@@ -3,1109 +3,777 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>متجر زمزميتي | أفضل الزمزميات والمطارات في مصر</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <title>متجر زمزميتي | أفضل الزمزميات في مصر</title>
   <style>
-    body { font-family: 'Cairo', sans-serif; }
-    .hide-scrollbar::-webkit-scrollbar { display: none; }
-    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f8fafc; color: #1e293b; direction: rtl; }
+    button { cursor: pointer; border: none; font-family: inherit; transition: 0.2s; }
+    button:hover { opacity: 0.9; }
+
+    /* شريط الإعلان العلوي */
+    .top-bar { background: linear-gradient(90deg, #0f766e, #0e7490); color: white; padding: 10px; text-align: center; font-size: 13px; font-weight: bold; }
+    
+    /* الهيدر */
+    header { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .logo { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .logo-icon { width: 44px; height: 44px; background: #0d9488; color: white; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-size: 22px; }
+    .logo h1 { font-size: 22px; font-weight: 900; color: #0f172a; margin: 0; }
+    .logo p { font-size: 11px; color: #64748b; margin: 0; }
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+    
+    .btn-admin { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 9px 15px; border-radius: 10px; font-weight: bold; font-size: 13px; color: #334155; }
+    .btn-cart { background: #0f172a; color: white; padding: 9px 16px; border-radius: 10px; font-weight: bold; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+    .cart-badge { background: #14b8a6; color: #0f172a; font-size: 11px; padding: 2px 7px; border-radius: 20px; font-weight: 900; }
+
+    /* البنر */
+    .hero { background: linear-gradient(180deg, #f0fdfa, #f8fafc); padding: 40px 20px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+    .hero h2 { font-size: 32px; font-weight: 900; color: #0f172a; margin-bottom: 10px; line-height: 1.3; }
+    .hero h2 span { color: #0d9488; }
+    .hero p { color: #64748b; font-size: 15px; max-width: 600px; margin: 0 auto; }
+
+    /* شبكة المنتجات */
+    .container { max-width: 1200px; margin: 0 auto; padding: 25px 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+    .card { background: white; border-radius: 18px; border: 1px solid #e2e8f0; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 2px 5px rgba(0,0,0,0.03); cursor: pointer; }
+    .card-img-wrap { height: 230px; border-radius: 14px; overflow: hidden; background: #f1f5f9; margin-bottom: 12px; position: relative; }
+    .card img { width: 100%; height: 100%; object-fit: cover; }
+    .badge-discount { position: absolute; top: 10px; right: 10px; background: #ef4444; color: white; padding: 4px 9px; border-radius: 20px; font-size: 11px; font-weight: 900; }
+    .badge-cap { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.92); padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+    .card h4 { font-size: 16px; font-weight: bold; margin-bottom: 6px; color: #0f172a; }
+    .card p { font-size: 12px; color: #64748b; line-height: 1.5; margin-bottom: 15px; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; }
+    .price { font-size: 19px; font-weight: 900; color: #0f172a; }
+    .old-price { font-size: 12px; color: #94a3b8; text-decoration: line-through; margin-left: 4px; font-weight: normal; }
+    .btn-buy { background: #0d9488; color: white; padding: 9px 15px; border-radius: 9px; font-weight: bold; font-size: 13px; }
+
+    /* ================= صفحة تفاصيل المنتج الكاملة ================= */
+    .product-full-page { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+    .btn-back { background: #f1f5f9; color: #334155; padding: 10px 18px; border-radius: 12px; font-weight: bold; font-size: 13px; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #cbd5e1; }
+    .product-detail-card { background: white; border-radius: 24px; border: 1px solid #e2e8f0; padding: 30px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 35px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
+    .detail-img { width: 100%; height: 420px; object-fit: cover; border-radius: 18px; background: #f1f5f9; }
+    .detail-info { display: flex; flex-direction: column; justify-content: space-between; }
+    .detail-title { font-size: 24px; font-weight: 900; color: #0f172a; margin-bottom: 12px; }
+    .detail-desc { font-size: 14px; color: #64748b; line-height: 1.8; margin-bottom: 20px; }
+    .features-list { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 15px; margin-bottom: 20px; font-size: 13px; font-weight: 600; color: #334155; }
+    .features-list div { margin-bottom: 6px; }
+    .detail-price-box { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+
+    /* ================= لوحة تحكم الأدمن ================= */
+    .admin-panel { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+    .admin-header { background: white; padding: 22px; border-radius: 18px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+    .admin-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+    .tab-btn { background: #e2e8f0; color: #334155; padding: 8px 16px; border-radius: 10px; font-weight: bold; font-size: 13px; }
+    .tab-btn.active { background: #0d9488; color: white; }
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; }
+    th, td { padding: 14px 16px; text-align: right; font-size: 13px; border-bottom: 1px solid #f1f5f9; }
+    th { background: #f8fafc; color: #64748b; font-weight: bold; }
+    .btn-edit { background: #f0fdfa; color: #0d9488; border: 1px solid #ccfbf1; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 12px; margin-left: 5px; }
+    .btn-delete { background: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 12px; }
+
+    /* النوافذ المنبثقة للتحكم */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 15px; }
+    .modal { background: white; width: 100%; max-width: 480px; border-radius: 20px; padding: 25px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    .modal-close { position: absolute; top: 15px; left: 15px; font-size: 20px; background: none; color: #94a3b8; font-weight: bold; }
+    .modal h3 { font-size: 18px; font-weight: 900; margin-bottom: 15px; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 5px; color: #475569; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 13px; outline: none; }
+    .btn-submit { width: 100%; background: #0d9488; color: white; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 14px; margin-top: 10px; }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 768px) {
+      .product-detail-card { grid-template-columns: 1fr; }
+      .detail-img { height: 280px; }
+      header { padding: 12px 16px; }
+    }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 selection:bg-teal-500 selection:text-white flex flex-col min-h-screen">
+<body>
 
   <!-- شريط الإعلان العلوي -->
-  <div class="bg-gradient-to-r from-teal-700 via-cyan-800 to-teal-800 text-white text-xs font-bold py-2.5 px-4 text-center">
-    <span>💧 شحن مجاني للطلبات بقيمة 350 ج.م وأكثر | كود خصم: <span class="bg-white/20 px-2 py-0.5 rounded font-mono">EGYPT10</span> (خصم 10%)</span>
+  <div class="top-bar" id="ui_top_announcement">
+    💧 شحن مجاني للطلبات فوق 350 ج.م في مصر | كود خصم: EGYPT10 (خصم 10%)
   </div>
 
-  <!-- ترويسة الموقع (الهيدر) -->
-  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-      
-      <!-- الشعار -->
-      <div class="flex items-center gap-3 cursor-pointer" onclick="showCustomerStore()">
-        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-teal-600 via-cyan-500 to-emerald-400 flex items-center justify-center text-white shadow-md font-black text-2xl">
-          💧
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight">زَمْزَمِيتِي</h1>
-            <span class="text-[10px] font-black bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-full">الأصلية</span>
-          </div>
-          <p class="text-xs text-slate-400 font-bold">عالم المطارات والزمزميات الفاخرة</p>
-        </div>
+  <!-- الهيدر -->
+  <header>
+    <div class="logo" onclick="showCustomerStore()">
+      <div class="logo-icon">💧</div>
+      <div>
+        <h1 id="ui_store_name">زَمْزَمِيتِي</h1>
+        <p id="ui_store_subtitle">عالم المطارات والزمزميات في مصر</p>
       </div>
-
-      <!-- الإجراءات: خانة الأدمن السرية + زر السلة -->
-      <div class="flex items-center gap-3">
-        <button id="adminNavBtn" onclick="handleAdminNavClick()" class="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold border transition flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200">
-          <span>🔒</span>
-          <span id="adminNavLabel">دخول الإدارة</span>
-        </button>
-
-        <button id="storeCartBtn" onclick="toggleCart()" class="relative flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-xl font-bold transition">
-          <span>🛒 السلة</span>
-          <span id="cartCount" class="bg-teal-500 text-slate-950 text-xs font-black w-5 h-5 rounded-full flex items-center justify-center">0</span>
-        </button>
-      </div>
-
+    </div>
+    <div class="header-actions">
+      <button class="btn-admin" id="ui_btn_admin_login" onclick="handleAdminClick()">🔒 دخول الإدارة</button>
+      <button id="cartBtn" class="btn-cart" onclick="toggleCart()">
+        <span id="ui_btn_cart_label">🛒 السلة</span>
+        <span id="cartCount" class="cart-badge">0</span>
+      </button>
     </div>
   </header>
 
-  <!-- ========================================================================= -->
-  <!-- 1. واجهة المتجر للعملاء (Customer Storefront) -->
-  <!-- ========================================================================= -->
-  <div id="storeView" class="flex-1 flex flex-col">
-    
-    <!-- البنر الترويجي -->
-    <section class="bg-gradient-to-b from-teal-50/70 via-slate-50 to-white py-12 md:py-16 border-b border-slate-200">
-      <div class="max-w-7xl mx-auto px-4 text-center">
-        <span class="inline-block bg-white border border-teal-200 text-teal-800 text-xs font-black px-4 py-1.5 rounded-full shadow-sm mb-4">
-          ✨ تشكيلة 2026 الحصرية بعزل ثلجي جداري مزدوج
-        </span>
-        <h2 class="text-3xl sm:text-5xl font-black text-slate-900 mb-4 leading-tight">
-          برودتك وانتعاشك معك <br>
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-500">
-            طوال 24 ساعة متواصلة
-          </span>
-        </h2>
-        <p class="text-slate-600 text-sm sm:text-base max-w-2xl mx-auto mb-8 leading-relaxed">
-          زمزميات طبية مصنوعة من فولاذ 18/8 الطبي المقاوم للصدأ والتسريب، ومطارات ذكية بشاشة رقمية لمعرفة درجة الحرارة في أي وقت.
-        </p>
-
-        <!-- كروت المزايا -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto text-right">
-          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-3">
-            <span class="text-3xl">❄️</span>
-            <div>
-              <h4 class="font-bold text-slate-900 text-sm">عزل 24 ساعة</h4>
-              <p class="text-xs text-slate-400">برودة مثلجة تدوم</p>
-            </div>
-          </div>
-          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-3">
-            <span class="text-3xl">🛡️</span>
-            <div>
-              <h4 class="font-bold text-slate-900 text-sm">ضمان سنة كاملة</h4>
-              <p class="text-xs text-slate-400">استبدال فوري ضد العيوب</p>
-            </div>
-          </div>
-          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-3">
-            <span class="text-3xl">🌿</span>
-            <div>
-              <h4 class="font-bold text-slate-900 text-sm">خالية من BPA</h4>
-              <p class="text-xs text-slate-400">خامات طبية صحية 100%</p>
-            </div>
-          </div>
-          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-3">
-            <span class="text-3xl">🚚</span>
-            <div>
-              <h4 class="font-bold text-slate-900 text-sm">توصيل لكافة المحافظات</h4>
-              <p class="text-xs text-slate-400">الدفع عند الاستلام</p>
-            </div>
-          </div>
-        </div>
-      </div>
+  <!-- ================= 1. واجهة المتجر الرئيسية للزبائن ================= -->
+  <div id="storeView">
+    <section class="hero">
+      <h2 id="ui_hero_title">برودتك وانتعاشك معك <br><span id="ui_hero_span">طوال 24 ساعة متواصلة</span></h2>
+      <p id="ui_hero_desc">زمزميات طبية عازلة للحرارة والبرودة من فولاذ 18/8 الطبي المقاوم للصدأ والتسريب تماماً.</p>
     </section>
 
-    <!-- شريط البحث والفلترة -->
-    <section class="max-w-7xl mx-auto px-4 pt-10 pb-4 w-full">
-      <div class="bg-white p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-          <div class="w-full md:w-96 relative">
-            <input 
-              type="text" 
-              id="searchInput" 
-              oninput="applyFilters()" 
-              placeholder="ابحث بالاسم أو السعة (مثال: ذكية، 750 مل)..." 
-              class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs sm:text-sm outline-none focus:border-teal-500 focus:bg-white"
-            >
-          </div>
-
-          <div class="flex items-center gap-3 w-full md:w-auto justify-end">
-            <label class="text-xs font-bold text-slate-500 whitespace-nowrap">الترتيب:</label>
-            <select id="sortSelect" onchange="applyFilters()" class="bg-slate-50 border border-slate-200 text-xs font-bold px-3 py-2 rounded-xl outline-none">
-              <option value="default">المقترحة</option>
-              <option value="price-asc">السعر: من الأقل للأعلى</option>
-              <option value="price-desc">السعر: من الأعلى للأقل</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-2 overflow-x-auto pb-1 hide-scrollbar">
-          <button onclick="setCategory('الكل')" class="cat-pill active px-4 py-2 rounded-xl text-xs font-bold bg-teal-600 text-white whitespace-nowrap">الكل</button>
-          <button onclick="setCategory('معزولة ستانلس')" class="cat-pill px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">معزولة ستانلس</button>
-          <button onclick="setCategory('ذكية بشاشة رقمية')" class="cat-pill px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">ذكية بشاشة رقمية</button>
-          <button onclick="setCategory('رياضية تحفيزية')" class="cat-pill px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">رياضية تحفيزية</button>
-          <button onclick="setCategory('للأطفال والمدارس')" class="cat-pill px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">للأطفال والمدارس</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- شبكة المنتجات المعروضة -->
-    <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full">
-      <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-      <div id="noProductsFound" class="hidden text-center py-20 bg-white rounded-3xl border border-slate-200 p-8">
-        <span class="text-4xl mb-2 block">🔍</span>
-        <h4 class="font-bold text-slate-700">لم يتم العثور على زمزميات مطابقة</h4>
-      </div>
-    </main>
-
+    <div class="container">
+      <h3 style="margin-bottom: 20px; font-weight: 900; font-size: 18px;" id="ui_catalog_heading">الزمزميات المتوفرة للطلب الفوري:</h3>
+      <div id="productsGrid" class="grid"></div>
+    </div>
   </div>
 
-  <!-- ========================================================================= -->
-  <!-- 2. لوحة الإدارة (Admin Dashboard) -->
-  <!-- ========================================================================= -->
-  <div id="adminView" class="hidden flex-1 max-w-7xl mx-auto px-4 py-8 w-full space-y-6">
-    
-    <!-- ترويسة لوحة الأدمن -->
-    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+  <!-- ================= 2. صفحة تفاصيل المنتج الكاملة ================= -->
+  <div id="productDetailView" class="product-full-page hidden">
+    <button class="btn-back" onclick="showCustomerStore()">
+      <span>⬅️ العودة لجميع الزمزميات</span>
+    </button>
+    <div class="product-detail-card" id="productDetailContainer">
+      <!-- محتوى الزمزمية الكاملة يظهر هنا -->
+    </div>
+  </div>
+
+  <!-- ================= 3. لوحة تحكم الأدمن الكاملة ================= -->
+  <div id="adminView" class="admin-panel hidden">
+    <div class="admin-header">
       <div>
-        <div class="flex items-center gap-2">
-          <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
-          <h2 class="text-2xl font-black text-slate-900">لوحة تحكم الإدارة الكاملة</h2>
-        </div>
-        <p class="text-xs text-slate-400 mt-1">تعديل الأسعار والكميات فوراً، إضافة منتجات، ومتابعة الطلبات وتغيير بيانات الدخول السرية</p>
+        <h2 style="font-weight: 900; font-size: 20px;">لوحة تحكم إدارة المتجر</h2>
+        <p style="font-size: 12px; color: #64748b;">تحكم كامل في الأسعار، الخصومات، صور الموبايل، ونصوص الأزرار</p>
       </div>
-
-      <div class="flex items-center gap-2 flex-wrap">
-        <button onclick="openProductModal()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
-          <span>+ إضافة زمزمية جديدة</span>
-        </button>
-        <button onclick="openSettingsModal()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl transition flex items-center gap-1">
-          <span>⚙️ تغيير الباسورد والإيميل</span>
-        </button>
-        <button onclick="showCustomerStore()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-3.5 py-2.5 rounded-xl transition">
-          🏪 معاينة المتجر
-        </button>
-        <button onclick="adminLogout()" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold text-xs px-3 py-2.5 rounded-xl transition">
-          خروج 🚪
-        </button>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button onclick="openAddProductModal()" class="btn-admin" style="background: #0d9488; color: white;">+ إضافة زمزمية جديدة</button>
+        <button onclick="openChangePassModal()" class="btn-admin" style="background: #0f172a; color: white;">🔑 تغيير الباسورد</button>
+        <button onclick="showCustomerStore()" class="btn-admin">🏪 معاينة المتجر</button>
+        <button onclick="adminLogout()" class="btn-delete">خروج 🚪</button>
       </div>
     </div>
 
-    <!-- كروت الإحصائيات -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-        <p class="text-xs text-slate-400 font-bold">إجمالي المبيعات المؤكدة</p>
-        <h3 id="statSales" class="text-2xl font-black text-slate-900 mt-1">0 ج.م</h3>
-      </div>
-      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-        <p class="text-xs text-slate-400 font-bold">عدد الطلبات المستلمة</p>
-        <h3 id="statOrdersCount" class="text-2xl font-black text-teal-700 mt-1">0 طلب</h3>
-      </div>
-      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-        <p class="text-xs text-slate-400 font-bold">إجمالي الزمزميات في الكتالوج</p>
-        <h3 id="statProductsCount" class="text-2xl font-black text-slate-900 mt-1">0</h3>
-      </div>
+    <!-- تبويبات لوحة التحكم -->
+    <div class="admin-tabs">
+      <button class="tab-btn active" id="tabProductsBtn" onclick="switchAdminTab('products')">📦 إدارة المنتجات والخصومات</button>
+      <button class="tab-btn" id="tabButtonsBtn" onclick="switchAdminTab('buttons')">✏️ تعديل نصوص الأزرار والموقع</button>
     </div>
 
-    <!-- جدول إدارة المنتجات (تعديل السعر والكمية والحذف) -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-      <div class="p-5 border-b border-slate-100 flex items-center justify-between">
-        <div>
-          <h3 class="font-black text-slate-900 text-base">التحكم في أسعار ومخزون الزمزميات</h3>
-          <p class="text-xs text-slate-400 mt-0.5">يمكنك الضغط على زر "تعديل" لتحديث سعر أو كمية أي زمزمية فوراً</p>
-        </div>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-right text-xs sm:text-sm">
-          <thead class="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold">
-            <tr>
-              <th class="p-4">المنتج</th>
-              <th class="p-4">التصنيف</th>
-              <th class="p-4">السعر الحالي</th>
-              <th class="p-4">المخزون المتوفر</th>
-              <th class="p-4 text-center">إجراءات</th>
-            </tr>
-          </thead>
-          <tbody id="adminProductsTable" class="divide-y divide-slate-100"></tbody>
-        </table>
-      </div>
+    <!-- تبويب 1: جدول المنتجات والخصومات والكميات -->
+    <div id="adminTabProducts">
+      <table>
+        <thead>
+          <tr>
+            <th>الزمزمية والصورة</th>
+            <th>السعة</th>
+            <th>السعر الأصلي</th>
+            <th>الخصم (%)</th>
+            <th>السعر بعد الخصم</th>
+            <th>المخزون بالمستودع</th>
+            <th style="text-align: center;">إجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="adminTableBody"></tbody>
+      </table>
     </div>
 
-    <!-- سجل طلبات الشراء -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-      <div class="p-5 border-b border-slate-100">
-        <h3 class="font-black text-slate-900 text-base">سجل الطلبات الواردة من العملاء</h3>
-      </div>
-      <div class="divide-y divide-slate-100" id="adminOrdersList"></div>
-    </div>
-
-  </div>
-
-  <!-- ========================================================================= -->
-  <!-- 3. النوافذ المنبثقة (Modals) -->
-  <!-- ========================================================================= -->
-
-  <!-- نافذة تسجيل دخول الأدمن السرية (بدون عرض أي بيانات مسبقة) -->
-  <div id="adminLoginModal" class="fixed inset-0 z-50 hidden">
-    <div onclick="closeAdminLoginModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
-    <div class="relative min-h-screen flex items-center justify-center p-4 z-10">
-      <div class="bg-white rounded-3xl max-w-sm w-full p-6 sm:p-8 shadow-2xl relative">
-        <button onclick="closeAdminLoginModal()" class="absolute top-5 left-5 text-slate-400 hover:text-slate-700 text-2xl font-bold">✕</button>
-        
-        <div class="text-center mb-6">
-          <div class="w-14 h-14 bg-slate-100 text-slate-800 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-2 shadow-inner">
-            🔒
-          </div>
-          <h3 class="text-xl font-black text-slate-900">دخول الإدارة</h3>
-          <p class="text-xs text-slate-400 mt-1">يُرجى إدخال البيانات المعتمدة لمدير المتجر</p>
-        </div>
-
-        <form onsubmit="handleAdminLogin(event)" class="space-y-4 text-xs sm:text-sm">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">البريد الإلكتروني للوحة التحكم</label>
-            <input type="email" id="inputAdminEmail" required placeholder="name@domain.com" class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl outline-none focus:border-teal-500">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">كلمة المرور</label>
-            <input type="password" id="inputAdminPass" required placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl outline-none focus:border-teal-500">
-          </div>
-
-          <p id="adminLoginErr" class="text-red-500 text-xs font-bold hidden">❌ البريد الإلكتروني أو كلمة المرور غير صحيحة!</p>
-
-          <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-black py-3 rounded-xl shadow-lg transition">
-            دخول للوحة الإدارة
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- نافذة تعديل بيانات حساب الأدمن (تغيير الإيميل والباسورد) -->
-  <div id="settingsModal" class="fixed inset-0 z-50 hidden">
-    <div onclick="closeSettingsModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
-    <div class="relative min-h-screen flex items-center justify-center p-4 z-10">
-      <div class="bg-white rounded-3xl max-w-sm w-full p-6 sm:p-8 shadow-2xl relative">
-        <button onclick="closeSettingsModal()" class="absolute top-5 left-5 text-slate-400 hover:text-slate-700 text-2xl font-bold">✕</button>
-        
-        <h3 class="text-xl font-black text-slate-900 mb-1">تغيير بيانات دخول الأدمن</h3>
-        <p class="text-xs text-slate-400 mb-4">عين البريد وكلمة المرور الجديدة التي تناسبك</p>
-
-        <form onsubmit="handleUpdateAdminCredentials(event)" class="space-y-3.5 text-xs sm:text-sm">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">البريد الإلكتروني الجديد</label>
-            <input type="email" id="newAdminEmail" required class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl outline-none focus:border-teal-500">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">كلمة المرور الجديدة</label>
-            <input type="password" id="newAdminPass" required placeholder="أدخل كلمة مرور قوية" class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl outline-none focus:border-teal-500">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">تأكيد كلمة المرور الجديدة</label>
-            <input type="password" id="confirmAdminPass" required placeholder="أعد كتابة كلمة المرور" class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl outline-none focus:border-teal-500">
-          </div>
-
-          <p id="settingsErr" class="text-red-500 text-xs font-bold hidden"></p>
-
-          <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-black py-3 rounded-xl shadow transition">
-            حفظ البيانات الجديدة فوراً
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- نافذة تعديل السعر والكمية السريع لمنتج محدد -->
-  <div id="quickEditModal" class="fixed inset-0 z-50 hidden">
-    <div onclick="closeQuickEditModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
-    <div class="relative min-h-screen flex items-center justify-center p-4 z-10">
-      <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl relative">
-        <button onclick="closeQuickEditModal()" class="absolute top-5 left-5 text-slate-400 hover:text-slate-700 text-2xl font-bold">✕</button>
-        <h3 class="text-lg font-black text-slate-900 mb-1">تعديل السعر والمخزون</h3>
-        <p id="editProdTitle" class="text-xs text-teal-600 font-bold mb-4"></p>
-
-        <form onsubmit="handleQuickEditSubmit(event)" class="space-y-3.5 text-xs sm:text-sm">
-          <input type="hidden" id="editProdId">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">السعر الجديد (بالجنيه المصري ج.م) *</label>
-            <input type="number" id="editProdPrice" required min="1" class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl outline-none focus:border-teal-500 font-bold">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">الكمية المتوفرة بالمخزن *</label>
-            <input type="number" id="editProdStock" required min="0" class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl outline-none focus:border-teal-500 font-bold">
-          </div>
-          <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-black py-3 rounded-xl shadow transition">
-            تحديث الزمزمية فوراً
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- نافذة سلة المشتريات (Cart Drawer) -->
-  <div id="cartModal" class="fixed inset-0 z-50 hidden">
-    <div onclick="toggleCart()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
-    <div class="fixed inset-y-0 left-0 max-w-md w-full bg-white shadow-2xl flex flex-col z-10">
+    <!-- تبويب 2: تعديل نصوص الأزرار والموقع -->
+    <div id="adminTabButtons" class="hidden" style="background: white; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0;">
+      <h3 style="margin-bottom: 15px; font-weight: 900;">تخصيص نصوص وأزرار الموقع بالكامل</h3>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">يمكنك تغيير الكلام المكتوب على أي زر في الموقع ليظهر لزبائنك كما تريد:</p>
       
-      <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-        <h4 class="font-black text-lg text-slate-900">سلة المشتريات</h4>
-        <button onclick="toggleCart()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold">✕</button>
-      </div>
-
-      <!-- مؤشر الشحن المجاني -->
-      <div class="bg-teal-50 px-5 py-3 border-b border-teal-100 text-xs">
-        <div class="flex justify-between font-bold mb-1 text-teal-900">
-          <span>الشحن المجاني:</span>
-          <span id="freeShippingLabel">الشحن المجاني عند 350 ج.م</span>
+      <form onsubmit="saveCustomTexts(event)" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px;">
+        <div class="form-group">
+          <label>نص زر إضافة للسلة بالكارت</label>
+          <input type="text" id="cfg_btn_buy" required>
         </div>
-        <div class="w-full bg-teal-200 h-2 rounded-full overflow-hidden">
-          <div id="freeShippingBar" class="bg-teal-600 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+        <div class="form-group">
+          <label>نص زر السلة في الهيدر</label>
+          <input type="text" id="cfg_btn_cart" required>
         </div>
-      </div>
-
-      <!-- عناصر السلة -->
-      <div id="cartItemsList" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
-
-      <!-- ملخص السلة والكوبون -->
-      <div class="p-5 border-t border-slate-100 bg-slate-50 space-y-3">
-        <div class="flex gap-2">
-          <input type="text" id="couponInput" placeholder="كود الخصم (جرب EGYPT10)" class="flex-1 bg-white border border-slate-200 px-3 py-2 rounded-xl text-xs uppercase font-bold outline-none">
-          <button onclick="applyCoupon()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-xl transition">تطبيق</button>
+        <div class="form-group">
+          <label>نص زر دخول الإدارة</label>
+          <input type="text" id="cfg_btn_admin" required>
         </div>
-        <p id="couponMsg" class="hidden text-xs font-bold"></p>
-
-        <div class="space-y-1 text-xs text-slate-600 border-t border-slate-200 pt-3">
-          <div class="flex justify-between">
-            <span>المجموع الفرعي:</span>
-            <span id="cartSubtotal" class="font-bold text-slate-900">0 ج.م</span>
-          </div>
-          <div id="discountRow" class="hidden flex justify-between text-emerald-600 font-bold">
-            <span>قيمة الخصم:</span>
-            <span id="cartDiscount">-0 ج.م</span>
-          </div>
-          <div class="flex justify-between">
-            <span>مصاريف الشحن:</span>
-            <span id="cartShipping" class="font-bold text-slate-900">مجاني</span>
-          </div>
-          <div class="border-t border-slate-200 pt-2 flex justify-between font-black text-base text-slate-900">
-            <span>الإجمالي النهائي:</span>
-            <span id="cartTotal" class="text-teal-700">0 ج.م</span>
-          </div>
+        <div class="form-group">
+          <label>نص زر إتمام الطلب بالسلة</label>
+          <input type="text" id="cfg_btn_checkout" required>
         </div>
-
-        <button onclick="openCheckout()" class="w-full bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white font-black py-3.5 rounded-xl shadow-lg transition">
-          متابعة إتمام الطلب (الدفع عند الاستلام)
-        </button>
-      </div>
+        <div class="form-group">
+          <label>شريط الإعلانات بالأعلى</label>
+          <input type="text" id="cfg_top_bar" required>
+        </div>
+        <div class="form-group">
+          <label>عنوان المتجر الرئيسي</label>
+          <input type="text" id="cfg_hero_title" required>
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <button type="submit" class="btn-submit" style="max-width: 250px;">حفظ التغييرات فوراً</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- نافذة المعاينة السريعة (Quick View) -->
-  <div id="quickViewModal" class="fixed inset-0 z-50 hidden">
-    <div onclick="closeQuickView()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
-    <div class="relative min-h-screen flex items-center justify-center p-4 z-10">
-      <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative">
-        <button onclick="closeQuickView()" class="absolute top-5 left-5 text-slate-400 hover:text-slate-700 text-2xl font-bold">✕</button>
-        <div id="quickViewContent" class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center"></div>
-      </div>
+  <!-- ================= 4. النوافذ المنبثقة ================= -->
+
+  <!-- نافذة دخول الأدمن السرية -->
+  <div id="adminLoginModal" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('adminLoginModal')">✕</button>
+      <h3>تسجيل دخول الإدارة</h3>
+      <form onsubmit="doAdminLogin(event)">
+        <div class="form-group">
+          <label>البريد الإلكتروني للوحة التحكم</label>
+          <input type="email" id="loginEmail" required placeholder="name@domain.com">
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور</label>
+          <input type="password" id="loginPass" required placeholder="••••••••">
+        </div>
+        <p id="loginError" style="color: #ef4444; font-size: 12px; font-weight: bold; margin-bottom: 10px;" class="hidden">البيانات غير صحيحة!</p>
+        <button type="submit" class="btn-submit">دخول للوحة الإدارة</button>
+      </form>
     </div>
   </div>
 
-  <!-- نافذة إتمام الطلب للعميل (Checkout) -->
-  <div id="checkoutModal" class="fixed inset-0 z-50 hidden">
-    <div onclick="closeCheckout()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
-    <div class="relative min-h-screen flex items-center justify-center p-4 z-10">
-      <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative">
-        <button onclick="closeCheckout()" class="absolute top-5 left-5 text-slate-400 hover:text-slate-700 text-2xl font-bold">✕</button>
+  <!-- نافذة تعديل زمزمية (الخصم، السعر، والكمية، وصورة الموبايل) -->
+  <div id="editProductModal" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('editProductModal')">✕</button>
+      <h3>تعديل بيانات الزمزمية والخصومات</h3>
+      <form onsubmit="saveProductEdit(event)">
+        <input type="hidden" id="editProdId">
+        <div class="form-group">
+          <label>اسم الزمزمية</label>
+          <input type="text" id="editProdTitle" required>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label>السعر الأصلي (ج.م) *</label>
+            <input type="number" id="editProdPrice" required min="1">
+          </div>
+          <div class="form-group">
+            <label>نسبة الخصم (%) [0 إذا لا يوجد]</label>
+            <input type="number" id="editProdDiscount" min="0" max="95" value="0">
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label>الكمية المتوفرة بالمخزن *</label>
+            <input type="number" id="editProdStock" required min="0">
+          </div>
+          <div class="form-group">
+            <label>السعة (مثال: 750 مل)</label>
+            <input type="text" id="editProdCap" required>
+          </div>
+        </div>
         
-        <h3 class="text-xl font-black text-slate-900 mb-1">بيانات الشحن والتوصيل</h3>
-        <p class="text-xs text-slate-400 mb-4">ادخل عنوانك داخل مصر لتوصيل الزمزمية فوراً</p>
+        <!-- رفع صورة من الموبايل مباشرة بدون روابط -->
+        <div class="form-group">
+          <label>تغيير الصورة (ارفع مباشرة من الموبايل أو الكمبيوتر)</label>
+          <input type="file" id="editProdFileInput" accept="image/*" onchange="previewImageFile(event, 'editPreview')">
+          <img id="editPreview" src="" style="width: 100px; height: 100px; object-fit: cover; border-radius: 10px; margin-top: 8px; display: none;">
+        </div>
 
-        <form onsubmit="handleOrderSubmit(event)" class="space-y-3.5 text-xs sm:text-sm">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">الاسم الكامل *</label>
-            <input type="text" id="orderCustName" required placeholder="مثال: أحمد محمود" class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl outline-none focus:border-teal-500">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">رقم الهاتف أو الواتساب *</label>
-            <input type="tel" id="orderCustPhone" required placeholder="010xxxxxxxx أو 011xxxxxxxx" class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl outline-none focus:border-teal-500">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">المحافظة والمنطقة والعنوان بالتفصيل *</label>
-            <input type="text" id="orderCustAddress" required placeholder="القاهرة - المعادي - شارع 9" class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl outline-none focus:border-teal-500">
-          </div>
-          
-          <div class="p-3 bg-teal-50 border border-teal-200 rounded-xl text-xs font-bold text-teal-800 leading-relaxed">
-            💵 الدفع عند الاستلام بعد معاينة الزمزمية والتأكد من جودتها.
-          </div>
+        <div class="form-group">
+          <label>الوصف ومواصفات العزل</label>
+          <textarea id="editProdDesc" rows="3"></textarea>
+        </div>
 
-          <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-black py-3.5 rounded-xl shadow-lg transition">
-            تأكيد الطلب الآن
-          </button>
-        </form>
-
-      </div>
+        <button type="submit" class="btn-submit">حفظ التحديثات</button>
+      </form>
     </div>
   </div>
 
-  <!-- نافذة إضافة زمزمية جديدة من لوحة الأدمن -->
-  <div id="productModal" class="fixed inset-0 z-50 hidden">
-    <div onclick="closeProductModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
-    <div class="relative min-h-screen flex items-center justify-center p-4 z-10">
-      <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
-        <button onclick="closeProductModal()" class="absolute top-5 left-5 text-slate-400 hover:text-slate-700 text-2xl font-bold">✕</button>
-        <h3 class="text-xl font-black text-slate-900 mb-4">إضافة زمزمية جديدة للمتجر</h3>
+  <!-- نافذة إضافة زمزمية جديدة مع رفع صورة من الموبايل -->
+  <div id="addProductModal" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('addProductModal')">✕</button>
+      <h3>إضافة زمزمية جديدة للمتجر</h3>
+      <form onsubmit="handleAddNewProduct(event)">
+        <div class="form-group">
+          <label>اسم الزمزمية *</label>
+          <input type="text" id="newTitle" required placeholder="زمزمية هيدرو بلس">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label>السعر (ج.م) *</label>
+            <input type="number" id="newPrice" required min="1" placeholder="280">
+          </div>
+          <div class="form-group">
+            <label>نسبة الخصم (%)</label>
+            <input type="number" id="newDiscount" min="0" max="95" value="0">
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label>الكمية المتوفرة بالمخزن *</label>
+            <input type="number" id="newStock" required min="1" value="20">
+          </div>
+          <div class="form-group">
+            <label>السعة *</label>
+            <input type="text" id="newCap" required placeholder="750 مل">
+          </div>
+        </div>
 
-        <form onsubmit="handleSaveNewProduct(event)" class="space-y-3 text-xs sm:text-sm">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">اسم الزمزمية *</label>
-            <input type="text" id="newProdTitle" required placeholder="زمزمية هيدرو ماكس الرياضية" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl outline-none focus:border-teal-500">
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">التصنيف</label>
-              <select id="newProdCategory" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl outline-none">
-                <option value="معزولة ستانلس">معزولة ستانلس</option>
-                <option value="ذكية بشاشة رقمية">ذكية بشاشة رقمية</option>
-                <option value="رياضية تحفيزية">رياضية تحفيزية</option>
-                <option value="للأطفال والمدارس">للأطفال والمدارس</option>
-              </select>
-            </div>
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">السعة</label>
-              <input type="text" id="newProdCapacity" required placeholder="750 مل" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl outline-none focus:border-teal-500">
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">السعر (ج.م) *</label>
-              <input type="number" id="newProdPrice" required placeholder="250" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl outline-none focus:border-teal-500">
-            </div>
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">الكمية المتوفرة بالمخزن *</label>
-              <input type="number" id="newProdStock" required placeholder="25" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl outline-none focus:border-teal-500">
-            </div>
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">رابط صورة الزمزمية (URL)</label>
-            <input type="url" id="newProdImage" placeholder="https://images.unsplash.com/..." class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl outline-none focus:border-teal-500">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">وصف موجز للمنتج</label>
-            <textarea id="newProdDesc" rows="2" placeholder="مواصفات المطارة وخامات العزل الحراري..." class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl outline-none focus:border-teal-500"></textarea>
-          </div>
-          <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-black py-3 rounded-xl shadow-lg transition">
-            حفظ وإضافة للمتجر فوراً
-          </button>
-        </form>
-      </div>
+        <!-- رفع الصورة من الموبايل -->
+        <div class="form-group">
+          <label>صورة الزمزمية (اختر من ألبوم الموبايل مباشرة) *</label>
+          <input type="file" id="newFileInput" accept="image/*" required onchange="previewImageFile(event, 'newPreview')">
+          <img id="newPreview" src="" style="width: 100px; height: 100px; object-fit: cover; border-radius: 10px; margin-top: 8px; display: none;">
+        </div>
+
+        <div class="form-group">
+          <label>الوصف والمواصفات</label>
+          <textarea id="newDesc" rows="3" placeholder="مواصفات الفولاذ والعزل الحراري..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">نشر الزمزمية فوراً</button>
+      </form>
     </div>
   </div>
 
-  <!-- تذييل الصفحة -->
-  <footer class="bg-slate-900 text-slate-400 py-10 text-xs border-t border-slate-800 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 text-center space-y-4">
-      <div class="flex items-center justify-center gap-2 text-white font-black text-lg">
-        <span>💧</span>
-        <span>متجر زمزميتي للأدوات والمطارات المعزولة بمصر</span>
-      </div>
-      <p class="max-w-md mx-auto text-slate-400 leading-relaxed">
-        الخيار الأول للزمزميات الصحية والمطارات عالية الأداء لحفظ الماء بارداً ومثلجاً لأكثر من 24 ساعة.
-      </p>
-      <div class="border-t border-slate-800 pt-4 text-slate-500">
-        © 2026 جميع الحقوق محفوظة لمتجر زمزميتي
-      </div>
+  <!-- نافذة تغيير باسورد وإيميل الأدمن -->
+  <div id="changePassModal" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('changePassModal')">✕</button>
+      <h3>تغيير بيانات دخول الأدمن</h3>
+      <form onsubmit="saveNewCredentials(event)">
+        <div class="form-group">
+          <label>البريد الإلكتروني الجديد</label>
+          <input type="email" id="newAdminEmail" required>
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور الجديدة</label>
+          <input type="password" id="newAdminPass" required placeholder="5 خانات على الأقل">
+        </div>
+        <button type="submit" class="btn-submit">حفظ البيانات الجديدة</button>
+      </form>
     </div>
-  </footer>
+  </div>
 
-  <!-- ========================================================================= -->
-  <!-- 4. الجافاسكربت (JavaScript) -->
-  <!-- ========================================================================= -->
+  <!-- نافذة السلة -->
+  <div id="cartModal" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('cartModal')">✕</button>
+      <h3>سلة المشتريات</h3>
+      <div id="cartList" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;"></div>
+      <div style="border-top: 1px solid #e2e8f0; padding-top: 10px; margin-bottom: 15px; font-weight: 900; display: flex; justify-content: space-between;">
+        <span>الإجمالي النهائي:</span>
+        <span id="cartTotal" style="color: #0d9488;">0 ج.م</span>
+      </div>
+      <button id="ui_btn_checkout_submit" onclick="checkoutOrder()" class="btn-submit">تأكيد الشراء (الدفع عند الاستلام)</button>
+    </div>
+  </div>
+
   <script>
-    // بيانات دخول الأدمن المخزنة (مع إمكانية تعديلها وحفظها محلياً)
-    const DEFAULT_ADMIN = {
-      email: "admin@zamzamiah.com",
-      password: "admin123"
+    // الحساب الافتراضي للأدمن
+    const DEFAULT_AUTH = { email: "admin@zamzamiah.com", pass: "admin123" };
+    function getAuth() { return JSON.parse(localStorage.getItem('zam_auth')) || DEFAULT_AUTH; }
+    function setAuth(data) { localStorage.setItem('zam_auth', JSON.stringify(data)); }
+
+    // نصوص الأزرار والموقع القابلة للتعديل
+    const DEFAULT_TEXTS = {
+      btn_buy: "أضف للسلة 🛒",
+      btn_cart: "🛒 السلة",
+      btn_admin: "🔒 دخول الإدارة",
+      btn_checkout: "تأكيد الشراء (الدفع عند الاستلام)",
+      top_bar: "💧 شحن مجاني للطلبات فوق 350 ج.م في مصر | كود خصم: EGYPT10 (خصم 10%)",
+      hero_title: "برودتك وانتعاشك معك",
+      hero_span: "طوال 24 ساعة متواصلة"
     };
 
-    function getAdminCredentials() {
-      const stored = localStorage.getItem('zamzam_admin_auth');
-      return stored ? JSON.parse(stored) : DEFAULT_ADMIN;
+    function getCustomTexts() { return JSON.parse(localStorage.getItem('zam_texts')) || DEFAULT_TEXTS; }
+    function setCustomTexts(t) { localStorage.setItem('zam_texts', JSON.stringify(t)); applyTextsToUI(); }
+
+    function applyTextsToUI() {
+      const t = getCustomTexts();
+      document.getElementById('ui_btn_admin_login').textContent = t.btn_admin;
+      document.getElementById('ui_btn_cart_label').textContent = t.btn_cart;
+      document.getElementById('ui_top_announcement').textContent = t.top_bar;
+      document.getElementById('ui_hero_title').childNodes[0].textContent = t.hero_title + " ";
+      document.getElementById('ui_hero_span').textContent = t.hero_span;
+      document.getElementById('ui_btn_checkout_submit').textContent = t.btn_checkout;
+      
+      // تعبئة نموذج التعديل
+      document.getElementById('cfg_btn_buy').value = t.btn_buy;
+      document.getElementById('cfg_btn_cart').value = t.btn_cart;
+      document.getElementById('cfg_btn_admin').value = t.btn_admin;
+      document.getElementById('cfg_btn_checkout').value = t.btn_checkout;
+      document.getElementById('cfg_top_bar').value = t.top_bar;
+      document.getElementById('cfg_hero_title').value = t.hero_title;
     }
 
-    function saveAdminCredentials(email, password) {
-      localStorage.setItem('zamzam_admin_auth', JSON.stringify({ email, password }));
-    }
-
-    // المنتجات الافتراضية بأسعار الجنيه المصري
-    const DEFAULT_PRODUCTS = [
-      {
-        id: 1,
-        title: "زمزمية هيدرو برو المعزولة | ستانلس مزدوج",
-        category: "معزولة ستانلس",
-        price: 320,
-        stock: 25,
-        rating: 4.9,
-        capacity: "750 مل",
-        image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=700&q=80",
-        desc: "فولاذ طبي 18/8 مقاوم للصدأ، عزل ثلجي مفرغ من الهواء 24 ساعة بدون تكثف خارجي."
-      },
-      {
-        id: 2,
-        title: "زمزمية سينسور الذكية | شاشة رقمية لحرارة الماء",
-        category: "ذكية بشاشة رقمية",
-        price: 380,
-        stock: 18,
-        rating: 4.8,
-        capacity: "500 مل",
-        image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=700&q=80",
-        desc: "غطاء ذكي يعرض درجة حرارة الماء بدقة بمجرد اللمس مع تنبيه ضوئي للتذكير بالشرب دورياً."
-      },
-      {
-        id: 3,
-        title: "مطارة أكتيف سبورت الرياضية بمؤشرات تحفيزية",
-        category: "رياضية تحفيزية",
-        price: 195,
-        stock: 30,
-        rating: 4.7,
-        capacity: "1000 مل",
-        image: "https://images.unsplash.com/photo-1523362628745-0c100150b504?auto=format&fit=crop&w=700&q=80",
-        desc: "خفيفة الوزن ومصنوعة من مادة التريتان الآمنة، مزودة بأوقات زمنية تشجعك على شرب لترين ماء يومياً."
-      },
-      {
-        id: 4,
-        title: "زمزمية الأطفال سفاري المقاومة للصدمات",
-        category: "للأطفال والمدارس",
-        price: 165,
-        stock: 20,
-        rating: 4.9,
-        capacity: "450 مل",
-        image: "https://images.unsplash.com/photo-1570554886111-e80fcca6a029?auto=format&fit=crop&w=700&q=80",
-        desc: "غطاء محكم ضد الانسكاب تماماً داخل الحقائب وماصة سيليكون فائقة النعومة مع حبل تعليق لطيف."
-      },
-      {
-        id: 5,
-        title: "تانك الرحلات ماكس ترافيلر بمقبض حمل قوي",
-        category: "معزولة ستانلس",
-        price: 490,
-        stock: 12,
-        rating: 5.0,
-        capacity: "1500 مل",
-        image: "https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?auto=format&fit=crop&w=700&q=80",
-        desc: "سعة ضخمة للرحلات والنوادي وعزل حراري خارق يدوم حتى 36 ساعة متواصلة مع قاعدة مانعة للصدمات."
-      },
-      {
-        id: 6,
-        title: "زمزمية بيور جلاس زجاجية بغلاف سيليكون مخملي",
-        category: "معزولة ستانلس",
-        price: 240,
-        stock: 15,
-        rating: 4.6,
-        capacity: "600 مل",
-        image: "https://images.unsplash.com/photo-1556911073-38141963c9e0?auto=format&fit=crop&w=700&q=80",
-        desc: "طعم نقي 100% للماء والمشروبات بدون أي امتصاص للروائح، مغلفة بطبقة سيليكون أنيقة ومانعة للانزلاق."
-      }
+    // المنتجات الافتراضية مع دعم الخصم
+    const DEFAULT_PRODS = [
+      { id: 1, title: "زمزمية هيدرو برو ستانلس مزدوج", capacity: "750 مل", price: 350, discount: 10, stock: 20, img: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=600&q=80", desc: "فولاذ طبي 18/8 مقاوم للصدأ، عزل حراري ثلجي يدوم 24 ساعة دون أي تكثف قطرات خارجي." },
+      { id: 2, title: "زمزمية سينسور الذكية بشاشة حرارة", capacity: "500 مل", price: 420, discount: 15, stock: 15, img: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80", desc: "شاشة LED ذكية باللمس على الغطاء لعرض درجة حرارة الماء بدقة والتذكير بالشرب." },
+      { id: 3, title: "مطارة أكتيف سبورت التحفيزية", capacity: "1000 مل", price: 210, discount: 0, stock: 25, img: "https://images.unsplash.com/photo-1523362628745-0c100150b504?auto=format&fit=crop&w=600&q=80", desc: "خفيفة الوزن ومصنوعة من خامات التريتان الأمريكية مع مؤشرات زمنية لتشجيعك على شرب لترين ماء." },
+      { id: 4, title: "زمزمية الأطفال سفاري ضد التسريب", capacity: "450 مل", price: 180, discount: 5, stock: 18, img: "https://images.unsplash.com/photo-1570554886111-e80fcca6a029?auto=format&fit=crop&w=600&q=80", desc: "قفل أمان يمنع انسكاب الماء نهائياً بالحقيبة المدرسية، مع ماصة سيليكون صحية وفائقة النعومة." }
     ];
 
-    let products = JSON.parse(localStorage.getItem('zamzam_products')) || DEFAULT_PRODUCTS;
-    let orders = JSON.parse(localStorage.getItem('zamzam_orders')) || [];
+    let products = JSON.parse(localStorage.getItem('zam_prods')) || DEFAULT_PRODS;
     let cart = [];
-    let currentFilter = 'الكل';
-    let discountPercent = 0;
 
-    function saveState() {
-      localStorage.setItem('zamzam_products', JSON.stringify(products));
-      localStorage.setItem('zamzam_orders', JSON.stringify(orders));
+    function saveProducts() { localStorage.setItem('zam_prods', JSON.stringify(products)); }
+
+    // حساب السعر النهائي بعد الخصم
+    function getFinalPrice(p) {
+      if (!p.discount || p.discount <= 0) return p.price;
+      return Math.round(p.price - (p.price * (p.discount / 100)));
     }
 
-    // منطق خانة الأدمن في الهيدر
-    function handleAdminNavClick() {
-      const isLogged = sessionStorage.getItem('is_admin_logged') === 'true';
-      if (isLogged) {
-        showAdminDashboard();
-      } else {
-        openAdminLoginModal();
-      }
-    }
-
-    function openAdminLoginModal() {
-      document.getElementById('inputAdminEmail').value = '';
-      document.getElementById('inputAdminPass').value = '';
-      document.getElementById('adminLoginErr').classList.add('hidden');
-      document.getElementById('adminLoginModal').classList.remove('hidden');
-    }
-
-    function closeAdminLoginModal() {
-      document.getElementById('adminLoginModal').classList.add('hidden');
-    }
-
-    function handleAdminLogin(e) {
-      e.preventDefault();
-      const email = document.getElementById('inputAdminEmail').value.trim();
-      const pass = document.getElementById('inputAdminPass').value.trim();
-      const auth = getAdminCredentials();
-
-      if (email === auth.email && pass === auth.password) {
-        sessionStorage.setItem('is_admin_logged', 'true');
-        closeAdminLoginModal();
-        showAdminDashboard();
-      } else {
-        document.getElementById('adminLoginErr').classList.remove('hidden');
-      }
-    }
-
-    function showAdminDashboard() {
-      document.getElementById('storeView').classList.add('hidden');
-      document.getElementById('adminView').classList.remove('hidden');
-      document.getElementById('storeCartBtn').classList.add('hidden');
-      document.getElementById('adminNavLabel').textContent = "لوحة التحكم ⚙";
-      renderAdminDashboard();
-      window.scrollTo({top: 0, behavior: 'smooth'});
-    }
-
-    function showCustomerStore() {
-      document.getElementById('adminView').classList.add('hidden');
-      document.getElementById('storeView').classList.remove('hidden');
-      document.getElementById('storeCartBtn').classList.remove('hidden');
-      
-      const isLogged = sessionStorage.getItem('is_admin_logged') === 'true';
-      document.getElementById('adminNavLabel').textContent = isLogged ? "لوحة الإدارة ⚙" : "دخول الإدارة";
-      renderProducts();
-      window.scrollTo({top: 0, behavior: 'smooth'});
-    }
-
-    function adminLogout() {
-      sessionStorage.removeItem('is_admin_logged');
-      showCustomerStore();
-      alert("تم تسجيل الخروج من لوحة الإدارة بنجاح.");
-    }
-
-    // نافذة إعدادات حساب الأدمن
-    function openSettingsModal() {
-      const auth = getAdminCredentials();
-      document.getElementById('newAdminEmail').value = auth.email;
-      document.getElementById('newAdminPass').value = '';
-      document.getElementById('confirmAdminPass').value = '';
-      document.getElementById('settingsErr').classList.add('hidden');
-      document.getElementById('settingsModal').classList.remove('hidden');
-    }
-
-    function closeSettingsModal() {
-      document.getElementById('settingsModal').classList.add('hidden');
-    }
-
-    function handleUpdateAdminCredentials(e) {
-      e.preventDefault();
-      const newEmail = document.getElementById('newAdminEmail').value.trim();
-      const newPass = document.getElementById('newAdminPass').value.trim();
-      const confirmPass = document.getElementById('confirmAdminPass').value.trim();
-      const errBox = document.getElementById('settingsErr');
-
-      if (newPass !== confirmPass) {
-        errBox.textContent = "❌ كلمتا المرور غير متطابقتين!";
-        errBox.classList.remove('hidden');
-        return;
-      }
-
-      if (newPass.length < 5) {
-        errBox.textContent = "❌ كلمة المرور يجب أن تكون 5 حروف أو أرقام على الأقل!";
-        errBox.classList.remove('hidden');
-        return;
-      }
-
-      saveAdminCredentials(newEmail, newPass);
-      closeSettingsModal();
-      alert("تم تحديث البريد الإلكتروني وكلمة المرور للإدارة بنجاح! احتفظ ببياناتك الجديدة جيداً.");
-    }
-
-    // نافذة تعديل السعر والكمية السريع
-    function openQuickEdit(id) {
-      const prod = products.find(p => p.id === id);
-      if (!prod) return;
-      document.getElementById('editProdId').value = prod.id;
-      document.getElementById('editProdTitle').textContent = prod.title;
-      document.getElementById('editProdPrice').value = prod.price;
-      document.getElementById('editProdStock').value = prod.stock;
-      document.getElementById('quickEditModal').classList.remove('hidden');
-    }
-
-    function closeQuickEditModal() {
-      document.getElementById('quickEditModal').classList.add('hidden');
-    }
-
-    function handleQuickEditSubmit(e) {
-      e.preventDefault();
-      const id = Number(document.getElementById('editProdId').value);
-      const newPrice = Number(document.getElementById('editProdPrice').value);
-      const newStock = Number(document.getElementById('editProdStock').value);
-
-      const prod = products.find(p => p.id === id);
-      if (prod) {
-        prod.price = newPrice;
-        prod.stock = newStock;
-        saveState();
-        renderAdminDashboard();
-        closeQuickEditModal();
-        alert("تم تحديث سعر وكمية المنتج بنجاح!");
-      }
-    }
-
-    // عرض المنتجات للزبائن (بالجنيه المصري)
-    function renderProducts(itemsToRender = products) {
+    // واجهة المتجر الرئيسية
+    function renderStore() {
       const grid = document.getElementById('productsGrid');
-      const emptyMsg = document.getElementById('noProductsFound');
+      const texts = getCustomTexts();
 
-      if (itemsToRender.length === 0) {
-        grid.innerHTML = '';
-        emptyMsg.classList.remove('hidden');
-        return;
-      }
-      emptyMsg.classList.add('hidden');
+      grid.innerHTML = products.map(p => {
+        const finalPrice = getFinalPrice(p);
+        const hasDiscount = p.discount > 0;
 
-      grid.innerHTML = itemsToRender.map(p => `
-        <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between p-4 group">
-          <div class="relative h-64 bg-slate-100 rounded-2xl overflow-hidden mb-4 cursor-pointer" onclick="openQuickView(${p.id})">
-            <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-            <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-800 text-xs font-black px-2.5 py-1 rounded-full shadow-sm">
-              ${p.capacity}
-            </span>
-            <span class="absolute top-3 right-3 bg-teal-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-full shadow-sm">
-              ★ ${p.rating}
-            </span>
-          </div>
-
-          <div>
-            <span class="text-teal-600 text-xs font-bold">${p.category}</span>
-            <h4 onclick="openQuickView(${p.id})" class="font-bold text-slate-900 text-base mt-1 cursor-pointer hover:text-teal-600 transition">${p.title}</h4>
-            <p class="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">${p.desc}</p>
-          </div>
-
-          <div class="flex items-center justify-between pt-4 mt-4 border-t border-slate-100">
+        return `
+          <div class="card" onclick="openProductDetailPage(${p.id})">
             <div>
-              <span class="text-xl font-black text-slate-900">${p.price} <span class="text-xs font-bold">ج.م</span></span>
-              <span class="block text-[11px] text-slate-400">متبقي: ${p.stock} فقط</span>
-            </div>
-            <div class="flex gap-1.5">
-              <button onclick="openQuickView(${p.id})" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold p-2.5 rounded-xl transition" title="معاينة">
-                👁️
-              </button>
-              <button onclick="addToCart(${p.id})" class="bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow">
-                أضف للسلة 🛒
-              </button>
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    // فلترة وبحث
-    function applyFilters() {
-      const q = document.getElementById('searchInput').value.trim().toLowerCase();
-      const sortBy = document.getElementById('sortSelect').value;
-
-      let filtered = products.filter(p => {
-        const matchCat = (currentFilter === 'الكل') || (p.category === currentFilter);
-        const matchQ = p.title.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q) || p.capacity.toLowerCase().includes(q);
-        return matchCat && matchQ;
-      });
-
-      if (sortBy === 'price-asc') filtered.sort((a, b) => a.price - b.price);
-      if (sortBy === 'price-desc') filtered.sort((a, b) => b.price - a.price);
-
-      renderProducts(filtered);
-    }
-
-    function setCategory(cat) {
-      currentFilter = cat;
-      document.querySelectorAll('.cat-pill').forEach(btn => {
-        if (btn.textContent.trim() === cat) {
-          btn.className = "cat-pill px-4 py-2 rounded-xl text-xs font-bold bg-teal-600 text-white whitespace-nowrap";
-        } else {
-          btn.className = "cat-pill px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap";
-        }
-      });
-      applyFilters();
-    }
-
-    // إدارة السلة
-    function addToCart(id) {
-      const p = products.find(i => i.id === id);
-      if (!p) return;
-      if (p.stock <= 0) {
-        alert("عذراً، هذا المنتج نفد من المخزون حالياً!");
-        return;
-      }
-      const exist = cart.find(i => i.id === id);
-      if (exist) {
-        exist.quantity += 1;
-      } else {
-        cart.push({ ...p, quantity: 1 });
-      }
-      updateCartUI();
-      alert(`تمت إضافة "${p.title}" إلى السلة بنجاح!`);
-    }
-
-    function changeCartQty(id, delta) {
-      const item = cart.find(i => i.id === id);
-      if (!item) return;
-      item.quantity += delta;
-      if (item.quantity <= 0) {
-        cart = cart.filter(i => i.id !== id);
-      }
-      updateCartUI();
-    }
-
-    function removeFromCart(id) {
-      cart = cart.filter(i => i.id !== id);
-      updateCartUI();
-    }
-
-    function updateCartUI() {
-      const totalCount = cart.reduce((acc, i) => acc + i.quantity, 0);
-      document.getElementById('cartCount').textContent = totalCount;
-
-      const subtotal = cart.reduce((acc, i) => acc + (i.price * i.quantity), 0);
-      const discount = (subtotal * discountPercent) / 100;
-      const shipping = (subtotal >= 350 || subtotal === 0) ? 0 : 35;
-      const total = Math.max(0, subtotal - discount + shipping);
-
-      // شريط الشحن المجاني (فوق 350 جنيه)
-      const percent = Math.min(100, (subtotal / 350) * 100);
-      document.getElementById('freeShippingBar').style.width = percent + '%';
-      document.getElementById('freeShippingLabel').textContent = subtotal >= 350 ? '✓ تم تفعيل الشحن المجاني!' : `أضف ${(350 - subtotal)} ج.م للشحن المجاني`;
-
-      // قائمة السلة
-      const list = document.getElementById('cartItemsList');
-      if (cart.length === 0) {
-        list.innerHTML = `<div class="text-center py-16 text-slate-400"><p class="text-3xl mb-2">🛒</p><p class="font-bold text-sm">السلة فارغة حالياً</p></div>`;
-      } else {
-        list.innerHTML = cart.map(item => `
-          <div class="flex items-center justify-between p-3.5 bg-slate-50 rounded-2xl border border-slate-100">
-            <div class="flex items-center gap-3">
-              <img src="${item.image}" alt="${item.title}" class="w-12 h-12 rounded-xl object-cover">
-              <div>
-                <h5 class="font-bold text-xs text-slate-900 line-clamp-1">${item.title}</h5>
-                <p class="text-teal-700 font-black text-xs mt-0.5">${item.price} ج.م</p>
+              <div class="card-img-wrap">
+                <img src="${p.img}" alt="${p.title}">
+                <span class="badge-cap">${p.capacity}</span>
+                ${hasDiscount ? `<span class="badge-discount">خصم ${p.discount}%</span>` : ''}
               </div>
+              <h4>${p.title}</h4>
+              <p>${p.desc}</p>
             </div>
-            <div class="flex items-center gap-2">
-              <button onclick="changeCartQty(${item.id}, -1)" class="w-6 h-6 bg-white border border-slate-200 rounded text-xs font-bold hover:bg-slate-100">-</button>
-              <span class="text-xs font-bold text-slate-800">${item.quantity}</span>
-              <button onclick="changeCartQty(${item.id}, 1)" class="w-6 h-6 bg-white border border-slate-200 rounded text-xs font-bold hover:bg-slate-100">+</button>
-              <button onclick="removeFromCart(${item.id})" class="text-red-400 hover:text-red-600 text-xs mr-1 font-bold">✕</button>
+            <div class="card-footer" onclick="event.stopPropagation()">
+              <div>
+                <div class="price">
+                  ${finalPrice} <small>ج.م</small>
+                  ${hasDiscount ? `<span class="old-price">${p.price} ج.م</span>` : ''}
+                </div>
+                <small style="color: #64748b; font-size: 11px;">متبقي: ${p.stock} فقط</small>
+              </div>
+              <button onclick="addToCart(${p.id})" class="btn-buy">${texts.btn_buy}</button>
             </div>
           </div>
-        `).join('');
-      }
-
-      document.getElementById('cartSubtotal').textContent = subtotal + ' ج.م';
-      document.getElementById('cartShipping').textContent = shipping === 0 ? 'مجاني' : `${shipping} ج.م`;
-      document.getElementById('cartTotal').textContent = total.toFixed(0) + ' ج.م';
-
-      if (discount > 0) {
-        document.getElementById('discountRow').classList.remove('hidden');
-        document.getElementById('cartDiscount').textContent = `-${discount.toFixed(0)} ج.م`;
-      } else {
-        document.getElementById('discountRow').classList.add('hidden');
-      }
+        `;
+      }).join('');
     }
 
-    function applyCoupon() {
-      const code = document.getElementById('couponInput').value.trim().toUpperCase();
-      const msg = document.getElementById('couponMsg');
-      if (code === 'EGYPT10') {
-        discountPercent = 10;
-        msg.className = "text-xs font-bold text-emerald-600";
-        msg.textContent = "✓ تم تطبيق كود الخصم (10%) بنجاح!";
-        msg.classList.remove('hidden');
-      } else {
-        discountPercent = 0;
-        msg.className = "text-xs font-bold text-red-500";
-        msg.textContent = "كود الخصم غير صالح أو منتهي";
-        msg.classList.remove('hidden');
-      }
-      updateCartUI();
-    }
-
-    function toggleCart() {
-      document.getElementById('cartModal').classList.toggle('hidden');
-    }
-
-    function openCheckout() {
-      if (cart.length === 0) {
-        alert("سلة المشتريات فارغة!");
-        return;
-      }
-      toggleCart();
-      document.getElementById('checkoutModal').classList.remove('hidden');
-    }
-
-    function closeCheckout() {
-      document.getElementById('checkoutModal').classList.add('hidden');
-    }
-
-    // المعاينة السريعة
-    function openQuickView(id) {
+    // ================= صفحة تفاصيل المنتج الكاملة =================
+    function openProductDetailPage(id) {
       const p = products.find(i => i.id === id);
       if (!p) return;
-      const content = document.getElementById('quickViewContent');
-      content.innerHTML = `
-        <div class="h-72 bg-slate-100 rounded-2xl overflow-hidden">
-          <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover">
+      const finalPrice = getFinalPrice(p);
+      const texts = getCustomTexts();
+
+      const container = document.getElementById('productDetailContainer');
+      container.innerHTML = `
+        <div>
+          <img src="${p.img}" alt="${p.title}" class="detail-img">
         </div>
-        <div class="space-y-3">
-          <span class="bg-teal-50 text-teal-700 text-xs font-bold px-2.5 py-1 rounded-full border border-teal-200">${p.category}</span>
-          <h3 class="text-xl font-black text-slate-900">${p.title}</h3>
-          <p class="text-xs text-slate-500 leading-relaxed">${p.desc}</p>
-          <div class="text-xs font-bold text-slate-700 space-y-1">
-            <p>💧 السعة: <span class="text-teal-700">${p.capacity}</span></p>
-            <p>❄️ مدة العزل: 24 ساعة بارد / 12 ساعة ساخن</p>
-            <p>📦 المخزون المتبقي: ${p.stock} قطعة</p>
+        <div class="detail-info">
+          <div>
+            ${p.discount > 0 ? `<span style="background:#ef4444; color:white; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:bold;">وفر الآن ${p.discount}%</span>` : ''}
+            <h2 class="detail-title" style="margin-top:10px;">${p.title}</h2>
+            <p class="detail-desc">${p.desc}</p>
+            
+            <div class="features-list">
+              <div>💧 <strong>السعة:</strong> ${p.capacity}</div>
+              <div>❄️ <strong>العزل الحراري:</strong> يحفظ البرودة 24 ساعة والحرارة 12 ساعة</div>
+              <div>🛡️ <strong>الخامات:</strong> فولاذ 18/8 الطبي المقاوم للصدأ ومفرغ من الهواء</div>
+              <div>📦 <strong>المخزون المتاح:</strong> ${p.stock} قطعة جاهزة للشحن الفوري</div>
+            </div>
           </div>
-          <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
-            <span class="text-2xl font-black text-slate-900">${p.price} <span class="text-xs font-bold">ج.م</span></span>
-            <button onclick="addToCart(${p.id}); closeQuickView();" class="bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs px-5 py-3 rounded-xl transition shadow">
-              أضف للسلة الآن 🛒
+
+          <div class="detail-price-box">
+            <div>
+              <span style="font-size: 13px; color: #64748b; font-weight: bold; display: block;">السعر الحالي:</span>
+              <span style="font-size: 26px; font-weight: 900; color: #0f172a;">${finalPrice} ج.م</span>
+              ${p.discount > 0 ? `<span class="old-price" style="font-size: 15px;">${p.price} ج.م</span>` : ''}
+            </div>
+            <button onclick="addToCart(${p.id})" class="btn-buy" style="padding: 12px 24px; font-size: 15px;">
+              ${texts.btn_buy}
             </button>
           </div>
         </div>
       `;
-      document.getElementById('quickViewModal').classList.remove('hidden');
+
+      document.getElementById('storeView').classList.add('hidden');
+      document.getElementById('adminView').classList.add('hidden');
+      document.getElementById('productDetailView').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function closeQuickView() {
-      document.getElementById('quickViewModal').classList.add('hidden');
+    function showCustomerStore() {
+      document.getElementById('productDetailView').classList.add('hidden');
+      document.getElementById('adminView').classList.add('hidden');
+      document.getElementById('cartBtn').classList.remove('hidden');
+      document.getElementById('storeView').classList.remove('hidden');
+      renderStore();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // معالجة طلب العميل وتخزينه في الباك إند
-    function handleOrderSubmit(e) {
+    // ================= رفع الصور من الموبايل بدون روابط =================
+    let currentUploadedBase64 = null;
+
+    function previewImageFile(event, previewImgId) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        currentUploadedBase64 = e.target.result;
+        const img = document.getElementById(previewImgId);
+        img.src = currentUploadedBase64;
+        img.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // إضافة زمزمية جديدة
+    function openAddProductModal() {
+      currentUploadedBase64 = null;
+      document.getElementById('newPreview').style.display = 'none';
+      document.getElementById('addProductModal').classList.remove('hidden');
+    }
+
+    function handleAddNewProduct(e) {
       e.preventDefault();
-      const name = document.getElementById('orderCustName').value;
-      const phone = document.getElementById('orderCustPhone').value;
-      const address = document.getElementById('orderCustAddress').value;
-      const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
+      if (!currentUploadedBase64) {
+        alert("يرجى اختيار صورة للزمزمية من الموبايل أولاً!");
+        return;
+      }
 
-      const subtotal = cart.reduce((acc, i) => acc + (i.price * i.quantity), 0);
-      const discount = (subtotal * discountPercent) / 100;
-      const shipping = subtotal >= 350 ? 0 : 35;
-      const total = Math.max(0, subtotal - discount + shipping);
-
-      const newOrder = {
-        id: orderId,
-        name,
-        phone,
-        address,
-        items: [...cart],
-        total: total.toFixed(0),
-        status: 'جديد',
-        date: new Date().toLocaleDateString('ar-EG')
+      const newProd = {
+        id: Date.now(),
+        title: document.getElementById('newTitle').value,
+        price: Number(document.getElementById('newPrice').value),
+        discount: Number(document.getElementById('newDiscount').value || 0),
+        stock: Number(document.getElementById('newStock').value),
+        capacity: document.getElementById('newCap').value,
+        img: currentUploadedBase64,
+        desc: document.getElementById('newDesc').value || "زمزمية طبية فاخرة بعزل حراري عالي الجودة."
       };
 
-      // خصم من المخزون
-      cart.forEach(c => {
-        const prod = products.find(p => p.id === c.id);
-        if (prod) prod.stock = Math.max(0, prod.stock - c.quantity);
-      });
-
-      orders.unshift(newOrder);
-      saveState();
-      renderProducts();
-
-      cart = [];
-      updateCartUI();
-      closeCheckout();
-
-      alert(`شكراً لك يا ${name}! تم تسجيل طلبك بنجاح.\nرقم الطلب: #${orderId}\nسنتواصل معك هاتفياً على (${phone}) لتسليم الشحنة.`);
+      products.unshift(newProd);
+      saveProducts();
+      renderAdminTable();
+      renderStore();
+      closeModal('addProductModal');
+      e.target.reset();
+      alert("تمت إضافة الزمزمية وصورتها بنجاح!");
     }
 
-    // إدارة لوحة الأدمن (Admin Panel Methods)
-    function renderAdminDashboard() {
-      const totalSales = orders.reduce((sum, o) => sum + Number(o.total), 0);
-      document.getElementById('statSales').textContent = totalSales + ' ج.م';
-      document.getElementById('statOrdersCount').textContent = orders.length + ' طلب';
-      document.getElementById('statProductsCount').textContent = products.length + ' زمزميات';
+    // تعديل زمزمية موجودة
+    function openEditProduct(id) {
+      const p = products.find(i => i.id === id);
+      if (!p) return;
 
-      // جدول المنتجات مع إمكانية تعديل السعر والكمية
-      const tbody = document.getElementById('adminProductsTable');
-      tbody.innerHTML = products.map(p => `
-        <tr class="hover:bg-slate-50 transition">
-          <td class="p-4 flex items-center gap-3">
-            <img src="${p.image}" alt="${p.title}" class="w-10 h-10 rounded-xl object-cover">
-            <div>
-              <p class="font-bold text-slate-900">${p.title}</p>
-              <span class="text-xs text-slate-400 font-bold">${p.capacity}</span>
-            </div>
-          </td>
-          <td class="p-4 text-xs font-semibold">${p.category}</td>
-          <td class="p-4 font-black text-slate-900">${p.price} ج.م</td>
-          <td class="p-4 font-bold text-xs ${p.stock <= 5 ? 'text-red-500' : 'text-emerald-700'}">${p.stock} قطعة</td>
-          <td class="p-4 text-center">
-            <div class="flex items-center justify-center gap-2">
-              <button onclick="openQuickEdit(${p.id})" class="text-teal-700 hover:text-teal-900 font-bold text-xs bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg transition">
-                تعديل ✏️
-              </button>
-              <button onclick="adminDeleteProduct(${p.id})" class="text-red-500 hover:text-red-700 font-bold text-xs bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition">
-                حذف 🗑️
-              </button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
+      currentUploadedBase64 = p.img;
+      document.getElementById('editProdId').value = p.id;
+      document.getElementById('editProdTitle').value = p.title;
+      document.getElementById('editProdPrice').value = p.price;
+      document.getElementById('editProdDiscount').value = p.discount || 0;
+      document.getElementById('editProdStock').value = p.stock;
+      document.getElementById('editProdCap').value = p.capacity;
+      document.getElementById('editProdDesc').value = p.desc;
 
-      // سجل الطلبات
-      const ordersList = document.getElementById('adminOrdersList');
-      if (orders.length === 0) {
-        ordersList.innerHTML = `<p class="text-center py-10 text-slate-400 text-xs">لا توجد طلبات مسجلة حتى الآن.</p>`;
+      const preview = document.getElementById('editPreview');
+      preview.src = p.img;
+      preview.style.display = 'block';
+
+      document.getElementById('editProductModal').classList.remove('hidden');
+    }
+
+    function saveProductEdit(e) {
+      e.preventDefault();
+      const id = Number(document.getElementById('editProdId').value);
+      const prod = products.find(i => i.id === id);
+
+      if (prod) {
+        prod.title = document.getElementById('editProdTitle').value;
+        prod.price = Number(document.getElementById('editProdPrice').value);
+        prod.discount = Number(document.getElementById('editProdDiscount').value || 0);
+        prod.stock = Number(document.getElementById('editProdStock').value);
+        prod.capacity = document.getElementById('editProdCap').value;
+        prod.desc = document.getElementById('editProdDesc').value;
+        if (currentUploadedBase64) prod.img = currentUploadedBase64;
+
+        saveProducts();
+        renderAdminTable();
+        renderStore();
+        closeModal('editProductModal');
+        alert("تم تحديث بيانات الزمزمية والخصم بنجاح!");
+      }
+    }
+
+    function deleteProduct(id) {
+      if (!confirm("هل أنت متأكد من حذف هذه الزمزمية نهائياً من المتجر؟")) return;
+      products = products.filter(p => p.id !== id);
+      saveProducts();
+      renderAdminTable();
+      renderStore();
+    }
+
+    // لوحة تحكم الأدمن
+    function switchAdminTab(tab) {
+      if (tab === 'products') {
+        document.getElementById('adminTabProducts').classList.remove('hidden');
+        document.getElementById('adminTabButtons').classList.add('hidden');
+        document.getElementById('tabProductsBtn').classList.add('active');
+        document.getElementById('tabButtonsBtn').classList.remove('active');
       } else {
-        ordersList.innerHTML = orders.map(o => `
-          <div class="p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 hover:bg-slate-50">
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="font-black text-teal-700 text-sm font-mono">${o.id}</span>
-                <span class="text-xs text-slate-400">• ${o.date}</span>
-                <span class="bg-amber-100 text-amber-800 text-[11px] font-bold px-2 py-0.5 rounded-full">${o.status}</span>
-              </div>
-              <p class="font-bold text-slate-800 text-xs mt-1">العميل: ${o.name} (${o.phone}) - ${o.address}</p>
-            </div>
-            <span class="font-black text-slate-900 text-sm">${o.total} ج.م</span>
+        document.getElementById('adminTabProducts').classList.add('hidden');
+        document.getElementById('adminTabButtons').classList.remove('hidden');
+        document.getElementById('tabProductsBtn').classList.remove('active');
+        document.getElementById('tabButtonsBtn').classList.add('active');
+      }
+    }
+
+    function renderAdminTable() {
+      const tbody = document.getElementById('adminTableBody');
+      tbody.innerHTML = products.map(p => {
+        const finalPrice = getFinalPrice(p);
+        return `
+          <tr>
+            <td style="display:flex; align-items:center; gap:10px;">
+              <img src="${p.img}" style="width:40px; height:40px; object-fit:cover; border-radius:8px;">
+              <span style="font-weight:bold;">${p.title}</span>
+            </td>
+            <td>${p.capacity}</td>
+            <td style="font-weight:bold;">${p.price} ج.م</td>
+            <td style="font-weight:bold; color:${p.discount > 0 ? '#ef4444' : '#64748b'};">${p.discount || 0}%</td>
+            <td style="font-weight:900; color:#0d9488;">${finalPrice} ج.م</td>
+            <td style="font-weight:bold;">${p.stock} قطعة</td>
+            <td style="text-align:center;">
+              <button onclick="openEditProduct(${p.id})" class="btn-edit">تعديل ✏️</button>
+              <button onclick="deleteProduct(${p.id})" class="btn-delete">حذف 🗑️</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function saveCustomTexts(e) {
+      e.preventDefault();
+      const updated = {
+        btn_buy: document.getElementById('cfg_btn_buy').value,
+        btn_cart: document.getElementById('cfg_btn_cart').value,
+        btn_admin: document.getElementById('cfg_btn_admin').value,
+        btn_checkout: document.getElementById('cfg_btn_checkout').value,
+        top_bar: document.getElementById('cfg_top_bar').value,
+        hero_title: document.getElementById('cfg_hero_title').value,
+        hero_span: getCustomTexts().hero_span
+      };
+      setCustomTexts(updated);
+      renderStore();
+      alert("تم حفظ كل نصوص وأزرار الموقع بنجاح!");
+    }
+
+    // السلة والطلب
+    function addToCart(id) {
+      const p = products.find(i => i.id === id);
+      if (p.stock <= 0) { alert("عذراً، نفد المخزون حالياً!"); return; }
+      const finalPrice = getFinalPrice(p);
+      const item = cart.find(i => i.id === id);
+      if (item) item.qty += 1; else cart.push({ ...p, price: finalPrice, qty: 1 });
+      updateCartUI();
+      alert(`تمت إضافة "${p.title}" إلى السلة!`);
+    }
+
+    function updateCartUI() {
+      const totalCount = cart.reduce((s, i) => s + i.qty, 0);
+      document.getElementById('cartCount').textContent = totalCount;
+      const total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+      document.getElementById('cartTotal').textContent = total + " ج.م";
+
+      const list = document.getElementById('cartList');
+      if (cart.length === 0) {
+        list.innerHTML = "<p style='text-align:center; color:#94a3b8; padding:20px;'>السلة فارغة حالياً</p>";
+      } else {
+        list.innerHTML = cart.map(i => `
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px; border-bottom:1px solid #f1f5f9; padding-bottom:5px;">
+            <span>${i.title} (${i.qty})</span>
+            <span style="font-weight:bold;">${i.price * i.qty} ج.م</span>
           </div>
         `).join('');
       }
     }
 
-    function adminDeleteProduct(id) {
-      if (!confirm("هل أنت متأكد من حذف هذا المنتج من المتجر؟")) return;
-      products = products.filter(p => p.id !== id);
-      saveState();
-      renderAdminDashboard();
+    function toggleCart() { document.getElementById('cartModal').classList.toggle('hidden'); }
+
+    function checkoutOrder() {
+      if (cart.length === 0) return;
+      const name = prompt("ادخل اسمك الكريم للتوصيل:");
+      if (!name) return;
+      const phone = prompt("ادخل رقم الهاتف أو الواتساب:");
+      if (!phone) return;
+      alert(`شكراً لك يا ${name}! تم تسجيل طلبك بنجاح.\nسنتواصل معك عبر (${phone}) لتسليم الطلب.`);
+      cart = [];
+      updateCartUI();
+      closeModal('cartModal');
     }
 
-    function openProductModal() {
-      document.getElementById('productModal').classList.remove('hidden');
+    // دخول وخروج الأدمن
+    function handleAdminClick() {
+      if (sessionStorage.getItem('is_logged') === 'true') {
+        showAdminView();
+      } else {
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPass').value = '';
+        document.getElementById('loginError').classList.add('hidden');
+        document.getElementById('adminLoginModal').classList.remove('hidden');
+      }
     }
 
-    function closeProductModal() {
-      document.getElementById('productModal').classList.add('hidden');
-    }
-
-    function handleSaveNewProduct(e) {
+    function doAdminLogin(e) {
       e.preventDefault();
-      const newProd = {
-        id: Date.now(),
-        title: document.getElementById('newProdTitle').value,
-        category: document.getElementById('newProdCategory').value,
-        capacity: document.getElementById('newProdCapacity').value,
-        price: Number(document.getElementById('newProdPrice').value),
-        stock: Number(document.getElementById('newProdStock').value),
-        rating: 5.0,
-        image: document.getElementById('newProdImage').value || "https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=700&q=80",
-        desc: document.getElementById('newProdDesc').value || "مطارة زمزمية عالية الجودة بعزل حراري متميز."
-      };
-
-      products.unshift(newProd);
-      saveState();
-      renderAdminDashboard();
-      closeProductModal();
-      e.target.reset();
-      alert("تمت إضافة الزمزمية الجديدة إلى المتجر بنجاح!");
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass = document.getElementById('loginPass').value.trim();
+      const auth = getAuth();
+      if (email === auth.email && pass === auth.pass) {
+        sessionStorage.setItem('is_logged', 'true');
+        closeModal('adminLoginModal');
+        showAdminView();
+      } else {
+        document.getElementById('loginError').classList.remove('hidden');
+      }
     }
 
-    // بدء التشغيل
-    renderProducts();
+    function showAdminView() {
+      document.getElementById('storeView').classList.add('hidden');
+      document.getElementById('productDetailView').classList.add('hidden');
+      document.getElementById('cartBtn').classList.add('hidden');
+      document.getElementById('adminView').classList.remove('hidden');
+      renderAdminTable();
+      applyTextsToUI();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function adminLogout() {
+      sessionStorage.removeItem('is_logged');
+      showCustomerStore();
+    }
+
+    function openChangePassModal() {
+      const auth = getAuth();
+      document.getElementById('newAdminEmail').value = auth.email;
+      document.getElementById('newAdminPass').value = '';
+      document.getElementById('changePassModal').classList.remove('hidden');
+    }
+
+    function saveNewCredentials(e) {
+      e.preventDefault();
+      const email = document.getElementById('newAdminEmail').value.trim();
+      const pass = document.getElementById('newAdminPass').value.trim();
+      setAuth({ email, pass });
+      closeModal('changePassModal');
+      alert("تم حفظ البريد وكلمة المرور الجديدة بنجاح!");
+    }
+
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    // تشغيل المتجر فورياً
+    applyTextsToUI();
+    renderStore();
     updateCartUI();
   </script>
 </body>
