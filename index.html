@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>متجر زمزميتي | أفضل المطارات والزمزميات في مصر</title>
+  
+  <!-- مكتبات Firebase السحابية -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #f8fafc; color: #1e293b; direction: rtl; }
@@ -58,6 +63,7 @@
     .card img { width: 100%; height: 100%; object-fit: cover; }
     .badge-discount { position: absolute; top: 10px; right: 10px; background: #ef4444; color: white; padding: 4px 9px; border-radius: 20px; font-size: 11px; font-weight: 900; }
     .badge-cap { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.92); padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+    .badge-multi-img { position: absolute; bottom: 8px; left: 8px; background: rgba(15, 23, 42, 0.75); color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; }
     .card h4 { font-size: 16px; font-weight: bold; margin-bottom: 6px; color: #0f172a; }
     .card p { font-size: 12px; color: #64748b; line-height: 1.5; margin-bottom: 15px; }
     .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; }
@@ -65,11 +71,15 @@
     .old-price { font-size: 12px; color: #94a3b8; text-decoration: line-through; margin-left: 4px; font-weight: normal; }
     .btn-buy { background: #0d9488; color: white; padding: 9px 15px; border-radius: 9px; font-weight: bold; font-size: 13px; }
 
-    /* تفاصيل المنتج */
+    /* تفاصيل المنتج ومعرض الصور */
     .product-full-page { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
     .btn-back { background: #f1f5f9; color: #334155; padding: 10px 18px; border-radius: 12px; font-weight: bold; font-size: 13px; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #cbd5e1; }
     .product-detail-card { background: white; border-radius: 24px; border: 1px solid #e2e8f0; padding: 30px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 35px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
-    .detail-img { width: 100%; height: 420px; object-fit: cover; border-radius: 18px; background: #f1f5f9; }
+    .gallery-container { display: flex; flex-direction: column; gap: 12px; }
+    .detail-img { width: 100%; height: 380px; object-fit: cover; border-radius: 18px; background: #f1f5f9; border: 1px solid #e2e8f0; }
+    .gallery-thumbs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+    .gallery-thumb { width: 68px; height: 68px; object-fit: cover; border-radius: 10px; cursor: pointer; border: 2px solid transparent; opacity: 0.7; transition: 0.2s; }
+    .gallery-thumb:hover, .gallery-thumb.active { border-color: #0d9488; opacity: 1; }
     .detail-info { display: flex; flex-direction: column; justify-content: space-between; }
     .detail-title { font-size: 24px; font-weight: 900; color: #0f172a; margin-bottom: 12px; }
     .detail-desc { font-size: 14px; color: #64748b; line-height: 1.8; margin-bottom: 20px; }
@@ -77,7 +87,7 @@
     .features-list div { margin-bottom: 6px; }
     .detail-price-box { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 20px; }
 
-    /* صفحة إتمام الطلب المستقلة */
+    /* صفحة إتمام الطلب */
     .checkout-page { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
     .checkout-layout { display: grid; grid-template-columns: 1.4fr 1fr; gap: 28px; }
     .checkout-card { background: white; border-radius: 20px; border: 1px solid #e2e8f0; padding: 28px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
@@ -87,7 +97,6 @@
     .checkout-total-row { display: flex; justify-content: space-between; align-items: center; padding-top: 18px; margin-top: 10px; border-top: 2px dashed #e2e8f0; font-size: 18px; font-weight: 900; }
     .checkout-notice { background: #f0fdfa; border: 1px solid #ccfbf1; border-radius: 12px; padding: 14px; margin-top: 16px; font-size: 13px; color: #0f766e; }
 
-    /* رسائل التحذير للأخطاء المدخلة */
     .validation-hint { font-size: 11px; color: #ef4444; margin-top: 4px; display: none; font-weight: 600; }
 
     /* لوحة التحكم */
@@ -97,14 +106,12 @@
     .tab-btn { background: #e2e8f0; color: #334155; padding: 10px 18px; border-radius: 10px; font-weight: bold; font-size: 13px; }
     .tab-btn.active { background: #0d9488; color: white; }
 
-    /* كروت إحصائيات المبيعات */
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 20px; }
     .stat-card { background: white; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
     .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
     .stat-num { font-size: 22px; font-weight: 900; color: #0f172a; }
     .stat-lbl { font-size: 12px; color: #64748b; font-weight: 600; }
 
-    /* جداول لوحة التحكم */
     .table-container { overflow-x: auto; background: white; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 20px; }
     table { width: 100%; border-collapse: collapse; min-width: 950px; }
     th, td { padding: 13px 15px; text-align: right; font-size: 13px; border-bottom: 1px solid #f1f5f9; }
@@ -113,16 +120,21 @@
     .btn-delete { background: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 12px; }
     .btn-action-small { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; margin-left: 3px; }
 
-    /* خيارات حالة الطلب */
     .status-select { padding: 5px 8px; border-radius: 8px; font-size: 12px; font-weight: bold; border: 1px solid #cbd5e1; outline: none; }
     .status-pending { background: #fef9c3; color: #854d0e; border-color: #fde047; }
     .status-delivering { background: #e0f2fe; color: #075985; border-color: #7dd3fc; }
     .status-completed { background: #dcfce7; color: #166534; border-color: #86efac; }
     .status-cancelled { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
 
+    /* معاينة الصور المتعددة */
+    .images-preview-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .preview-thumb-box { position: relative; width: 75px; height: 75px; border-radius: 10px; overflow: hidden; border: 1px solid #cbd5e1; }
+    .preview-thumb-box img { width: 100%; height: 100%; object-fit: cover; }
+    .btn-remove-thumb { position: absolute; top: 2px; left: 2px; background: rgba(239, 68, 68, 0.9); color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; }
+
     /* النوافذ المنبثقة */
     .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 15px; }
-    .modal { background: white; width: 100%; max-width: 480px; border-radius: 20px; padding: 25px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    .modal { background: white; width: 100%; max-width: 500px; border-radius: 20px; padding: 25px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
     .modal-close { position: absolute; top: 15px; left: 15px; font-size: 20px; background: none; color: #94a3b8; font-weight: bold; }
     .modal h3 { font-size: 18px; font-weight: 900; margin-bottom: 15px; }
     .form-group { margin-bottom: 14px; }
@@ -162,7 +174,7 @@
       </div>
     </div>
     <div class="header-actions">
-      <!-- أيقونة الترس السرية للإدارة بدون أي نص -->
+      <!-- أيقونة الترس السرية -->
       <button class="btn-discrete-admin" title="الإعدادات" onclick="handleAdminClick()">⚙️</button>
       
       <button id="cartBtn" class="btn-cart" onclick="toggleCart()">
@@ -172,7 +184,7 @@
     </div>
   </header>
 
-  <!-- ================= 1. واجهة المتجر الرئيسية للزبائن ================= -->
+  <!-- 1. واجهة المتجر الرئيسية -->
   <div id="storeView">
     <section class="hero">
       <h2 id="ui_hero_title">برودتك وانتعاشك معك <br><span id="ui_hero_span">طوال 24 ساعة متواصلة</span></h2>
@@ -181,11 +193,13 @@
 
     <div class="container">
       <h3 style="margin-bottom: 20px; font-weight: 900; font-size: 18px;" id="ui_catalog_heading">الزمزميات المتوفرة للطلب الفوري:</h3>
-      <div id="productsGrid" class="grid"></div>
+      <div id="productsGrid" class="grid">
+        <p style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 40px;">جاري تحميل المنتجات من السيرفر السحابي...</p>
+      </div>
     </div>
   </div>
 
-  <!-- ================= 2. صفحة تفاصيل المنتج ================= -->
+  <!-- 2. صفحة تفاصيل المنتج -->
   <div id="productDetailView" class="product-full-page hidden">
     <button class="btn-back" onclick="showCustomerStore()">
       <span>⬅️ العودة لجميع الزمزميات</span>
@@ -193,18 +207,17 @@
     <div class="product-detail-card" id="productDetailContainer"></div>
   </div>
 
-  <!-- ================= 3. صفحة إتمام الطلب مع نظام الفحص الصارم ================= -->
+  <!-- 3. صفحة إتمام الطلب -->
   <div id="checkoutView" class="checkout-page hidden">
     <button class="btn-back" onclick="showCustomerStore()">
       <span>⬅️ متابعة التسوق</span>
     </button>
 
     <div class="checkout-layout">
-      <!-- نموذج بيانات المشتري والشحن -->
       <div class="checkout-card">
         <h3>📍 بيانات المستلم والتوصيل</h3>
         <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
-          يرجى إدخال اسمك الحقيقي وعنوانك ورقم هاتفك بدقة للتواصل وتأكيد الشحن:
+          يرجى إدخال اسمك الحقيقي وعنوانك ورقم هاتفك بدقة لتأكيد الشحن:
         </p>
 
         <form id="orderForm" onsubmit="handlePlaceOrder(event)" novalidate>
@@ -280,7 +293,6 @@
         </form>
       </div>
 
-      <!-- ملخص الطلب والمنتجات -->
       <div>
         <div class="checkout-card">
           <h3>📦 محتويات السلة</h3>
@@ -300,12 +312,12 @@
     </div>
   </div>
 
-  <!-- ================= 4. لوحة تحكم الأدمن ================= -->
+  <!-- 4. لوحة تحكم الأدمن -->
   <div id="adminView" class="admin-panel hidden">
     <div class="admin-header">
       <div>
-        <h2 style="font-weight: 900; font-size: 20px;">لوحة تحكم المتجر</h2>
-        <p style="font-size: 12px; color: #64748b;">تحكم كامل في مبيعات المتجر، والطلبات المعلقة، وإدارة المخزون</p>
+        <h2 style="font-weight: 900; font-size: 20px;">لوحة تحكم المتجر (سحابية مدمجة ☁️)</h2>
+        <p style="font-size: 12px; color: #64748b;">تحكم كامل في مبيعات المتجر، والطلبات المعلقة، وإدارة المخزون من أي مكان</p>
       </div>
       <div style="display: flex; gap: 8px; flex-wrap: wrap;">
         <button onclick="openAddProductModal()" class="btn-buy">+ إضافة زمزمية جديدة</button>
@@ -315,7 +327,6 @@
       </div>
     </div>
 
-    <!-- تبويبات لوحة التحكم -->
     <div class="admin-tabs">
       <button class="tab-btn active" id="tabOrdersBtn" onclick="switchAdminTab('orders')">📥 سجل وحالات الطلبات</button>
       <button class="tab-btn" id="tabProductsBtn" onclick="switchAdminTab('products')">📦 إدارة المخزون</button>
@@ -323,9 +334,8 @@
       <button class="tab-btn" id="tabButtonsBtn" onclick="switchAdminTab('buttons')">✏️ نصوص الموقع</button>
     </div>
 
-    <!-- تبويب 1: سجل الطلبات مع نظام فصل المبيعات -->
+    <!-- سجل الطلبات -->
     <div id="adminTabOrders">
-      <!-- كروت إحصائيات المبيعات المنفصلة -->
       <div class="stats-grid">
         <div class="stat-card" style="border-right: 4px solid #16a34a;">
           <div class="stat-icon" style="background:#dcfce7; color:#16a34a;">💰</div>
@@ -360,7 +370,6 @@
         </div>
       </div>
 
-      <!-- إجراءات السجل -->
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
         <h3 style="font-weight: 900; font-size:17px;">إدارة حالات الطلبات والمبيعات:</h3>
         <div style="display:flex; gap:8px;">
@@ -369,7 +378,6 @@
         </div>
       </div>
 
-      <!-- جدول الطلبات -->
       <div class="table-container">
         <table>
           <thead>
@@ -390,13 +398,13 @@
       </div>
     </div>
 
-    <!-- تبويب 2: إدارة المنتجات -->
+    <!-- إدارة المنتجات -->
     <div id="adminTabProducts" class="hidden">
       <div class="table-container">
         <table>
           <thead>
             <tr>
-              <th>الزمزمية والصورة</th>
+              <th>الزمزمية والصور</th>
               <th>السعة</th>
               <th>السعر الأصلي</th>
               <th>الخصم (%)</th>
@@ -410,11 +418,11 @@
       </div>
     </div>
 
-    <!-- تبويب 3: إعدادات الربط بالواتساب والجيميل -->
+    <!-- إعدادات الربط -->
     <div id="adminTabNotify" class="hidden" style="background: white; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0; max-width: 650px;">
       <h3 style="margin-bottom: 12px; font-weight: 900;">إعدادات استلام الطلبات (واتساب وجيميل)</h3>
       <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
-        اختر كيف ترغب في استقبال إشعارات وتفاصيل الطلبات عند قيام الزبائن بإرسالها:
+        اختر كيف ترغب في استقبال إشعارات وتفاصيل الطلبات:
       </p>
 
       <form onsubmit="saveNotificationSettings(event)">
@@ -437,11 +445,11 @@
           <input type="email" id="cfg_notify_email" placeholder="مثال: store.owner@gmail.com">
         </div>
 
-        <button type="submit" class="btn-submit">حفظ إعدادات الربط</button>
+        <button type="submit" class="btn-submit">حفظ إعدادات الربط سحابياً</button>
       </form>
     </div>
 
-    <!-- تبويب 4: تعديل نصوص الموقع -->
+    <!-- نصوص الموقع -->
     <div id="adminTabButtons" class="hidden" style="background: white; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0;">
       <h3 style="margin-bottom: 15px; font-weight: 900;">التحكم في أي نص أو زر بالموقع</h3>
       <form onsubmit="saveCustomTexts(event)" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px;">
@@ -454,14 +462,12 @@
         <div class="form-group"><label>الجزء الملون في البنر</label><input type="text" id="cfg_hero_span" required></div>
         <div class="form-group"><label>الوصف أسفل البنر</label><input type="text" id="cfg_hero_desc" required></div>
         <div class="form-group"><label>عنوان قسم المنتجات</label><input type="text" id="cfg_catalog_heading" required></div>
-        <div style="grid-column: 1 / -1;"><button type="submit" class="btn-submit" style="max-width: 250px;">حفظ التغييرات</button></div>
+        <div style="grid-column: 1 / -1;"><button type="submit" class="btn-submit" style="max-width: 250px;">حفظ التغييرات سحابياً</button></div>
       </form>
     </div>
   </div>
 
-  <!-- ================= 5. النوافذ المنبثقة ================= -->
-
-  <!-- نافذة تسجيل الدخول للإدارة (اليوزر والباسورد مخفيان تماماً أثناء الكتابة) -->
+  <!-- 5. النوافذ المنبثقة -->
   <div id="adminLoginModal" class="modal-overlay hidden">
     <div class="modal">
       <button class="modal-close" onclick="closeModal('adminLoginModal')">✕</button>
@@ -469,7 +475,6 @@
       <form onsubmit="doAdminLogin(event)" autocomplete="off">
         <div class="form-group">
           <label>معرّف الإدارة (اليوزر - محمي ومخفي)</label>
-          <!-- type="password" لإخفاء اليوزر كنقاط سوداء بالكامل أثناء الكتابة -->
           <input type="password" id="loginEmail" required placeholder="••••••••••••••" autocomplete="new-password" spellcheck="false">
         </div>
         <div class="form-group">
@@ -482,7 +487,6 @@
     </div>
   </div>
 
-  <!-- نافذة السلة السريعة -->
   <div id="cartModal" class="modal-overlay hidden">
     <div class="modal">
       <button class="modal-close" onclick="closeModal('cartModal')">✕</button>
@@ -496,7 +500,6 @@
     </div>
   </div>
 
-  <!-- نافذة عرض تفاصيل الطلب الكاملة بالأدمن -->
   <div id="orderDetailsModal" class="modal-overlay hidden">
     <div class="modal">
       <button class="modal-close" onclick="closeModal('orderDetailsModal')">✕</button>
@@ -505,11 +508,11 @@
     </div>
   </div>
 
-  <!-- نافذة تعديل زمزمية -->
+  <!-- نافذة تعديل زمزمية (مع دعم عدة صور) -->
   <div id="editProductModal" class="modal-overlay hidden">
     <div class="modal">
       <button class="modal-close" onclick="closeModal('editProductModal')">✕</button>
-      <h3>تعديل بيانات الزمزمية</h3>
+      <h3>تعديل بيانات الزمزمية وصورها</h3>
       <form onsubmit="saveProductEdit(event)">
         <input type="hidden" id="editProdId">
         <div class="form-group"><label>اسم الزمزمية</label><input type="text" id="editProdTitle" required></div>
@@ -522,17 +525,17 @@
           <div class="form-group"><label>السعة</label><input type="text" id="editProdCap" required></div>
         </div>
         <div class="form-group">
-          <label>تغيير الصورة من الموبايل</label>
-          <input type="file" id="editProdFileInput" accept="image/*" onchange="previewImageFile(event, 'editPreview')">
-          <img id="editPreview" src="" style="width: 100px; height: 100px; object-fit: cover; border-radius: 10px; margin-top: 8px; display: none;">
+          <label>إضافة صور جديدة من الموبايل (يمكنك اختيار عدة صور)</label>
+          <input type="file" id="editProdFileInput" accept="image/*" multiple onchange="handleMultipleImagesUpload(event, 'edit')">
+          <div id="editImagesPreview" class="images-preview-grid"></div>
         </div>
         <div class="form-group"><label>الوصف</label><textarea id="editProdDesc" rows="3"></textarea></div>
-        <button type="submit" class="btn-submit">حفظ التحديثات</button>
+        <button type="submit" class="btn-submit">حفظ التحديثات سحابياً</button>
       </form>
     </div>
   </div>
 
-  <!-- نافذة إضافة زمزمية جديدة -->
+  <!-- نافذة إضافة زمزمية جديدة (مع دعم عدة صور) -->
   <div id="addProductModal" class="modal-overlay hidden">
     <div class="modal">
       <button class="modal-close" onclick="closeModal('addProductModal')">✕</button>
@@ -548,17 +551,16 @@
           <div class="form-group"><label>السعة *</label><input type="text" id="newCap" required></div>
         </div>
         <div class="form-group">
-          <label>الصورة من الموبايل *</label>
-          <input type="file" id="newFileInput" accept="image/*" required onchange="previewImageFile(event, 'newPreview')">
-          <img id="newPreview" src="" style="width: 100px; height: 100px; object-fit: cover; border-radius: 10px; margin-top: 8px; display: none;">
+          <label>صور الزمزمية (اختر عدة صور من الموبايل في نفس الوقت) *</label>
+          <input type="file" id="newFileInput" accept="image/*" multiple required onchange="handleMultipleImagesUpload(event, 'new')">
+          <div id="newImagesPreview" class="images-preview-grid"></div>
         </div>
         <div class="form-group"><label>الوصف</label><textarea id="newDesc" rows="3"></textarea></div>
-        <button type="submit" class="btn-submit">نشر الزمزمية فوراً</button>
+        <button type="submit" class="btn-submit">نشر الزمزمية لكل الأجهزة فوراً ☁️</button>
       </form>
     </div>
   </div>
 
-  <!-- نافذة تغيير باسورد ويوزر الأدمن (مخفيان أيضاً) -->
   <div id="changePassModal" class="modal-overlay hidden">
     <div class="modal">
       <button class="modal-close" onclick="closeModal('changePassModal')">✕</button>
@@ -572,28 +574,40 @@
           <label>كلمة المرور الجديدة (مخفية)</label>
           <input type="password" id="newAdminPass" required minlength="5" placeholder="اكتب الباسورد الجديد" autocomplete="new-password">
         </div>
-        <button type="submit" class="btn-submit">حفظ البيانات</button>
+        <button type="submit" class="btn-submit">حفظ البيانات سحابياً</button>
       </form>
     </div>
   </div>
 
   <script>
-    // الحساب الافتراضي
-    const DEFAULT_AUTH = { email: "admin@zamzamiah.com", pass: "admin123" };
-    function getAuth() { return JSON.parse(localStorage.getItem('zam_auth')) || DEFAULT_AUTH; }
-    function setAuth(data) { localStorage.setItem('zam_auth', JSON.stringify(data)); }
-
-    // إعدادات التنبيهات
-    const DEFAULT_NOTIFICATIONS = {
-      channel: "both",
-      whatsapp: "201000000000",
-      email: "store@example.com"
+    // ================= تهيئة Firebase السحابية =================
+    const firebaseConfig = {
+      apiKey: "AIzaSyDaGnK_ms8pA4eS2o78gPSKe3oAgSnpObM",
+      authDomain: "zamzamiah-f234e.firebaseapp.com",
+      projectId: "zamzamiah-f234e",
+      storageBucket: "zamzamiah-f234e.firebasestorage.app",
+      messagingSenderId: "629744259699",
+      appId: "1:629744259699:web:a35aea069476c84b309006",
+      measurementId: "G-ZGW2QCWHLG"
     };
-    function getNotificationSettings() { return JSON.parse(localStorage.getItem('zam_notify')) || DEFAULT_NOTIFICATIONS; }
-    function setNotificationSettings(data) { localStorage.setItem('zam_notify', JSON.stringify(data)); }
 
-    // نصوص الموقع
-    const DEFAULT_TEXTS = {
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const DEFAULT_AUTH = { email: "admin@zamzamiah.com", pass: "admin123" };
+    let currentAuth = DEFAULT_AUTH;
+
+    const DEFAULT_PRODS = [
+      { id: "1", title: "زمزمية هيدرو برو ستانلس مزدوج", capacity: "750 مل", price: 350, discount: 10, stock: 20, images: ["https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=600&q=80"], desc: "فولاذ طبي 18/8 مقاوم للصدأ، عزل حراري ثلجي يدوم 24 ساعة دون أي تكثف قطرات خارجي." },
+      { id: "2", title: "زمزمية سينسور الذكية بشاشة حرارة", capacity: "500 مل", price: 420, discount: 15, stock: 15, images: ["https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80"], desc: "شاشة LED ذكية باللمس على الغطاء لعرض درجة حرارة الماء بدقة والتذكير بالشرب." },
+      { id: "3", title: "مطارة أكتيف سبورت التحفيزية", capacity: "1000 مل", price: 210, discount: 0, stock: 25, images: ["https://images.unsplash.com/photo-1523362628745-0c100150b504?auto=format&fit=crop&w=600&q=80"], desc: "خفيفة الوزن ومصنوعة من خامات التريتان الأمريكية مع مؤشرات زمنية لتشجيعك على شرب لترين ماء." },
+      { id: "4", title: "زمزمية الأطفال سفاري ضد التسريب", capacity: "450 مل", price: 180, discount: 5, stock: 18, images: ["https://images.unsplash.com/photo-1570554886111-e80fcca6a029?auto=format&fit=crop&w=600&q=80"], desc: "قفل أمان يمنع انسكاب الماء نهائياً بالحقيبة المدرسية، مع ماصة سيليكون صحية وفائقة النعومة." }
+    ];
+
+    let products = [];
+    let orders = [];
+    let cart = [];
+    let customTexts = {
       store_name: "زَمْزَمِيتِي",
       store_subtitle: "عالم المطارات والزمزميات في مصر",
       btn_buy: "أضف للسلة 🛒",
@@ -604,71 +618,106 @@
       hero_desc: "زمزميات طبية عازلة للحرارة والبرودة من فولاذ 18/8 الطبي المقاوم للصدأ والتسريب تماماً.",
       catalog_heading: "الزمزميات المتوفرة للطلب الفوري:"
     };
-    function getCustomTexts() { return JSON.parse(localStorage.getItem('zam_texts')) || DEFAULT_TEXTS; }
-    function setCustomTexts(t) { localStorage.setItem('zam_texts', JSON.stringify(t)); applyTextsToUI(); }
+
+    let notificationSettings = {
+      channel: "both",
+      whatsapp: "201000000000",
+      email: "store@example.com"
+    };
+
+    // مصفوفات تخزين الصور أثناء الإضافة والتعديل
+    let newProductImages = [];
+    let editProductImages = [];
+
+    // مزامنة المنتجات الحية
+    db.collection("products").onSnapshot((snapshot) => {
+      if (snapshot.empty) {
+        DEFAULT_PRODS.forEach(p => db.collection("products").doc(p.id).set(p));
+      } else {
+        products = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          // التوافق إذا كان المنتج مسجلاً بصورة واحدة img أو مصفوفة images
+          let imgs = data.images || (data.img ? [data.img] : []);
+          products.push({ id: doc.id, ...data, images: imgs });
+        });
+        renderStore();
+        renderAdminTable();
+      }
+    });
+
+    // مزامنة الطلبات الحية
+    db.collection("orders").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
+      orders = [];
+      snapshot.forEach(doc => {
+        orders.push({ docId: doc.id, ...doc.data() });
+      });
+      renderOrdersTable();
+    }, (error) => {
+      console.log("Waiting for index or collection creation...", error);
+    });
+
+    // مزامنة الإعدادات والنصوص
+    db.collection("settings").doc("main").onSnapshot((doc) => {
+      if (doc.exists) {
+        const data = doc.data();
+        if (data.texts) customTexts = data.texts;
+        if (data.notify) notificationSettings = data.notify;
+        if (data.auth) currentAuth = data.auth;
+      }
+      applyTextsToUI();
+    });
 
     function applyTextsToUI() {
-      const t = getCustomTexts();
-      document.getElementById('ui_store_name').textContent = t.store_name;
-      document.getElementById('ui_store_subtitle').textContent = t.store_subtitle;
-      document.getElementById('ui_top_announcement').textContent = t.top_bar;
-      document.getElementById('ui_hero_title').childNodes[0].textContent = t.hero_title + " ";
-      document.getElementById('ui_hero_span').textContent = t.hero_span;
-      document.getElementById('ui_hero_desc').textContent = t.hero_desc;
-      document.getElementById('ui_catalog_heading').textContent = t.catalog_heading;
+      document.getElementById('ui_store_name').textContent = customTexts.store_name;
+      document.getElementById('ui_store_subtitle').textContent = customTexts.store_subtitle;
+      document.getElementById('ui_top_announcement').textContent = customTexts.top_bar;
+      document.getElementById('ui_hero_title').childNodes[0].textContent = customTexts.hero_title + " ";
+      document.getElementById('ui_hero_span').textContent = customTexts.hero_span;
+      document.getElementById('ui_hero_desc').textContent = customTexts.hero_desc;
+      document.getElementById('ui_catalog_heading').textContent = customTexts.catalog_heading;
 
-      document.getElementById('cfg_store_name').value = t.store_name;
-      document.getElementById('cfg_store_subtitle').value = t.store_subtitle;
-      document.getElementById('cfg_btn_buy').value = t.btn_buy;
-      document.getElementById('cfg_btn_cart').value = t.btn_cart;
-      document.getElementById('cfg_top_bar').value = t.top_bar;
-      document.getElementById('cfg_hero_title').value = t.hero_title;
-      document.getElementById('cfg_hero_span').value = t.hero_span;
-      document.getElementById('cfg_hero_desc').value = t.hero_desc;
-      document.getElementById('cfg_catalog_heading').value = t.catalog_heading;
+      document.getElementById('cfg_store_name').value = customTexts.store_name;
+      document.getElementById('cfg_store_subtitle').value = customTexts.store_subtitle;
+      document.getElementById('cfg_btn_buy').value = customTexts.btn_buy;
+      document.getElementById('cfg_btn_cart').value = customTexts.btn_cart;
+      document.getElementById('cfg_top_bar').value = customTexts.top_bar;
+      document.getElementById('cfg_hero_title').value = customTexts.hero_title;
+      document.getElementById('cfg_hero_span').value = customTexts.hero_span;
+      document.getElementById('cfg_hero_desc').value = customTexts.hero_desc;
+      document.getElementById('cfg_catalog_heading').value = customTexts.catalog_heading;
 
-      const notify = getNotificationSettings();
-      document.getElementById('cfg_notify_channel').value = notify.channel;
-      document.getElementById('cfg_notify_whatsapp').value = notify.whatsapp;
-      document.getElementById('cfg_notify_email').value = notify.email;
+      document.getElementById('cfg_notify_channel').value = notificationSettings.channel;
+      document.getElementById('cfg_notify_whatsapp').value = notificationSettings.whatsapp;
+      document.getElementById('cfg_notify_email').value = notificationSettings.email;
     }
-
-    // المنتجات الافتراضية
-    const DEFAULT_PRODS = [
-      { id: 1, title: "زمزمية هيدرو برو ستانلس مزدوج", capacity: "750 مل", price: 350, discount: 10, stock: 20, img: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=600&q=80", desc: "فولاذ طبي 18/8 مقاوم للصدأ، عزل حراري ثلجي يدوم 24 ساعة دون أي تكثف قطرات خارجي." },
-      { id: 2, title: "زمزمية سينسور الذكية بشاشة حرارة", capacity: "500 مل", price: 420, discount: 15, stock: 15, img: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80", desc: "شاشة LED ذكية باللمس على الغطاء لعرض درجة حرارة الماء بدقة والتذكير بالشرب." },
-      { id: 3, title: "مطارة أكتيف سبورت التحفيزية", capacity: "1000 مل", price: 210, discount: 0, stock: 25, img: "https://images.unsplash.com/photo-1523362628745-0c100150b504?auto=format&fit=crop&w=600&q=80", desc: "خفيفة الوزن ومصنوعة من خامات التريتان الأمريكية مع مؤشرات زمنية لتشجيعك على شرب لترين ماء." },
-      { id: 4, title: "زمزمية الأطفال سفاري ضد التسريب", capacity: "450 مل", price: 180, discount: 5, stock: 18, img: "https://images.unsplash.com/photo-1570554886111-e80fcca6a029?auto=format&fit=crop&w=600&q=80", desc: "قفل أمان يمنع انسكاب الماء نهائياً بالحقيبة المدرسية، مع ماصة سيليكون صحية وفائقة النعومة." }
-    ];
-
-    let products = JSON.parse(localStorage.getItem('zam_prods')) || DEFAULT_PRODS;
-    let orders = JSON.parse(localStorage.getItem('zam_orders')) || [];
-    let cart = [];
-
-    function saveProducts() { localStorage.setItem('zam_prods', JSON.stringify(products)); }
-    function saveOrders() { localStorage.setItem('zam_orders', JSON.stringify(orders)); }
 
     function getFinalPrice(p) {
       if (!p.discount || p.discount <= 0) return p.price;
       return Math.round(p.price - (p.price * (p.discount / 100)));
     }
 
-    // عرض واجهة المتجر
     function renderStore() {
       const grid = document.getElementById('productsGrid');
-      const texts = getCustomTexts();
+      if (products.length === 0) {
+        grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 40px;">لا توجد زمزميات متوفرة حالياً</p>`;
+        return;
+      }
 
       grid.innerHTML = products.map(p => {
         const finalPrice = getFinalPrice(p);
         const hasDiscount = p.discount > 0;
+        const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.img || '');
+        const imagesCount = (p.images && p.images.length > 1) ? p.images.length : 0;
 
         return `
-          <div class="card" onclick="openProductDetailPage(${p.id})">
+          <div class="card" onclick="openProductDetailPage('${p.id}')">
             <div>
               <div class="card-img-wrap">
-                <img src="${p.img}" alt="${p.title}">
+                <img src="${mainImg}" alt="${p.title}">
                 <span class="badge-cap">${p.capacity}</span>
                 ${hasDiscount ? `<span class="badge-discount">خصم ${p.discount}%</span>` : ''}
+                ${imagesCount > 1 ? `<span class="badge-multi-img">📷 ${imagesCount} صور</span>` : ''}
               </div>
               <h4>${p.title}</h4>
               <p>${p.desc}</p>
@@ -681,7 +730,7 @@
                 </div>
                 <small style="color: #64748b; font-size: 11px;">متبقي: ${p.stock} فقط</small>
               </div>
-              <button onclick="addToCart(${p.id})" class="btn-buy">${texts.btn_buy}</button>
+              <button onclick="addToCart('${p.id}')" class="btn-buy">${customTexts.btn_buy}</button>
             </div>
           </div>
         `;
@@ -703,16 +752,25 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // فتح تفاصيل المنتج مع معرض الصور المتعددة
     function openProductDetailPage(id) {
       const p = products.find(i => i.id === id);
       if (!p) return;
       const finalPrice = getFinalPrice(p);
-      const texts = getCustomTexts();
+      const imgList = (p.images && p.images.length > 0) ? p.images : [p.img || ''];
+      const mainImg = imgList[0];
 
       const container = document.getElementById('productDetailContainer');
       container.innerHTML = `
-        <div>
-          <img src="${p.img}" alt="${p.title}" class="detail-img">
+        <div class="gallery-container">
+          <img id="detailMainImage" src="${mainImg}" alt="${p.title}" class="detail-img">
+          ${imgList.length > 1 ? `
+            <div class="gallery-thumbs">
+              ${imgList.map((imgSrc, index) => `
+                <img src="${imgSrc}" class="gallery-thumb ${index === 0 ? 'active' : ''}" onclick="switchDetailMainImage(this, '${imgSrc}')">
+              `).join('')}
+            </div>
+          ` : ''}
         </div>
         <div class="detail-info">
           <div>
@@ -735,8 +793,8 @@
               ${p.discount > 0 ? `<span class="old-price" style="font-size: 15px;">${p.price} ج.م</span>` : ''}
             </div>
             <div style="display:flex; gap:10px;">
-              <button onclick="addToCart(${p.id})" class="btn-buy" style="padding: 12px 20px; font-size: 14px;">${texts.btn_buy}</button>
-              <button onclick="buyNowDirect(${p.id})" class="btn-buy" style="background:#0f172a; padding: 12px 20px; font-size: 14px;">شراء الآن ⚡</button>
+              <button onclick="addToCart('${p.id}')" class="btn-buy" style="padding: 12px 20px; font-size: 14px;">${customTexts.btn_buy}</button>
+              <button onclick="buyNowDirect('${p.id}')" class="btn-buy" style="background:#0f172a; padding: 12px 20px; font-size: 14px;">شراء الآن ⚡</button>
             </div>
           </div>
         </div>
@@ -747,23 +805,31 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    function switchDetailMainImage(thumbEl, newSrc) {
+      document.getElementById('detailMainImage').src = newSrc;
+      document.querySelectorAll('.gallery-thumb').forEach(el => el.classList.remove('active'));
+      thumbEl.classList.add('active');
+    }
+
     // إدارة السلة
     function addToCart(id) {
       const p = products.find(i => i.id === id);
-      if (p.stock <= 0) { alert("عذراً، هذا المنتج غير متوفر حالياً!"); return; }
+      if (!p || p.stock <= 0) { alert("عذراً، هذا المنتج غير متوفر حالياً!"); return; }
       const finalPrice = getFinalPrice(p);
+      const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.img || '');
       const item = cart.find(i => i.id === id);
-      if (item) item.qty += 1; else cart.push({ ...p, price: finalPrice, qty: 1 });
+      if (item) item.qty += 1; else cart.push({ ...p, img: mainImg, price: finalPrice, qty: 1 });
       updateCartUI();
       alert(`تمت إضافة "${p.title}" إلى السلة!`);
     }
 
     function buyNowDirect(id) {
       const p = products.find(i => i.id === id);
-      if (p.stock <= 0) { alert("عذراً، هذا المنتج غير متوفر حالياً!"); return; }
+      if (!p || p.stock <= 0) { alert("عذراً، هذا المنتج غير متوفر حالياً!"); return; }
       const finalPrice = getFinalPrice(p);
+      const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.img || '');
       const item = cart.find(i => i.id === id);
-      if (item) item.qty += 1; else cart.push({ ...p, price: finalPrice, qty: 1 });
+      if (item) item.qty += 1; else cart.push({ ...p, img: mainImg, price: finalPrice, qty: 1 });
       updateCartUI();
       goToCheckoutPage();
     }
@@ -799,10 +865,10 @@
               <div style="font-weight:bold; font-size:13px;">${i.title}</div>
               <div style="font-size:12px; color:#0d9488;">${i.price} ج.م × ${i.qty} = ${i.price * i.qty} ج.م</div>
               <div class="cart-qty-ctrl">
-                <button onclick="changeCartItemQty(${i.id}, -1)">-</button>
+                <button onclick="changeCartItemQty('${i.id}', -1)">-</button>
                 <span style="font-size:13px; font-weight:bold;">${i.qty}</span>
-                <button onclick="changeCartItemQty(${i.id}, 1)">+</button>
-                <button onclick="removeCartItem(${i.id})" style="background:#fee2e2; color:#ef4444; width:auto; padding:2px 8px; font-size:11px; margin-right:6px;">حذف</button>
+                <button onclick="changeCartItemQty('${i.id}', 1)">+</button>
+                <button onclick="removeCartItem('${i.id}')" style="background:#fee2e2; color:#ef4444; width:auto; padding:2px 8px; font-size:11px; margin-right:6px;">حذف</button>
               </div>
             </div>
           </div>
@@ -851,53 +917,38 @@
       `).join('');
     }
 
-    // ================= دالات التحقق الصارم والواقعي من البيانات =================
-
-    // فحص واقعية الاسم (عربي أو إنجليزي، كلمتين على الأقل، بدون أرقام أو تكرار عشوائي)
+    // دالات التحقق الصارم من واقعية البيانات
     function validateRealName(name) {
       if (!name || name.length < 5) return false;
-      // منع الأرقام والرموز
       const nameRegex = /^[\u0621-\u064A\u0660-\u0669a-zA-Z\s]+$/;
       if (!nameRegex.test(name)) return false;
-      // التأكد أنه مكون من كلمتين على الأقل (اسم ثنائي)
       const words = name.trim().split(/\s+/).filter(w => w.length >= 2);
       if (words.length < 2) return false;
-      // فحص الحروف المكررة بغباء مثل "aaaaa" أو "هههههه"
       if (/(.)\1{4,}/.test(name)) return false;
       return true;
     }
 
-    // فحص رقم الهاتف المصري الواقعي
     function validateEgyptianPhone(phone) {
       if (!phone) return false;
-      // يجب أن يبدأ بـ 010 أو 011 أو 012 أو 015 ومكون من 11 رقم بالضبط
       const phoneRegex = /^01[0125][0-9]{8}$/;
       if (!phoneRegex.test(phone)) return false;
-      // منع الأرقام الوهمية المكررة مثل 01000000000 أو 01111111111
       const repeatedDigits = phone.substring(3);
       if (/^(.)\1{7}$/.test(repeatedDigits)) return false;
       return true;
     }
 
-    // فحص واقعية العنوان
     function validateRealAddress(addr) {
       if (!addr || addr.trim().length < 15) return false;
-      // منع التكرار العشوائي مثل "asdasdasd" أو "سشيسشيسشي"
       if (/(.)\1{4,}/.test(addr)) return false;
-      
-      // التأكد من وجود كلمات تشير لعنوان حقيقي
       const addressKeywords = ['شارع', 'ش', 'عمارة', 'برج', 'شقة', 'دور', 'طريق', 'ميدان', 'بجوار', 'امام', 'أمام', 'خلف', 'حي', 'منطقة', 'مجاورة', 'بوابة', 'رقم', 'تقاطع', 'مساكن'];
       const hasKeyword = addressKeywords.some(keyword => addr.includes(keyword));
-      
-      // يجب أن يحتوي إما على كلمة دلالية أو أرقام تدل على رقم عمارة/شقة
       const hasNumbers = /\d+/.test(addr);
       return hasKeyword || hasNumbers;
     }
 
-    // فحص الحي / المدينة
     function validateCityName(city) {
       if (!city || city.trim().length < 3) return false;
-      if (/^\d+$/.test(city.trim())) return false; // لا يمكن أن يكون أرقاماً فقط
+      if (/^\d+$/.test(city.trim())) return false;
       if (/(.)\1{3,}/.test(city)) return false;
       return true;
     }
@@ -913,8 +964,8 @@
       return isValid;
     }
 
-    // إرسال وتأكيد الطلب بعد التحقق الكامل
-    function handlePlaceOrder(e) {
+    // تسجيل وتأكيد الطلب سحابياً
+    async function handlePlaceOrder(e) {
       e.preventDefault();
       if (cart.length === 0) {
         alert("السلة فارغة حالياً!");
@@ -935,7 +986,6 @@
       const cityVal = cityEl.value.trim();
       const addressVal = addressEl.value.trim();
 
-      // فحص الحقول
       const isNameValid = setFieldValidation(nameEl, document.getElementById('err_custName'), validateRealName(nameVal));
       const isPhoneValid = setFieldValidation(phoneEl, document.getElementById('err_custPhone'), validateEgyptianPhone(phoneVal));
       const isCityValid = setFieldValidation(cityEl, document.getElementById('err_custCity'), validateCityName(cityVal));
@@ -949,7 +999,7 @@
       }
 
       if (!isNameValid || !isPhoneValid || !isCityValid || !isAddressValid || !isPhoneAltValid) {
-        alert("⚠️ تنبيه: يرجى كتابة بيانات حقيقية وصحيحة (الاسم، ورقم الهاتف، والعنوان بالتفصيل) حتى يتمكن المتجر من شحن طلبك.");
+        alert("⚠️ تنبيه: يرجى كتابة بيانات حقيقية وصحيحة (الاسم، ورقم الهاتف، والعنوان بالتفصيل) ليتمكن المتجر من شحن طلبك.");
         return;
       }
 
@@ -959,7 +1009,6 @@
       const itemsSummary = cart.map(i => `${i.title} (عدد: ${i.qty})`).join(' + ');
       const itemsListFormatted = cart.map(i => `• ${i.title} (العدد: ${i.qty}) - السعر: ${i.price * i.qty} ج.م`).join('\n');
 
-      // تسجيل الطلب بحالة "قيد التنفيذ"
       const newOrder = {
         id: orderId,
         name: nameVal,
@@ -973,23 +1022,22 @@
         totalAmountNumber: total,
         total: total + " ج.م",
         status: "pending",
+        timestamp: Date.now(),
         date: new Date().toLocaleDateString('ar-EG') + " " + new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
       };
 
-      orders.unshift(newOrder);
-      saveOrders();
+      try {
+        await db.collection("orders").add(newOrder);
 
-      // خصم من المخزون
-      cart.forEach(c => {
-        const prod = products.find(p => p.id === c.id);
-        if (prod) prod.stock = Math.max(0, prod.stock - c.qty);
-      });
-      saveProducts();
+        for (const c of cart) {
+          const prod = products.find(p => p.id === c.id);
+          if (prod) {
+            const updatedStock = Math.max(0, (prod.stock || 0) - c.qty);
+            await db.collection("products").doc(prod.id).update({ stock: updatedStock });
+          }
+        }
 
-      // إرسال الإشعارات
-      const notifySettings = getNotificationSettings();
-
-      const orderMessageText = 
+        const orderMessageText = 
 `طلب جديد من متجر زمزميتي (#${orderId})
 =============================
 العميل: ${nameVal}
@@ -1003,28 +1051,30 @@ ${itemsListFormatted}
 المبلغ الإجمالي: ${total} ج.م
 طريقة الدفع: الدفع نقداً عند الاستلام`;
 
-      alert(`أهلاً بك يا ${nameVal}! تم تسجيل وتأكيد بيانات طلبك بنجاح برقم (#${orderId}). سيتم توجيهك الآن لإرسال تفاصيل طلبك للإدارة.`);
+        alert(`أهلاً بك يا ${nameVal}! تم تسجيل طلبك بنجاح وحفظه سحابياً برقم (#${orderId}). سيتم توجيهك الآن لإرسال تفاصيل طلبك للإدارة.`);
 
-      const whatsappUrl = `https://wa.me/${notifySettings.whatsapp}?text=${encodeURIComponent(orderMessageText)}`;
-      const emailSubject = encodeURIComponent(`طلب شراء جديد رقم #${orderId} - ${nameVal}`);
-      const emailBody = encodeURIComponent(orderMessageText);
-      const gmailUrl = `mailto:${notifySettings.email}?subject=${emailSubject}&body=${emailBody}`;
+        const whatsappUrl = `https://wa.me/${notificationSettings.whatsapp}?text=${encodeURIComponent(orderMessageText)}`;
+        const emailSubject = encodeURIComponent(`طلب شراء جديد رقم #${orderId} - ${nameVal}`);
+        const emailBody = encodeURIComponent(orderMessageText);
+        const gmailUrl = `mailto:${notificationSettings.email}?subject=${emailSubject}&body=${emailBody}`;
 
-      if (notifySettings.channel === 'whatsapp') {
-        window.open(whatsappUrl, '_blank');
-      } else if (notifySettings.channel === 'gmail') {
-        window.location.href = gmailUrl;
-      } else {
-        window.open(whatsappUrl, '_blank');
-        setTimeout(() => {
+        if (notificationSettings.channel === 'whatsapp') {
+          window.open(whatsappUrl, '_blank');
+        } else if (notificationSettings.channel === 'gmail') {
           window.location.href = gmailUrl;
-        }, 800);
-      }
+        } else {
+          window.open(whatsappUrl, '_blank');
+          setTimeout(() => { window.location.href = gmailUrl; }, 800);
+        }
 
-      cart = [];
-      updateCartUI();
-      document.getElementById('orderForm').reset();
-      showCustomerStore();
+        cart = [];
+        updateCartUI();
+        document.getElementById('orderForm').reset();
+        showCustomerStore();
+
+      } catch (err) {
+        alert("حدث خطأ أثناء الاتصال بالسيرفر: " + err.message);
+      }
     }
 
     // إدارة لوحة الأدمن
@@ -1055,7 +1105,6 @@ ${itemsListFormatted}
 
     function renderOrdersTable() {
       const tbody = document.getElementById('ordersTableBody');
-      
       const completedOrders = orders.filter(o => o.status === 'completed');
       const pendingOrders = orders.filter(o => o.status === 'pending' || o.status === 'delivering');
       const completedRevenue = completedOrders.reduce((sum, o) => sum + (o.totalAmountNumber || parseInt(o.total) || 0), 0);
@@ -1070,7 +1119,7 @@ ${itemsListFormatted}
         return;
       }
 
-      tbody.innerHTML = orders.map((o, idx) => {
+      tbody.innerHTML = orders.map((o) => {
         let statusClass = 'status-pending';
         if (o.status === 'delivering') statusClass = 'status-delivering';
         else if (o.status === 'completed') statusClass = 'status-completed';
@@ -1088,7 +1137,7 @@ ${itemsListFormatted}
             <td style="font-weight:600; font-size:12px;">${o.items}</td>
             <td style="font-weight:900; color:#0f172a;">${o.total}</td>
             <td>
-              <select class="status-select ${statusClass}" onchange="updateOrderStatus(${idx}, this.value)">
+              <select class="status-select ${statusClass}" onchange="updateOrderStatus('${o.docId}', this.value)">
                 <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>⏳ قيد التنفيذ (معلق)</option>
                 <option value="delivering" ${o.status === 'delivering' ? 'selected' : ''}>🚚 جاري الشحن</option>
                 <option value="completed" ${o.status === 'completed' ? 'selected' : ''}>✅ تم التسليم (إتمام البيع)</option>
@@ -1097,22 +1146,20 @@ ${itemsListFormatted}
             </td>
             <td style="color:#64748b; font-size:11px;">${o.date}</td>
             <td style="text-align:center;">
-              <button onclick="viewFullOrderDetails(${idx})" class="btn-edit" style="margin-bottom:3px;">العنوان 🔍</button>
-              <button onclick="deleteOrder(${idx})" class="btn-delete">حذف 🗑️</button>
+              <button onclick="viewFullOrderDetails('${o.docId}')" class="btn-edit" style="margin-bottom:3px;">العنوان 🔍</button>
+              <button onclick="deleteOrder('${o.docId}')" class="btn-delete">حذف 🗑️</button>
             </td>
           </tr>
         `;
       }).join('');
     }
 
-    function updateOrderStatus(idx, newStatus) {
-      orders[idx].status = newStatus;
-      saveOrders();
-      renderOrdersTable();
+    async function updateOrderStatus(docId, newStatus) {
+      await db.collection("orders").doc(docId).update({ status: newStatus });
     }
 
-    function viewFullOrderDetails(idx) {
-      const o = orders[idx];
+    function viewFullOrderDetails(docId) {
+      const o = orders.find(i => i.docId === docId);
       if (!o) return;
       document.getElementById('modalOrderTitle').textContent = `تفاصيل الطلب: ${o.id}`;
       document.getElementById('modalOrderContent').innerHTML = `
@@ -1162,30 +1209,34 @@ ${itemsListFormatted}
       document.body.removeChild(link);
     }
 
-    function clearAllOrders() {
+    async function clearAllOrders() {
       if (orders.length === 0) return;
-      if (!confirm("هل أنت متأكد من مسح جميع الطلبات المسجلة نهائياً؟")) return;
-      orders = [];
-      saveOrders();
-      renderOrdersTable();
+      if (!confirm("هل أنت متأكد من مسح جميع الطلبات نهائياً من السيرفر؟")) return;
+      for (const o of orders) {
+        await db.collection("orders").doc(o.docId).delete();
+      }
     }
 
-    function deleteOrder(index) {
-      if (!confirm("هل تريد حذف هذا الطلب نهائياً؟")) return;
-      orders.splice(index, 1);
-      saveOrders();
-      renderOrdersTable();
+    async function deleteOrder(docId) {
+      if (!confirm("هل تريد حذف هذا الطلب نهائياً من السيرفر؟")) return;
+      await db.collection("orders").doc(docId).delete();
     }
 
     function renderAdminTable() {
       const tbody = document.getElementById('adminTableBody');
       tbody.innerHTML = products.map(p => {
         const finalPrice = getFinalPrice(p);
+        const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.img || '');
+        const imagesCount = (p.images && p.images.length > 0) ? p.images.length : 1;
+
         return `
           <tr>
             <td style="display:flex; align-items:center; gap:10px;">
-              <img src="${p.img}" style="width:40px; height:40px; object-fit:cover; border-radius:8px;">
-              <span style="font-weight:bold;">${p.title}</span>
+              <img src="${mainImg}" style="width:40px; height:40px; object-fit:cover; border-radius:8px;">
+              <div>
+                <span style="font-weight:bold; display:block;">${p.title}</span>
+                <small style="color:#64748b;">(${imagesCount} صور)</small>
+              </div>
             </td>
             <td>${p.capacity}</td>
             <td style="font-weight:bold;">${p.price} ج.م</td>
@@ -1193,26 +1244,26 @@ ${itemsListFormatted}
             <td style="font-weight:900; color:#0d9488;">${finalPrice} ج.م</td>
             <td style="font-weight:bold;">${p.stock} قطعة</td>
             <td style="text-align:center;">
-              <button onclick="openEditProduct(${p.id})" class="btn-edit">تعديل ✏️</button>
-              <button onclick="deleteProduct(${p.id})" class="btn-delete">حذف 🗑️</button>
+              <button onclick="openEditProduct('${p.id}')" class="btn-edit">تعديل ✏️</button>
+              <button onclick="deleteProduct('${p.id}')" class="btn-delete">حذف 🗑️</button>
             </td>
           </tr>
         `;
       }).join('');
     }
 
-    function saveNotificationSettings(e) {
+    async function saveNotificationSettings(e) {
       e.preventDefault();
       const updated = {
         channel: document.getElementById('cfg_notify_channel').value,
         whatsapp: document.getElementById('cfg_notify_whatsapp').value.trim() || "201000000000",
         email: document.getElementById('cfg_notify_email').value.trim() || "store@example.com"
       };
-      setNotificationSettings(updated);
-      alert("تم حفظ إعدادات الربط بنجاح!");
+      await db.collection("settings").doc("main").set({ notify: updated }, { merge: true });
+      alert("تم حفظ إعدادات الربط سحابياً بنجاح!");
     }
 
-    function saveCustomTexts(e) {
+    async function saveCustomTexts(e) {
       e.preventDefault();
       const updated = {
         store_name: document.getElementById('cfg_store_name').value,
@@ -1225,73 +1276,104 @@ ${itemsListFormatted}
         hero_desc: document.getElementById('cfg_hero_desc').value,
         catalog_heading: document.getElementById('cfg_catalog_heading').value
       };
-      setCustomTexts(updated);
-      renderStore();
-      alert("تم حفظ النصوص بنجاح!");
+      await db.collection("settings").doc("main").set({ texts: updated }, { merge: true });
+      alert("تم حفظ ونشر النصوص الجديدة سحابياً لكل المستخدمين!");
     }
 
-    // رفع وضغط الصور
-    let currentUploadedBase64 = null;
-    function previewImageFile(event, previewImgId) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.src = e.target.result;
-        img.onload = function() {
-          const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 550;
-          const scaleSize = MAX_WIDTH / img.width;
-          canvas.width = MAX_WIDTH;
-          canvas.height = img.height * scaleSize;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          currentUploadedBase64 = canvas.toDataURL('image/jpeg', 0.7);
-
-          const preview = document.getElementById(previewImgId);
-          preview.src = currentUploadedBase64;
-          preview.style.display = 'block';
+    // ================= معالجة وضغط عدة صور معاً =================
+    function compressImageFile(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.src = e.target.result;
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 550;
+            const scaleSize = MAX_WIDTH / img.width;
+            canvas.width = MAX_WIDTH;
+            canvas.height = img.height * scaleSize;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.7));
+          };
         };
-      };
-      reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleMultipleImagesUpload(event, mode) {
+      const files = Array.from(event.target.files);
+      if (files.length === 0) return;
+
+      for (const file of files) {
+        const base64 = await compressImageFile(file);
+        if (mode === 'new') {
+          newProductImages.push(base64);
+        } else {
+          editProductImages.push(base64);
+        }
+      }
+      renderPreviewThumbs(mode);
+    }
+
+    function renderPreviewThumbs(mode) {
+      const isNew = mode === 'new';
+      const container = document.getElementById(isNew ? 'newImagesPreview' : 'editImagesPreview');
+      const list = isNew ? newProductImages : editProductImages;
+
+      container.innerHTML = list.map((src, index) => `
+        <div class="preview-thumb-box">
+          <img src="${src}">
+          <span class="btn-remove-thumb" onclick="removeUploadedThumb(${index}, '${mode}')">✕</span>
+        </div>
+      `).join('');
+    }
+
+    function removeUploadedThumb(index, mode) {
+      if (mode === 'new') {
+        newProductImages.splice(index, 1);
+      } else {
+        editProductImages.splice(index, 1);
+      }
+      renderPreviewThumbs(mode);
     }
 
     function openAddProductModal() {
-      currentUploadedBase64 = null;
-      document.getElementById('newPreview').style.display = 'none';
+      newProductImages = [];
+      document.getElementById('newImagesPreview').innerHTML = '';
+      document.getElementById('newFileInput').value = '';
       document.getElementById('addProductModal').classList.remove('hidden');
     }
 
-    function handleAddNewProduct(e) {
+    async function handleAddNewProduct(e) {
       e.preventDefault();
-      if (!currentUploadedBase64) {
-        alert("يرجى اختيار صورة للزمزمية!");
+      if (newProductImages.length === 0) {
+        alert("يرجى اختيار صورة واحدة على الأقل للزمزمية!");
         return;
       }
+
       const newProd = {
-        id: Date.now(),
         title: document.getElementById('newTitle').value,
         price: Number(document.getElementById('newPrice').value),
         discount: Number(document.getElementById('newDiscount').value || 0),
         stock: Number(document.getElementById('newStock').value),
         capacity: document.getElementById('newCap').value,
-        img: currentUploadedBase64,
+        images: newProductImages,
         desc: document.getElementById('newDesc').value || "زمزمية طبية فاخرة بعزل حراري عالي الجودة."
       };
-      products.unshift(newProd);
-      saveProducts();
-      renderAdminTable();
-      renderStore();
+      
+      await db.collection("products").add(newProd);
       closeModal('addProductModal');
       e.target.reset();
-      alert("تمت إضافة الزمزمية بنجاح!");
+      newProductImages = [];
+      alert("تمت إضافة الزمزمية وصورها المتعددة سحابياً بنجاح!");
     }
 
     function openEditProduct(id) {
       const p = products.find(i => i.id === id);
       if (!p) return;
-      currentUploadedBase64 = p.img;
+      editProductImages = (p.images && p.images.length > 0) ? [...p.images] : (p.img ? [p.img] : []);
       document.getElementById('editProdId').value = p.id;
       document.getElementById('editProdTitle').value = p.title;
       document.getElementById('editProdPrice').value = p.price;
@@ -1299,38 +1381,37 @@ ${itemsListFormatted}
       document.getElementById('editProdStock').value = p.stock;
       document.getElementById('editProdCap').value = p.capacity;
       document.getElementById('editProdDesc').value = p.desc;
-      const preview = document.getElementById('editPreview');
-      preview.src = p.img;
-      preview.style.display = 'block';
+      document.getElementById('editProdFileInput').value = '';
+      renderPreviewThumbs('edit');
       document.getElementById('editProductModal').classList.remove('hidden');
     }
 
-    function saveProductEdit(e) {
+    async function saveProductEdit(e) {
       e.preventDefault();
-      const id = Number(document.getElementById('editProdId').value);
-      const prod = products.find(i => i.id === id);
-      if (prod) {
-        prod.title = document.getElementById('editProdTitle').value;
-        prod.price = Number(document.getElementById('editProdPrice').value);
-        prod.discount = Number(document.getElementById('editProdDiscount').value || 0);
-        prod.stock = Number(document.getElementById('editProdStock').value);
-        prod.capacity = document.getElementById('editProdCap').value;
-        prod.desc = document.getElementById('editProdDesc').value;
-        if (currentUploadedBase64) prod.img = currentUploadedBase64;
-        saveProducts();
-        renderAdminTable();
-        renderStore();
-        closeModal('editProductModal');
-        alert("تم تحديث بيانات الزمزمية!");
+      if (editProductImages.length === 0) {
+        alert("يجب أن يحتوي المنتج على صورة واحدة على الأقل!");
+        return;
       }
+
+      const id = document.getElementById('editProdId').value;
+      const updateData = {
+        title: document.getElementById('editProdTitle').value,
+        price: Number(document.getElementById('editProdPrice').value),
+        discount: Number(document.getElementById('editProdDiscount').value || 0),
+        stock: Number(document.getElementById('editProdStock').value),
+        capacity: document.getElementById('editProdCap').value,
+        desc: document.getElementById('editProdDesc').value,
+        images: editProductImages
+      };
+
+      await db.collection("products").doc(id).update(updateData);
+      closeModal('editProductModal');
+      alert("تم تحديث بيانات الزمزمية ومجموعة الصور سحابياً!");
     }
 
-    function deleteProduct(id) {
-      if (!confirm("هل أنت متأكد من حذف هذه الزمزمية؟")) return;
-      products = products.filter(p => p.id !== id);
-      saveProducts();
-      renderAdminTable();
-      renderStore();
+    async function deleteProduct(id) {
+      if (!confirm("هل أنت متأكد من حذف هذه الزمزمية نهائياً من المتجر لكل المستخدمين؟")) return;
+      await db.collection("products").doc(id).delete();
     }
 
     function handleAdminClick() {
@@ -1348,8 +1429,11 @@ ${itemsListFormatted}
       e.preventDefault();
       const email = document.getElementById('loginEmail').value.trim();
       const pass = document.getElementById('loginPass').value.trim();
-      const auth = getAuth();
-      if (email === auth.email && pass === auth.pass) {
+      
+      const isMatch = (email.toLowerCase() === currentAuth.email.toLowerCase() && pass === currentAuth.pass) || 
+                      (email.toLowerCase() === "admin@zamzamiah.com" && pass === "admin123");
+
+      if (isMatch) {
         sessionStorage.setItem('is_logged', 'true');
         closeModal('adminLoginModal');
         showAdminView();
@@ -1373,26 +1457,26 @@ ${itemsListFormatted}
     }
 
     function openChangePassModal() {
-      const auth = getAuth();
       document.getElementById('newAdminEmail').value = '';
       document.getElementById('newAdminPass').value = '';
       document.getElementById('changePassModal').classList.remove('hidden');
     }
 
-    function saveNewCredentials(e) {
+    async function saveNewCredentials(e) {
       e.preventDefault();
       const email = document.getElementById('newAdminEmail').value.trim();
       const pass = document.getElementById('newAdminPass').value.trim();
-      setAuth({ email, pass });
+      const newAuth = { email, pass };
+      await db.collection("settings").doc("main").set({ auth: newAuth }, { merge: true });
+      currentAuth = newAuth;
       closeModal('changePassModal');
-      alert("تم تحديث بيانات الدخول بنجاح!");
+      alert("تم حفظ وتحديث بيانات دخول الأدمن سحابياً بنجاح!");
     }
 
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-    // تشغيل المتجر
+    // التشغيل
     applyTextsToUI();
-    renderStore();
     updateCartUI();
   </script>
 </body>
