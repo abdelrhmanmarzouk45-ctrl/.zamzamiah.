@@ -174,7 +174,6 @@
       </div>
     </div>
     <div class="header-actions">
-      <!-- أيقونة الترس السرية -->
       <button class="btn-discrete-admin" title="الإعدادات" onclick="handleAdminClick()">⚙️</button>
       
       <button id="cartBtn" class="btn-cart" onclick="toggleCart()">
@@ -194,7 +193,7 @@
     <div class="container">
       <h3 style="margin-bottom: 20px; font-weight: 900; font-size: 18px;" id="ui_catalog_heading">الزمزميات المتوفرة للطلب الفوري:</h3>
       <div id="productsGrid" class="grid">
-        <p style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 40px;">جاري تحميل المنتجات من السيرفر السحابي...</p>
+        <p style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 40px;">جاري تحميل المنتجات...</p>
       </div>
     </div>
   </div>
@@ -320,7 +319,7 @@
         <p style="font-size: 12px; color: #64748b;">تحكم كامل في مبيعات المتجر، والطلبات المعلقة، وإدارة المخزون من أي مكان</p>
       </div>
       <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-        <button onclick="openAddProductModal()" class="btn-buy">+ إضافة زمزمية جديدة</button>
+        <button onclick="openAddProductModal()" class="btn-buy" style="font-size: 13px;">+ إضافة زمزمية جديدة</button>
         <button onclick="openChangePassModal()" class="btn-cart" style="background:#0f172a;">🔑 تغيير بيانات الدخول</button>
         <button onclick="showCustomerStore()" class="btn-cart" style="background:#64748b;">🏪 معاينة المتجر</button>
         <button onclick="adminLogout()" class="btn-delete">خروج 🚪</button>
@@ -445,7 +444,7 @@
           <input type="email" id="cfg_notify_email" placeholder="مثال: store.owner@gmail.com">
         </div>
 
-        <button type="submit" class="btn-submit">حفظ إعدادات الربط سحابياً</button>
+        <button type="submit" id="btnSaveNotify" class="btn-submit">حفظ إعدادات الربط سحابياً</button>
       </form>
     </div>
 
@@ -462,7 +461,9 @@
         <div class="form-group"><label>الجزء الملون في البنر</label><input type="text" id="cfg_hero_span" required></div>
         <div class="form-group"><label>الوصف أسفل البنر</label><input type="text" id="cfg_hero_desc" required></div>
         <div class="form-group"><label>عنوان قسم المنتجات</label><input type="text" id="cfg_catalog_heading" required></div>
-        <div style="grid-column: 1 / -1;"><button type="submit" class="btn-submit" style="max-width: 250px;">حفظ التغييرات سحابياً</button></div>
+        <div style="grid-column: 1 / -1;">
+          <button type="submit" id="btnSaveTexts" class="btn-submit" style="max-width: 250px;">حفظ التغييرات سحابياً</button>
+        </div>
       </form>
     </div>
   </div>
@@ -508,7 +509,7 @@
     </div>
   </div>
 
-  <!-- نافذة تعديل زمزمية (مع دعم عدة صور) -->
+  <!-- نافذة تعديل زمزمية -->
   <div id="editProductModal" class="modal-overlay hidden">
     <div class="modal">
       <button class="modal-close" onclick="closeModal('editProductModal')">✕</button>
@@ -525,17 +526,17 @@
           <div class="form-group"><label>السعة</label><input type="text" id="editProdCap" required></div>
         </div>
         <div class="form-group">
-          <label>إضافة صور جديدة من الموبايل (يمكنك اختيار عدة صور)</label>
+          <label>إضافة صور من الموبايل (يمكنك اختيار عدة صور)</label>
           <input type="file" id="editProdFileInput" accept="image/*" multiple onchange="handleMultipleImagesUpload(event, 'edit')">
           <div id="editImagesPreview" class="images-preview-grid"></div>
         </div>
         <div class="form-group"><label>الوصف</label><textarea id="editProdDesc" rows="3"></textarea></div>
-        <button type="submit" class="btn-submit">حفظ التحديثات سحابياً</button>
+        <button type="submit" id="btnSaveEditProduct" class="btn-submit">حفظ التحديثات سحابياً</button>
       </form>
     </div>
   </div>
 
-  <!-- نافذة إضافة زمزمية جديدة (مع دعم عدة صور) -->
+  <!-- نافذة إضافة زمزمية جديدة -->
   <div id="addProductModal" class="modal-overlay hidden">
     <div class="modal">
       <button class="modal-close" onclick="closeModal('addProductModal')">✕</button>
@@ -551,12 +552,12 @@
           <div class="form-group"><label>السعة *</label><input type="text" id="newCap" required></div>
         </div>
         <div class="form-group">
-          <label>صور الزمزمية (اختر عدة صور من الموبايل في نفس الوقت) *</label>
-          <input type="file" id="newFileInput" accept="image/*" multiple required onchange="handleMultipleImagesUpload(event, 'new')">
+          <label>صور الزمزمية (اختر عدة صور من الموبايل) *</label>
+          <input type="file" id="newFileInput" accept="image/*" multiple onchange="handleMultipleImagesUpload(event, 'new')">
           <div id="newImagesPreview" class="images-preview-grid"></div>
         </div>
         <div class="form-group"><label>الوصف</label><textarea id="newDesc" rows="3"></textarea></div>
-        <button type="submit" class="btn-submit">نشر الزمزمية لكل الأجهزة فوراً ☁️</button>
+        <button type="submit" id="btnSaveNewProduct" class="btn-submit">نشر الزمزمية لكل الأجهزة فوراً ☁️</button>
       </form>
     </div>
   </div>
@@ -574,7 +575,7 @@
           <label>كلمة المرور الجديدة (مخفية)</label>
           <input type="password" id="newAdminPass" required minlength="5" placeholder="اكتب الباسورد الجديد" autocomplete="new-password">
         </div>
-        <button type="submit" class="btn-submit">حفظ البيانات سحابياً</button>
+        <button type="submit" id="btnSavePass" class="btn-submit">حفظ البيانات سحابياً</button>
       </form>
     </div>
   </div>
@@ -591,8 +592,13 @@
       measurementId: "G-ZGW2QCWHLG"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    let db;
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+    } catch(err) {
+      console.warn("Firebase Init Warning:", err);
+    }
 
     const DEFAULT_AUTH = { email: "admin@zamzamiah.com", pass: "admin123" };
     let currentAuth = DEFAULT_AUTH;
@@ -604,10 +610,10 @@
       { id: "4", title: "زمزمية الأطفال سفاري ضد التسريب", capacity: "450 مل", price: 180, discount: 5, stock: 18, images: ["https://images.unsplash.com/photo-1570554886111-e80fcca6a029?auto=format&fit=crop&w=600&q=80"], desc: "قفل أمان يمنع انسكاب الماء نهائياً بالحقيبة المدرسية، مع ماصة سيليكون صحية وفائقة النعومة." }
     ];
 
-    let products = [];
-    let orders = [];
+    let products = JSON.parse(localStorage.getItem('cached_prods')) || DEFAULT_PRODS;
+    let orders = JSON.parse(localStorage.getItem('cached_orders')) || [];
     let cart = [];
-    let customTexts = {
+    let customTexts = JSON.parse(localStorage.getItem('cached_texts')) || {
       store_name: "زَمْزَمِيتِي",
       store_subtitle: "عالم المطارات والزمزميات في مصر",
       btn_buy: "أضف للسلة 🛒",
@@ -619,77 +625,84 @@
       catalog_heading: "الزمزميات المتوفرة للطلب الفوري:"
     };
 
-    let notificationSettings = {
+    let notificationSettings = JSON.parse(localStorage.getItem('cached_notify')) || {
       channel: "both",
       whatsapp: "201000000000",
       email: "store@example.com"
     };
 
-    // مصفوفات تخزين الصور أثناء الإضافة والتعديل
     let newProductImages = [];
     let editProductImages = [];
 
-    // مزامنة المنتجات الحية
-    db.collection("products").onSnapshot((snapshot) => {
-      if (snapshot.empty) {
-        DEFAULT_PRODS.forEach(p => db.collection("products").doc(p.id).set(p));
-      } else {
-        products = [];
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          // التوافق إذا كان المنتج مسجلاً بصورة واحدة img أو مصفوفة images
-          let imgs = data.images || (data.img ? [data.img] : []);
-          products.push({ id: doc.id, ...data, images: imgs });
-        });
-        renderStore();
-        renderAdminTable();
-      }
-    });
-
-    // مزامنة الطلبات الحية
-    db.collection("orders").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
-      orders = [];
-      snapshot.forEach(doc => {
-        orders.push({ docId: doc.id, ...doc.data() });
+    // ================= الربط المباشر مع معالجة الأخطاء =================
+    if (db) {
+      db.collection("products").onSnapshot((snapshot) => {
+        if (!snapshot.empty) {
+          products = [];
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            let imgs = data.images || (data.img ? [data.img] : []);
+            products.push({ id: doc.id, ...data, images: imgs });
+          });
+          localStorage.setItem('cached_prods', JSON.stringify(products));
+          renderStore();
+          renderAdminTable();
+        } else {
+          DEFAULT_PRODS.forEach(p => db.collection("products").doc(p.id).set(p).catch(()=>{}));
+        }
+      }, (err) => {
+        console.warn("Products sync warning:", err);
       });
-      renderOrdersTable();
-    }, (error) => {
-      console.log("Waiting for index or collection creation...", error);
-    });
 
-    // مزامنة الإعدادات والنصوص
-    db.collection("settings").doc("main").onSnapshot((doc) => {
-      if (doc.exists) {
-        const data = doc.data();
-        if (data.texts) customTexts = data.texts;
-        if (data.notify) notificationSettings = data.notify;
-        if (data.auth) currentAuth = data.auth;
-      }
-      applyTextsToUI();
-    });
+      db.collection("orders").onSnapshot((snapshot) => {
+        orders = [];
+        snapshot.forEach(doc => {
+          orders.push({ docId: doc.id, ...doc.data() });
+        });
+        orders.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+        localStorage.setItem('cached_orders', JSON.stringify(orders));
+        renderOrdersTable();
+      }, (err) => {
+        console.warn("Orders sync warning:", err);
+      });
+
+      db.collection("settings").doc("main").onSnapshot((doc) => {
+        if (doc.exists) {
+          const data = doc.data();
+          if (data.texts) { customTexts = data.texts; localStorage.setItem('cached_texts', JSON.stringify(customTexts)); }
+          if (data.notify) { notificationSettings = data.notify; localStorage.setItem('cached_notify', JSON.stringify(notificationSettings)); }
+          if (data.auth) currentAuth = data.auth;
+        }
+        applyTextsToUI();
+      }, (err) => {
+        console.warn("Settings sync warning:", err);
+      });
+    }
 
     function applyTextsToUI() {
-      document.getElementById('ui_store_name').textContent = customTexts.store_name;
-      document.getElementById('ui_store_subtitle').textContent = customTexts.store_subtitle;
-      document.getElementById('ui_top_announcement').textContent = customTexts.top_bar;
-      document.getElementById('ui_hero_title').childNodes[0].textContent = customTexts.hero_title + " ";
-      document.getElementById('ui_hero_span').textContent = customTexts.hero_span;
-      document.getElementById('ui_hero_desc').textContent = customTexts.hero_desc;
-      document.getElementById('ui_catalog_heading').textContent = customTexts.catalog_heading;
+      try {
+        document.getElementById('ui_store_name').textContent = customTexts.store_name;
+        document.getElementById('ui_store_subtitle').textContent = customTexts.store_subtitle;
+        document.getElementById('ui_top_announcement').textContent = customTexts.top_bar;
+        document.getElementById('ui_hero_title').childNodes[0].textContent = customTexts.hero_title + " ";
+        document.getElementById('ui_hero_span').textContent = customTexts.hero_span;
+        document.getElementById('ui_hero_desc').textContent = customTexts.hero_desc;
+        document.getElementById('ui_catalog_heading').textContent = customTexts.catalog_heading;
 
-      document.getElementById('cfg_store_name').value = customTexts.store_name;
-      document.getElementById('cfg_store_subtitle').value = customTexts.store_subtitle;
-      document.getElementById('cfg_btn_buy').value = customTexts.btn_buy;
-      document.getElementById('cfg_btn_cart').value = customTexts.btn_cart;
-      document.getElementById('cfg_top_bar').value = customTexts.top_bar;
-      document.getElementById('cfg_hero_title').value = customTexts.hero_title;
-      document.getElementById('cfg_hero_span').value = customTexts.hero_span;
-      document.getElementById('cfg_hero_desc').value = customTexts.hero_desc;
-      document.getElementById('cfg_catalog_heading').value = customTexts.catalog_heading;
+        document.getElementById('cfg_store_name').value = customTexts.store_name;
+        document.getElementById('cfg_store_subtitle').value = customTexts.store_subtitle;
+        document.getElementById('cfg_btn_buy').value = customTexts.btn_buy;
+        document.getElementById('cfg_btn_cart').value = customTexts.btn_cart;
+        document.getElementById('cfg_top_bar').value = customTexts.top_bar;
+        document.getElementById('cfg_hero_title').value = customTexts.hero_title;
+        document.getElementById('cfg_hero_span').value = customTexts.hero_span;
+        document.getElementById('cfg_hero_desc').value = customTexts.hero_desc;
+        document.getElementById('cfg_catalog_heading').value = customTexts.catalog_heading;
 
-      document.getElementById('cfg_notify_channel').value = notificationSettings.channel;
-      document.getElementById('cfg_notify_whatsapp').value = notificationSettings.whatsapp;
-      document.getElementById('cfg_notify_email').value = notificationSettings.email;
+        document.getElementById('cfg_notify_channel').value = notificationSettings.channel;
+        document.getElementById('cfg_notify_whatsapp').value = notificationSettings.whatsapp;
+        document.getElementById('cfg_notify_email').value = notificationSettings.email;
+      } catch(e) {}
     }
 
     function getFinalPrice(p) {
@@ -752,9 +765,8 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // فتح تفاصيل المنتج مع معرض الصور المتعددة
     function openProductDetailPage(id) {
-      const p = products.find(i => i.id === id);
+      const p = products.find(i => i.id == id);
       if (!p) return;
       const finalPrice = getFinalPrice(p);
       const imgList = (p.images && p.images.length > 0) ? p.images : [p.img || ''];
@@ -811,40 +823,39 @@
       thumbEl.classList.add('active');
     }
 
-    // إدارة السلة
     function addToCart(id) {
-      const p = products.find(i => i.id === id);
+      const p = products.find(i => i.id == id);
       if (!p || p.stock <= 0) { alert("عذراً، هذا المنتج غير متوفر حالياً!"); return; }
       const finalPrice = getFinalPrice(p);
       const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.img || '');
-      const item = cart.find(i => i.id === id);
+      const item = cart.find(i => i.id == id);
       if (item) item.qty += 1; else cart.push({ ...p, img: mainImg, price: finalPrice, qty: 1 });
       updateCartUI();
       alert(`تمت إضافة "${p.title}" إلى السلة!`);
     }
 
     function buyNowDirect(id) {
-      const p = products.find(i => i.id === id);
+      const p = products.find(i => i.id == id);
       if (!p || p.stock <= 0) { alert("عذراً، هذا المنتج غير متوفر حالياً!"); return; }
       const finalPrice = getFinalPrice(p);
       const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.img || '');
-      const item = cart.find(i => i.id === id);
+      const item = cart.find(i => i.id == id);
       if (item) item.qty += 1; else cart.push({ ...p, img: mainImg, price: finalPrice, qty: 1 });
       updateCartUI();
       goToCheckoutPage();
     }
 
     function changeCartItemQty(id, delta) {
-      const item = cart.find(i => i.id === id);
+      const item = cart.find(i => i.id == id);
       if (!item) return;
       item.qty += delta;
-      if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+      if (item.qty <= 0) cart = cart.filter(i => i.id != id);
       updateCartUI();
       renderCheckoutSummary();
     }
 
     function removeCartItem(id) {
-      cart = cart.filter(i => i.id !== id);
+      cart = cart.filter(i => i.id != id);
       updateCartUI();
       renderCheckoutSummary();
     }
@@ -917,7 +928,7 @@
       `).join('');
     }
 
-    // دالات التحقق الصارم من واقعية البيانات
+    // فحص البيانات الواقعية
     function validateRealName(name) {
       if (!name || name.length < 5) return false;
       const nameRegex = /^[\u0621-\u064A\u0660-\u0669a-zA-Z\s]+$/;
@@ -964,7 +975,6 @@
       return isValid;
     }
 
-    // تسجيل وتأكيد الطلب سحابياً
     async function handlePlaceOrder(e) {
       e.preventDefault();
       if (cart.length === 0) {
@@ -999,7 +1009,7 @@
       }
 
       if (!isNameValid || !isPhoneValid || !isCityValid || !isAddressValid || !isPhoneAltValid) {
-        alert("⚠️ تنبيه: يرجى كتابة بيانات حقيقية وصحيحة (الاسم، ورقم الهاتف، والعنوان بالتفصيل) ليتمكن المتجر من شحن طلبك.");
+        alert("⚠️ تنبيه: يرجى كتابة بيانات حقيقية وصحيحة ليتمكن المتجر من شحن طلبك.");
         return;
       }
 
@@ -1027,17 +1037,24 @@
       };
 
       try {
-        await db.collection("orders").add(newOrder);
-
-        for (const c of cart) {
-          const prod = products.find(p => p.id === c.id);
-          if (prod) {
-            const updatedStock = Math.max(0, (prod.stock || 0) - c.qty);
-            await db.collection("products").doc(prod.id).update({ stock: updatedStock });
+        if (db) {
+          await db.collection("orders").add(newOrder);
+          for (const c of cart) {
+            const prod = products.find(p => p.id == c.id);
+            if (prod) {
+              const updatedStock = Math.max(0, (prod.stock || 0) - c.qty);
+              await db.collection("products").doc(prod.id).update({ stock: updatedStock }).catch(()=>{});
+            }
           }
         }
+      } catch (err) {
+        console.warn("Could not save to Cloud DB, saved locally:", err);
+      }
 
-        const orderMessageText = 
+      orders.unshift(newOrder);
+      localStorage.setItem('cached_orders', JSON.stringify(orders));
+
+      const orderMessageText = 
 `طلب جديد من متجر زمزميتي (#${orderId})
 =============================
 العميل: ${nameVal}
@@ -1051,30 +1068,26 @@ ${itemsListFormatted}
 المبلغ الإجمالي: ${total} ج.م
 طريقة الدفع: الدفع نقداً عند الاستلام`;
 
-        alert(`أهلاً بك يا ${nameVal}! تم تسجيل طلبك بنجاح وحفظه سحابياً برقم (#${orderId}). سيتم توجيهك الآن لإرسال تفاصيل طلبك للإدارة.`);
+      alert(`أهلاً بك يا ${nameVal}! تم تسجيل طلبك بنجاح برقم (#${orderId}).`);
 
-        const whatsappUrl = `https://wa.me/${notificationSettings.whatsapp}?text=${encodeURIComponent(orderMessageText)}`;
-        const emailSubject = encodeURIComponent(`طلب شراء جديد رقم #${orderId} - ${nameVal}`);
-        const emailBody = encodeURIComponent(orderMessageText);
-        const gmailUrl = `mailto:${notificationSettings.email}?subject=${emailSubject}&body=${emailBody}`;
+      const whatsappUrl = `https://wa.me/${notificationSettings.whatsapp}?text=${encodeURIComponent(orderMessageText)}`;
+      const emailSubject = encodeURIComponent(`طلب شراء جديد رقم #${orderId} - ${nameVal}`);
+      const emailBody = encodeURIComponent(orderMessageText);
+      const gmailUrl = `mailto:${notificationSettings.email}?subject=${emailSubject}&body=${emailBody}`;
 
-        if (notificationSettings.channel === 'whatsapp') {
-          window.open(whatsappUrl, '_blank');
-        } else if (notificationSettings.channel === 'gmail') {
-          window.location.href = gmailUrl;
-        } else {
-          window.open(whatsappUrl, '_blank');
-          setTimeout(() => { window.location.href = gmailUrl; }, 800);
-        }
-
-        cart = [];
-        updateCartUI();
-        document.getElementById('orderForm').reset();
-        showCustomerStore();
-
-      } catch (err) {
-        alert("حدث خطأ أثناء الاتصال بالسيرفر: " + err.message);
+      if (notificationSettings.channel === 'whatsapp') {
+        window.open(whatsappUrl, '_blank');
+      } else if (notificationSettings.channel === 'gmail') {
+        window.location.href = gmailUrl;
+      } else {
+        window.open(whatsappUrl, '_blank');
+        setTimeout(() => { window.location.href = gmailUrl; }, 800);
       }
+
+      cart = [];
+      updateCartUI();
+      document.getElementById('orderForm').reset();
+      showCustomerStore();
     }
 
     // إدارة لوحة الأدمن
@@ -1119,12 +1132,13 @@ ${itemsListFormatted}
         return;
       }
 
-      tbody.innerHTML = orders.map((o) => {
+      tbody.innerHTML = orders.map((o, idx) => {
         let statusClass = 'status-pending';
         if (o.status === 'delivering') statusClass = 'status-delivering';
         else if (o.status === 'completed') statusClass = 'status-completed';
         else if (o.status === 'cancelled') statusClass = 'status-cancelled';
 
+        const rowId = o.docId || idx;
         return `
           <tr>
             <td style="font-weight:900; color:#0d9488;">${o.id}</td>
@@ -1137,7 +1151,7 @@ ${itemsListFormatted}
             <td style="font-weight:600; font-size:12px;">${o.items}</td>
             <td style="font-weight:900; color:#0f172a;">${o.total}</td>
             <td>
-              <select class="status-select ${statusClass}" onchange="updateOrderStatus('${o.docId}', this.value)">
+              <select class="status-select ${statusClass}" onchange="updateOrderStatus('${rowId}', this.value)">
                 <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>⏳ قيد التنفيذ (معلق)</option>
                 <option value="delivering" ${o.status === 'delivering' ? 'selected' : ''}>🚚 جاري الشحن</option>
                 <option value="completed" ${o.status === 'completed' ? 'selected' : ''}>✅ تم التسليم (إتمام البيع)</option>
@@ -1146,20 +1160,31 @@ ${itemsListFormatted}
             </td>
             <td style="color:#64748b; font-size:11px;">${o.date}</td>
             <td style="text-align:center;">
-              <button onclick="viewFullOrderDetails('${o.docId}')" class="btn-edit" style="margin-bottom:3px;">العنوان 🔍</button>
-              <button onclick="deleteOrder('${o.docId}')" class="btn-delete">حذف 🗑️</button>
+              <button onclick="viewFullOrderDetails('${rowId}')" class="btn-edit" style="margin-bottom:3px;">العنوان 🔍</button>
+              <button onclick="deleteOrder('${rowId}')" class="btn-delete">حذف 🗑️</button>
             </td>
           </tr>
         `;
       }).join('');
     }
 
-    async function updateOrderStatus(docId, newStatus) {
-      await db.collection("orders").doc(docId).update({ status: newStatus });
+    async function updateOrderStatus(rowId, newStatus) {
+      const order = orders.find(o => o.docId == rowId || o.id == rowId);
+      if (order) order.status = newStatus;
+      localStorage.setItem('cached_orders', JSON.stringify(orders));
+      renderOrdersTable();
+
+      if (db && typeof rowId === 'string' && rowId.length > 5) {
+        try {
+          await db.collection("orders").doc(rowId).update({ status: newStatus });
+        } catch(e) {
+          console.warn(e);
+        }
+      }
     }
 
-    function viewFullOrderDetails(docId) {
-      const o = orders.find(i => i.docId === docId);
+    function viewFullOrderDetails(rowId) {
+      const o = orders.find(i => i.docId == rowId || i.id == rowId);
       if (!o) return;
       document.getElementById('modalOrderTitle').textContent = `تفاصيل الطلب: ${o.id}`;
       document.getElementById('modalOrderContent').innerHTML = `
@@ -1211,15 +1236,29 @@ ${itemsListFormatted}
 
     async function clearAllOrders() {
       if (orders.length === 0) return;
-      if (!confirm("هل أنت متأكد من مسح جميع الطلبات نهائياً من السيرفر؟")) return;
-      for (const o of orders) {
-        await db.collection("orders").doc(o.docId).delete();
+      if (!confirm("هل أنت متأكد من مسح جميع الطلبات نهائياً؟")) return;
+      
+      const copy = [...orders];
+      orders = [];
+      localStorage.setItem('cached_orders', JSON.stringify(orders));
+      renderOrdersTable();
+
+      if (db) {
+        for (const o of copy) {
+          if (o.docId) await db.collection("orders").doc(o.docId).delete().catch(()=>{});
+        }
       }
     }
 
-    async function deleteOrder(docId) {
-      if (!confirm("هل تريد حذف هذا الطلب نهائياً من السيرفر؟")) return;
-      await db.collection("orders").doc(docId).delete();
+    async function deleteOrder(rowId) {
+      if (!confirm("هل تريد حذف هذا الطلب نهائياً؟")) return;
+      orders = orders.filter(o => o.docId != rowId && o.id != rowId);
+      localStorage.setItem('cached_orders', JSON.stringify(orders));
+      renderOrdersTable();
+
+      if (db && typeof rowId === 'string' && rowId.length > 5) {
+        await db.collection("orders").doc(rowId).delete().catch(()=>{});
+      }
     }
 
     function renderAdminTable() {
@@ -1254,17 +1293,36 @@ ${itemsListFormatted}
 
     async function saveNotificationSettings(e) {
       e.preventDefault();
+      const btn = document.getElementById('btnSaveNotify');
+      btn.textContent = "جاري الحفظ...";
+      btn.disabled = true;
+
       const updated = {
         channel: document.getElementById('cfg_notify_channel').value,
         whatsapp: document.getElementById('cfg_notify_whatsapp').value.trim() || "201000000000",
         email: document.getElementById('cfg_notify_email').value.trim() || "store@example.com"
       };
-      await db.collection("settings").doc("main").set({ notify: updated }, { merge: true });
-      alert("تم حفظ إعدادات الربط سحابياً بنجاح!");
+
+      notificationSettings = updated;
+      localStorage.setItem('cached_notify', JSON.stringify(updated));
+
+      try {
+        if (db) await db.collection("settings").doc("main").set({ notify: updated }, { merge: true });
+        alert("تم حفظ إعدادات الربط بنجاح!");
+      } catch(err) {
+        alert("تم الحفظ محلياً! (ملاحظة: تأكد من تفعيل قواعد Rules في فايربيس: " + err.message + ")");
+      } finally {
+        btn.textContent = "حفظ إعدادات الربط سحابياً";
+        btn.disabled = false;
+      }
     }
 
     async function saveCustomTexts(e) {
       e.preventDefault();
+      const btn = document.getElementById('btnSaveTexts');
+      btn.textContent = "جاري الحفظ...";
+      btn.disabled = true;
+
       const updated = {
         store_name: document.getElementById('cfg_store_name').value,
         store_subtitle: document.getElementById('cfg_store_subtitle').value,
@@ -1276,11 +1334,23 @@ ${itemsListFormatted}
         hero_desc: document.getElementById('cfg_hero_desc').value,
         catalog_heading: document.getElementById('cfg_catalog_heading').value
       };
-      await db.collection("settings").doc("main").set({ texts: updated }, { merge: true });
-      alert("تم حفظ ونشر النصوص الجديدة سحابياً لكل المستخدمين!");
+
+      customTexts = updated;
+      localStorage.setItem('cached_texts', JSON.stringify(updated));
+      applyTextsToUI();
+      renderStore();
+
+      try {
+        if (db) await db.collection("settings").doc("main").set({ texts: updated }, { merge: true });
+        alert("تم حفظ وتحديث النصوص في الموقع بنجاح!");
+      } catch(err) {
+        alert("تم الحفظ محلياً! (ملاحظة: تأكد من تفعيل قواعد Rules في فايربيس: " + err.message + ")");
+      } finally {
+        btn.textContent = "حفظ التغييرات سحابياً";
+        btn.disabled = false;
+      }
     }
 
-    // ================= معالجة وضغط عدة صور معاً =================
     function compressImageFile(file) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -1289,14 +1359,15 @@ ${itemsListFormatted}
           img.src = e.target.result;
           img.onload = function() {
             const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 550;
+            const MAX_WIDTH = 480;
             const scaleSize = MAX_WIDTH / img.width;
             canvas.width = MAX_WIDTH;
             canvas.height = img.height * scaleSize;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            resolve(canvas.toDataURL('image/jpeg', 0.7));
+            resolve(canvas.toDataURL('image/jpeg', 0.6));
           };
+          img.onerror = () => resolve('');
         };
         reader.readAsDataURL(file);
       });
@@ -1308,10 +1379,9 @@ ${itemsListFormatted}
 
       for (const file of files) {
         const base64 = await compressImageFile(file);
-        if (mode === 'new') {
-          newProductImages.push(base64);
-        } else {
-          editProductImages.push(base64);
+        if (base64) {
+          if (mode === 'new') newProductImages.push(base64);
+          else editProductImages.push(base64);
         }
       }
       renderPreviewThumbs(mode);
@@ -1331,27 +1401,29 @@ ${itemsListFormatted}
     }
 
     function removeUploadedThumb(index, mode) {
-      if (mode === 'new') {
-        newProductImages.splice(index, 1);
-      } else {
-        editProductImages.splice(index, 1);
-      }
+      if (mode === 'new') newProductImages.splice(index, 1);
+      else editProductImages.splice(index, 1);
       renderPreviewThumbs(mode);
     }
 
     function openAddProductModal() {
       newProductImages = [];
       document.getElementById('newImagesPreview').innerHTML = '';
-      document.getElementById('newFileInput').value = '';
+      const fileInput = document.getElementById('newFileInput');
+      if (fileInput) fileInput.value = '';
       document.getElementById('addProductModal').classList.remove('hidden');
     }
 
     async function handleAddNewProduct(e) {
       e.preventDefault();
       if (newProductImages.length === 0) {
-        alert("يرجى اختيار صورة واحدة على الأقل للزمزمية!");
+        alert("يرجى اختيار صورة واحدة على الأقل للزمزمية من زر اختيار الصور!");
         return;
       }
+
+      const btn = document.getElementById('btnSaveNewProduct');
+      btn.textContent = "جاري النشر...";
+      btn.disabled = true;
 
       const newProd = {
         title: document.getElementById('newTitle').value,
@@ -1363,15 +1435,31 @@ ${itemsListFormatted}
         desc: document.getElementById('newDesc').value || "زمزمية طبية فاخرة بعزل حراري عالي الجودة."
       };
       
-      await db.collection("products").add(newProd);
-      closeModal('addProductModal');
-      e.target.reset();
-      newProductImages = [];
-      alert("تمت إضافة الزمزمية وصورها المتعددة سحابياً بنجاح!");
+      try {
+        if (db) {
+          const docRef = await db.collection("products").add(newProd);
+          newProd.id = docRef.id;
+        } else {
+          newProd.id = "local_" + Date.now();
+        }
+        products.unshift(newProd);
+        localStorage.setItem('cached_prods', JSON.stringify(products));
+        renderAdminTable();
+        renderStore();
+        closeModal('addProductModal');
+        e.target.reset();
+        newProductImages = [];
+        alert("تمت إضافة الزمزمية وصورها بنجاح!");
+      } catch(err) {
+        alert("تعذر الحفظ في فايربيس (تأكد من فتح Rules في فايربيس): " + err.message);
+      } finally {
+        btn.textContent = "نشر الزمزمية لكل الأجهزة فوراً ☁️";
+        btn.disabled = false;
+      }
     }
 
     function openEditProduct(id) {
-      const p = products.find(i => i.id === id);
+      const p = products.find(i => i.id == id);
       if (!p) return;
       editProductImages = (p.images && p.images.length > 0) ? [...p.images] : (p.img ? [p.img] : []);
       document.getElementById('editProdId').value = p.id;
@@ -1381,7 +1469,8 @@ ${itemsListFormatted}
       document.getElementById('editProdStock').value = p.stock;
       document.getElementById('editProdCap').value = p.capacity;
       document.getElementById('editProdDesc').value = p.desc;
-      document.getElementById('editProdFileInput').value = '';
+      const fileInput = document.getElementById('editProdFileInput');
+      if (fileInput) fileInput.value = '';
       renderPreviewThumbs('edit');
       document.getElementById('editProductModal').classList.remove('hidden');
     }
@@ -1392,6 +1481,10 @@ ${itemsListFormatted}
         alert("يجب أن يحتوي المنتج على صورة واحدة على الأقل!");
         return;
       }
+
+      const btn = document.getElementById('btnSaveEditProduct');
+      btn.textContent = "جاري الحفظ...";
+      btn.disabled = true;
 
       const id = document.getElementById('editProdId').value;
       const updateData = {
@@ -1404,14 +1497,35 @@ ${itemsListFormatted}
         images: editProductImages
       };
 
-      await db.collection("products").doc(id).update(updateData);
-      closeModal('editProductModal');
-      alert("تم تحديث بيانات الزمزمية ومجموعة الصور سحابياً!");
+      try {
+        if (db && !id.startsWith("local_")) {
+          await db.collection("products").doc(id).update(updateData);
+        }
+        const prod = products.find(p => p.id == id);
+        if (prod) Object.assign(prod, updateData);
+        localStorage.setItem('cached_prods', JSON.stringify(products));
+        renderAdminTable();
+        renderStore();
+        closeModal('editProductModal');
+        alert("تم تحديث بيانات الزمزمية وصورها بنجاح!");
+      } catch(err) {
+        alert("تعذر الحفظ في فايربيس (تأكد من فتح Rules في فايربيس): " + err.message);
+      } finally {
+        btn.textContent = "حفظ التحديثات سحابياً";
+        btn.disabled = false;
+      }
     }
 
     async function deleteProduct(id) {
-      if (!confirm("هل أنت متأكد من حذف هذه الزمزمية نهائياً من المتجر لكل المستخدمين؟")) return;
-      await db.collection("products").doc(id).delete();
+      if (!confirm("هل أنت متأكد من حذف هذه الزمزمية نهائياً من المتجر؟")) return;
+      products = products.filter(p => p.id != id);
+      localStorage.setItem('cached_prods', JSON.stringify(products));
+      renderAdminTable();
+      renderStore();
+
+      if (db && !id.startsWith("local_")) {
+        try { await db.collection("products").doc(id).delete(); } catch(e){}
+      }
     }
 
     function handleAdminClick() {
@@ -1464,19 +1578,37 @@ ${itemsListFormatted}
 
     async function saveNewCredentials(e) {
       e.preventDefault();
+      const btn = document.getElementById('btnSavePass');
+      btn.textContent = "جاري الحفظ...";
+      btn.disabled = true;
+
       const email = document.getElementById('newAdminEmail').value.trim();
       const pass = document.getElementById('newAdminPass').value.trim();
       const newAuth = { email, pass };
-      await db.collection("settings").doc("main").set({ auth: newAuth }, { merge: true });
-      currentAuth = newAuth;
-      closeModal('changePassModal');
-      alert("تم حفظ وتحديث بيانات دخول الأدمن سحابياً بنجاح!");
+      
+      try {
+        if (db) await db.collection("settings").doc("main").set({ auth: newAuth }, { merge: true });
+        currentAuth = newAuth;
+        closeModal('changePassModal');
+        alert("تم تحديث وحفظ بيانات الدخول الجديدة بنجاح!");
+      } catch(err) {
+        alert("حدث خطأ أثناء حفظ البيانات: " + err.message);
+      } finally {
+        btn.textContent = "حفظ البيانات سحابياً";
+        btn.disabled = false;
+      }
     }
 
-    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    function closeModal(id) { 
+      const el = document.getElementById(id);
+      if (el) el.classList.add('hidden'); 
+    }
 
-    // التشغيل
+    // التشغيل الأولي
     applyTextsToUI();
+    renderStore();
+    renderAdminTable();
+    renderOrdersTable();
     updateCartUI();
   </script>
 </body>
