@@ -140,20 +140,20 @@
         <p style="font-size: 12px; color: #64748b; font-weight: 700;">تحكم كامل في فيسبوك، انستجرام، تيك توك، رفع صور الأزرار، الخلفية، والمنتجات</p>
       </div>
       <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-        <button onclick="openAddProductModal()" class="btn-buy">+ إضافة زمزمية جديدة</button>
-        <button onclick="openChangePassModal()" class="btn-dark">🔑 تغيير الباسورد</button>
+        <button type="button" onclick="openAddProductModal()" class="btn-buy">+ إضافة زمزمية جديدة</button>
+        <button type="button" onclick="openChangePassModal()" class="btn-dark">🔑 تغيير الباسورد</button>
         <a href="index.html" target="_blank" class="btn-dark" style="background:#475569;">🏪 فتح المتجر الحي</a>
-        <button onclick="adminLogout()" class="btn-delete" style="padding: 10px 16px;">خروج 🚪</button>
+        <button type="button" onclick="adminLogout()" class="btn-delete" style="padding: 10px 16px;">خروج 🚪</button>
       </div>
     </div>
 
     <div class="admin-tabs">
-      <button class="tab-btn active" id="tabButtonsMgrBtn" onclick="switchAdminTab('buttonsMgr')">📱 أزرار السوشيال (فيسبوك/انستجرام/تيك توك) والصور</button>
-      <button class="tab-btn" id="tabOrdersBtn" onclick="switchAdminTab('orders')">📥 الطلبات والمبيعات</button>
-      <button class="tab-btn" id="tabProductsBtn" onclick="switchAdminTab('products')">📦 الزمزميات والمخزون</button>
-      <button class="tab-btn" id="tabThemeBtn" onclick="switchAdminTab('theme')">🎨 اللوجو والباك جروند والألوان</button>
-      <button class="tab-btn" id="tabTextsBtn" onclick="switchAdminTab('texts')">✏️ النصوص والمميزات</button>
-      <button class="tab-btn" id="tabNotifyBtn" onclick="switchAdminTab('notify')">⚡ الربط (واتساب وجيميل)</button>
+      <button type="button" class="tab-btn active" id="tabButtonsMgrBtn" onclick="switchAdminTab('buttonsMgr')">📱 أزرار السوشيال (فيسبوك/انستجرام/تيك توك) والصور</button>
+      <button type="button" class="tab-btn" id="tabOrdersBtn" onclick="switchAdminTab('orders')">📥 الطلبات والمبيعات</button>
+      <button type="button" class="tab-btn" id="tabProductsBtn" onclick="switchAdminTab('products')">📦 الزمزميات والمخزون</button>
+      <button type="button" class="tab-btn" id="tabThemeBtn" onclick="switchAdminTab('theme')">🎨 اللوجو والباك جروند والألوان</button>
+      <button type="button" class="tab-btn" id="tabTextsBtn" onclick="switchAdminTab('texts')">✏️ النصوص والمميزات</button>
+      <button type="button" class="tab-btn" id="tabNotifyBtn" onclick="switchAdminTab('notify')">⚡ الربط (واتساب وجيميل)</button>
     </div>
 
     <!-- ================= تبويب 1: أزرار السوشيال ورفع الصور ================= -->
@@ -164,7 +164,7 @@
 
         <div id="socialLinksListContainer" style="margin-bottom: 16px;"></div>
 
-        <button onclick="saveAllSocialLinks()" id="btnSaveSocials" class="btn-submit" style="max-width: 320px; margin-bottom: 24px;">💾 حفظ ونشر أزرار السوشيال في المتجر ☁️</button>
+        <button type="button" onclick="saveAllSocialLinks()" id="btnSaveSocials" class="btn-submit" style="max-width: 320px; margin-bottom: 24px;">💾 حفظ ونشر أزرار السوشيال في المتجر ☁️</button>
 
         <div style="background: #f0fdfa; padding: 20px; border-radius: 16px; border: 1.5px dashed #0d9488;">
           <h4 style="font-size: 15px; font-weight: 900; margin-bottom: 12px; color: #0f766e;">➕ إضافة زر سوشيال أو موقع جديد (بالشعار الجاهز أو برفع صورة من جهازك):</h4>
@@ -256,7 +256,7 @@
           <label class="toggle-item"><span>زر "اطلبها الآن ⚡"</span><input type="checkbox" id="tog_showBuyNowBtn" checked></label>
           <label class="toggle-item"><span>شريط الشحن المجاني في السلة</span><input type="checkbox" id="tog_showFreeShipBar" checked></label>
         </div>
-        <button onclick="saveTogglesSettings()" id="btnSaveToggles" class="btn-submit" style="max-width: 280px; margin-top: 0;">حفظ إعدادات الإظهار والإخفاء ☁️</button>
+        <button type="button" onclick="saveTogglesSettings()" id="btnSaveToggles" class="btn-submit" style="max-width: 280px; margin-top: 0;">حفظ إعدادات الإظهار والإخفاء ☁️</button>
       </div>
     </div>
 
@@ -284,8 +284,8 @@
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
         <h3 style="font-weight: 900; font-size:17px;">إدارة حالات الطلبات:</h3>
         <div style="display:flex; gap:8px;">
-          <button onclick="exportOrdersToCSV()" class="btn-buy" style="background:#15803d; font-size:12px;">📊 تصدير Excel</button>
-          <button onclick="clearAllOrders()" class="btn-delete" style="font-size:12px;">🗑️ مسح السجل</button>
+          <button type="button" onclick="exportOrdersToCSV()" class="btn-buy" style="background:#15803d; font-size:12px;">📊 تصدير Excel</button>
+          <button type="button" onclick="clearAllOrders()" class="btn-delete" style="font-size:12px;">🗑️ مسح السجل</button>
         </div>
       </div>
 
@@ -303,6 +303,9 @@
 
     <!-- ================= تبويب 3: المنتجات ================= -->
     <div id="adminTabProducts" class="hidden">
+      <div style="margin-bottom: 15px;">
+        <button type="button" onclick="openAddProductModal()" class="btn-buy">+ إضافة زمزمية جديدة للمتجر</button>
+      </div>
       <div class="table-container">
         <table>
           <thead>
@@ -319,6 +322,17 @@
     <div id="adminTabTheme" class="hidden">
       <div class="card-box">
         <h3>🎨 التحكم الكامل في اللوجو، الباك جروند، وألوان الموقع</h3>
+        <div style="margin-bottom: 20px; padding: 14px; background: #f8fafc; border-radius: 14px; border: 1px solid #e2e8f0;">
+          <label style="font-size: 12px; font-weight: 800; display: block; margin-bottom: 8px;">✨ قوالب ألوان جاهزة بضغطة واحدة:</label>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" class="preset-btn" onclick="applyThemePreset('#0d9488', '#f8fafc', '#ffffff', '#0f172a', '#f0fdfa', '#f8fafc', '#0f766e')">🌊 تركواز مائي</button>
+            <button type="button" class="preset-btn" onclick="applyThemePreset('#2563eb', '#f8fafc', '#ffffff', '#0f172a', '#eff6ff', '#f8fafc', '#1d4ed8')">💙 أزرق ملكي</button>
+            <button type="button" class="preset-btn" onclick="applyThemePreset('#7c3aed', '#faf5ff', '#ffffff', '#1e1b4b', '#f3e8ff', '#faf5ff', '#6d28d9')">💜 بنفسجي عصري</button>
+            <button type="button" class="preset-btn" onclick="applyThemePreset('#ea580c', '#fff7ed', '#ffffff', '#431407', '#ffedd5', '#fff7ed', '#c2410c')">🧡 برتقالي ناري</button>
+            <button type="button" class="preset-btn" onclick="applyThemePreset('#059669', '#f0fdf4', '#ffffff', '#064e3b', '#dcfce7', '#f0fdf4', '#047857')">🌿 أخضر زمردي</button>
+          </div>
+        </div>
+
         <form onsubmit="saveThemeSettings(event)">
           <div class="form-grid">
             <div class="form-group"><label>اللون الأساسي للموقع والأزرار</label><input type="color" id="cfg_theme_primary" value="#0d9488"></div>
@@ -365,7 +379,7 @@
       </div>
     </div>
 
-    <!-- ================= تبويب 5: النصوص ================= -->
+    <!-- ================= تبويب 5: النصوص والمميزات ================= -->
     <div id="adminTabTexts" class="hidden">
       <form onsubmit="saveCustomTexts(event)">
         <div class="card-box">
@@ -387,7 +401,25 @@
             <div class="form-group"><label>نص الحقوق في الفوتر</label><input type="text" id="cfg_footer_copy" required></div>
           </div>
         </div>
-        <button type="submit" id="btnSaveTexts" class="btn-submit" style="max-width: 300px;">حفظ جميع النصوص ☁️</button>
+
+        <div class="card-box">
+          <h3>🛡️ تعديل مربعات المميزات الأربعة</h3>
+          <div class="form-grid">
+            <div class="form-group"><label>أيقونة 1</label><input type="text" id="cfg_t1_icon"></div>
+            <div class="form-group"><label>عنوان 1</label><input type="text" id="cfg_t1_title"></div>
+            <div class="form-group"><label>وصف 1</label><input type="text" id="cfg_t1_desc"></div>
+            <div class="form-group"><label>أيقونة 2</label><input type="text" id="cfg_t2_icon"></div>
+            <div class="form-group"><label>عنوان 2</label><input type="text" id="cfg_t2_title"></div>
+            <div class="form-group"><label>وصف 2</label><input type="text" id="cfg_t2_desc"></div>
+            <div class="form-group"><label>أيقونة 3</label><input type="text" id="cfg_t3_icon"></div>
+            <div class="form-group"><label>عنوان 3</label><input type="text" id="cfg_t3_title"></div>
+            <div class="form-group"><label>وصف 3</label><input type="text" id="cfg_t3_desc"></div>
+            <div class="form-group"><label>أيقونة 4</label><input type="text" id="cfg_t4_icon"></div>
+            <div class="form-group"><label>عنوان 4</label><input type="text" id="cfg_t4_title"></div>
+            <div class="form-group"><label>وصف 4</label><input type="text" id="cfg_t4_desc"></div>
+          </div>
+          <button type="submit" id="btnSaveTexts" class="btn-submit" style="max-width: 300px;">حفظ جميع النصوص والمميزات ☁️</button>
+        </div>
       </form>
     </div>
 
@@ -418,10 +450,10 @@
     </div>
   </div>
 
-  <!-- النوافذ المنبثقة -->
+  <!-- النوافذ المنبثقة (Modals) -->
   <div id="orderDetailsModal" class="modal-overlay hidden">
     <div class="modal">
-      <button class="modal-close" onclick="closeModal('orderDetailsModal')">✕</button>
+      <button type="button" class="modal-close" onclick="closeModal('orderDetailsModal')">✕</button>
       <h3 id="modalOrderTitle" style="margin-bottom: 14px; font-weight: 900;">تفاصيل الطلب</h3>
       <div id="modalOrderContent" style="font-size: 13px; line-height: 1.8;"></div>
     </div>
@@ -429,7 +461,7 @@
 
   <div id="editProductModal" class="modal-overlay hidden">
     <div class="modal">
-      <button class="modal-close" onclick="closeModal('editProductModal')">✕</button>
+      <button type="button" class="modal-close" onclick="closeModal('editProductModal')">✕</button>
       <h3 style="margin-bottom: 14px; font-weight: 900;">تعديل الزمزمية وصورها</h3>
       <form onsubmit="saveProductEdit(event)">
         <input type="hidden" id="editProdId">
@@ -443,7 +475,7 @@
           <div class="form-group"><label>السعة</label><input type="text" id="editProdCap" required></div>
         </div>
         <div class="form-group">
-          <label>إضافة صور للمنتج</label>
+          <label>إضافة صور للمنتج (تظهر كاملة وبدون قص)</label>
           <input type="file" id="editProdFileInput" accept="image/*" multiple onchange="handleMultipleImagesUpload(event, 'edit')">
           <div id="editImagesPreview" class="images-preview-grid"></div>
         </div>
@@ -455,24 +487,24 @@
 
   <div id="addProductModal" class="modal-overlay hidden">
     <div class="modal">
-      <button class="modal-close" onclick="closeModal('addProductModal')">✕</button>
-      <h3 style="margin-bottom: 14px; font-weight: 900;">إضافة زمزمية جديدة</h3>
+      <button type="button" class="modal-close" onclick="closeModal('addProductModal')">✕</button>
+      <h3 style="margin-bottom: 14px; font-weight: 900;">إضافة زمزمية جديدة للمتجر</h3>
       <form onsubmit="handleAddNewProduct(event)">
-        <div class="form-group"><label>اسم الزمزمية *</label><input type="text" id="newTitle" required></div>
+        <div class="form-group"><label>اسم الزمزمية *</label><input type="text" id="newTitle" required placeholder="مثال: زمزمية ستانلس ديجيتال"></div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div class="form-group"><label>السعر (ج.م) *</label><input type="number" id="newPrice" required min="1"></div>
+          <div class="form-group"><label>السعر (ج.م) *</label><input type="number" id="newPrice" required min="1" placeholder="350"></div>
           <div class="form-group"><label>الخصم (%)</label><input type="number" id="newDiscount" min="0" max="95" value="0"></div>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <div class="form-group"><label>المخزون *</label><input type="number" id="newStock" required min="1" value="20"></div>
-          <div class="form-group"><label>السعة *</label><input type="text" id="newCap" required></div>
+          <div class="form-group"><label>السعة *</label><input type="text" id="newCap" required placeholder="مثال: 750 مل"></div>
         </div>
         <div class="form-group">
-          <label>صور الزمزمية *</label>
+          <label>صور الزمزمية (اختر صورة أو عدة صور) *</label>
           <input type="file" id="newFileInput" accept="image/*" multiple onchange="handleMultipleImagesUpload(event, 'new')">
           <div id="newImagesPreview" class="images-preview-grid"></div>
         </div>
-        <div class="form-group"><label>الوصف</label><textarea id="newDesc" rows="3"></textarea></div>
+        <div class="form-group"><label>الوصف</label><textarea id="newDesc" rows="3" placeholder="اكتب مواصفات الزمزمية..."></textarea></div>
         <button type="submit" id="btnSaveNewProduct" class="btn-submit">نشر الزمزمية فوراً ☁️</button>
       </form>
     </div>
@@ -480,12 +512,18 @@
 
   <div id="changePassModal" class="modal-overlay hidden">
     <div class="modal">
-      <button class="modal-close" onclick="closeModal('changePassModal')">✕</button>
+      <button type="button" class="modal-close" onclick="closeModal('changePassModal')">✕</button>
       <h3 style="margin-bottom: 14px; font-weight: 900;">تغيير بيانات دخول الأدمن</h3>
-      <form onsubmit="saveNewCredentials(event)">
-        <div class="form-group"><label>الإيميل الجديد</label><input type="password" id="newAdminEmail" required placeholder="••••••••••••••" autocomplete="new-password"></div>
-        <div class="form-group"><label>الباسورد الجديد</label><input type="password" id="newAdminPass" required minlength="4" placeholder="••••••••" autocomplete="new-password"></div>
-        <button type="submit" id="btnSavePass" class="btn-submit">حفظ البيانات سحابياً</button>
+      <form onsubmit="saveNewCredentials(event)" autocomplete="off">
+        <div class="form-group">
+          <label>الإيميل / اليوزر الجديد (مخفي أثناء الكتابة)</label>
+          <input type="password" id="newAdminEmail" required placeholder="••••••••••••••" dir="ltr" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور الجديدة (مخفية أثناء الكتابة)</label>
+          <input type="password" id="newAdminPass" required minlength="4" placeholder="••••••••" dir="ltr" autocomplete="new-password">
+        </div>
+        <button type="submit" id="btnSavePass" class="btn-submit">حفظ البيانات الجديدة سحابياً</button>
       </form>
     </div>
   </div>
@@ -613,6 +651,7 @@
       });
     }
 
+    // تسجيل الدخول والخروج
     function doAdminLogin(e) {
       e.preventDefault();
       const email = document.getElementById('loginEmail').value.trim().toLowerCase();
@@ -624,6 +663,7 @@
 
       if (isMatch) {
         sessionStorage.setItem('is_admin_logged', 'true');
+        document.getElementById('loginError').classList.add('hidden');
         checkLoginState();
       } else {
         document.getElementById('loginError').classList.remove('hidden');
@@ -650,6 +690,7 @@
       checkLoginState();
     }
 
+    // إدارة السوشيال ميديا وصور الأزرار
     function renderSocialLinksAdmin() {
       const container = document.getElementById('socialLinksListContainer');
       if (!socialLinks || socialLinks.length === 0) {
@@ -758,7 +799,7 @@
     }
 
     async function removeSocialButton(id) {
-      if (!confirm("حذف هذا الزر؟")) return;
+      if (!confirm("حذف هذا الزر من الموقع؟")) return;
       socialLinks = socialLinks.filter(s => s.id !== id);
       await db.collection("settings").doc("main").set({ socialLinks }, { merge: true });
     }
@@ -797,7 +838,7 @@
             ${b.customImg ? `<img src="${b.customImg}" style="width:28px; height:28px; object-fit:contain; border-radius:6px; background:#fff;">` : `<span style="display:inline-block; width:18px; height:18px; border-radius:50%; background:${b.color};"></span>`}
             <strong>${b.label}</strong>
           </div>
-          <button onclick="removeCustomButton('${b.id}')" class="btn-delete">مسح 🗑️</button>
+          <button type="button" onclick="removeCustomButton('${b.id}')" class="btn-delete">مسح 🗑️</button>
         </div>
       `).join('');
     }
@@ -818,6 +859,19 @@
         document.getElementById('cfg_free_ship_target').value = customTexts.free_ship_target ?? 350;
         document.getElementById('cfg_footer_desc').value = customTexts.footer_desc || "";
         document.getElementById('cfg_footer_copy').value = customTexts.footer_copy || "";
+
+        document.getElementById('cfg_t1_icon').value = customTexts.t1_icon || "❄️";
+        document.getElementById('cfg_t1_title').value = customTexts.t1_title || "";
+        document.getElementById('cfg_t1_desc').value = customTexts.t1_desc || "";
+        document.getElementById('cfg_t2_icon').value = customTexts.t2_icon || "🛡️";
+        document.getElementById('cfg_t2_title').value = customTexts.t2_title || "";
+        document.getElementById('cfg_t2_desc').value = customTexts.t2_desc || "";
+        document.getElementById('cfg_t3_icon').value = customTexts.t3_icon || "🚚";
+        document.getElementById('cfg_t3_title').value = customTexts.t3_title || "";
+        document.getElementById('cfg_t3_desc').value = customTexts.t3_desc || "";
+        document.getElementById('cfg_t4_icon').value = customTexts.t4_icon || "🤝";
+        document.getElementById('cfg_t4_title').value = customTexts.t4_title || "";
+        document.getElementById('cfg_t4_desc').value = customTexts.t4_desc || "";
 
         document.getElementById('cfg_theme_primary').value = themeSettings.primaryColor || "#0d9488";
         document.getElementById('cfg_theme_bg').value = themeSettings.bgColor || "#f8fafc";
@@ -840,6 +894,10 @@
         document.getElementById('tog_showStockBar').checked = uiToggles.showStockBar !== false;
         document.getElementById('tog_showBuyNowBtn').checked = uiToggles.showBuyNowBtn !== false;
         document.getElementById('tog_showFreeShipBar').checked = uiToggles.showFreeShipBar !== false;
+
+        document.getElementById('cfg_notify_channel').value = notificationSettings.channel || "both";
+        document.getElementById('cfg_notify_whatsapp').value = notificationSettings.whatsapp || "";
+        document.getElementById('cfg_notify_email').value = notificationSettings.email || "";
       } catch(e) {}
     }
 
@@ -882,6 +940,8 @@
 
     async function saveThemeSettings(e) {
       e.preventDefault();
+      const btn = document.getElementById('btnSaveTheme');
+      btn.textContent = "جاري الحفظ..."; btn.disabled = true;
       const updatedTheme = {
         primaryColor: document.getElementById('cfg_theme_primary').value,
         bgColor: document.getElementById('cfg_theme_bg').value,
@@ -895,11 +955,16 @@
         heroBgImage: themeSettings.heroBgImage || "",
         siteBgImage: themeSettings.siteBgImage || ""
       };
-      await db.collection("settings").doc("main").set({ theme: updatedTheme }, { merge: true });
-      alert("تم حفظ التصميم بنجاح!");
+      try {
+        await db.collection("settings").doc("main").set({ theme: updatedTheme }, { merge: true });
+        alert("تم حفظ التصميم واللوجو والباك جروند بنجاح!");
+      } catch(err) { alert("خطأ: " + err.message); }
+      finally { btn.textContent = "حفظ اللوجو والباك جروند والألوان ☁️"; btn.disabled = false; }
     }
 
     async function saveTogglesSettings() {
+      const btn = document.getElementById('btnSaveToggles');
+      btn.textContent = "جاري الحفظ..."; btn.disabled = true;
       const updatedToggles = {
         showTopBar: document.getElementById('tog_showTopBar').checked,
         showHeroBadge: document.getElementById('tog_showHeroBadge').checked,
@@ -910,12 +975,17 @@
         showBuyNowBtn: document.getElementById('tog_showBuyNowBtn').checked,
         showFreeShipBar: document.getElementById('tog_showFreeShipBar').checked
       };
-      await db.collection("settings").doc("main").set({ toggles: updatedToggles }, { merge: true });
-      alert("تم حفظ الإعدادات بنجاح!");
+      try {
+        await db.collection("settings").doc("main").set({ toggles: updatedToggles }, { merge: true });
+        alert("تم حفظ إعدادات الإظهار والإخفاء بنجاح!");
+      } catch(err) { alert("خطأ: " + err.message); }
+      finally { btn.textContent = "حفظ إعدادات الإظهار والإخفاء ☁️"; btn.disabled = false; }
     }
 
     async function saveCustomTexts(e) {
       e.preventDefault();
+      const btn = document.getElementById('btnSaveTexts');
+      btn.textContent = "جاري الحفظ..."; btn.disabled = true;
       const updated = {
         store_name: document.getElementById('cfg_store_name').value,
         store_subtitle: document.getElementById('cfg_store_subtitle').value,
@@ -930,10 +1000,33 @@
         catalog_heading: document.getElementById('cfg_catalog_heading').value,
         free_ship_target: Number(document.getElementById('cfg_free_ship_target').value || 350),
         footer_desc: document.getElementById('cfg_footer_desc').value,
-        footer_copy: document.getElementById('cfg_footer_copy').value
+        footer_copy: document.getElementById('cfg_footer_copy').value,
+        t1_icon: document.getElementById('cfg_t1_icon').value, t1_title: document.getElementById('cfg_t1_title').value, t1_desc: document.getElementById('cfg_t1_desc').value,
+        t2_icon: document.getElementById('cfg_t2_icon').value, t2_title: document.getElementById('cfg_t2_title').value, t2_desc: document.getElementById('cfg_t2_desc').value,
+        t3_icon: document.getElementById('cfg_t3_icon').value, t3_title: document.getElementById('cfg_t3_title').value, t3_desc: document.getElementById('cfg_t3_desc').value,
+        t4_icon: document.getElementById('cfg_t4_icon').value, t4_title: document.getElementById('cfg_t4_title').value, t4_desc: document.getElementById('cfg_t4_desc').value
       };
-      await db.collection("settings").doc("main").set({ texts: updated }, { merge: true });
-      alert("تم حفظ النصوص بنجاح!");
+      try {
+        await db.collection("settings").doc("main").set({ texts: updated }, { merge: true });
+        alert("تم حفظ جميع النصوص والمميزات بنجاح!");
+      } catch(err) { alert("خطأ: " + err.message); }
+      finally { btn.textContent = "حفظ جميع النصوص والمميزات ☁️"; btn.disabled = false; }
+    }
+
+    async function saveNotificationSettings(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSaveNotify');
+      btn.textContent = "جاري الحفظ..."; btn.disabled = true;
+      const updated = {
+        channel: document.getElementById('cfg_notify_channel').value,
+        whatsapp: document.getElementById('cfg_notify_whatsapp').value.trim() || "201000000000",
+        email: document.getElementById('cfg_notify_email').value.trim() || "store@example.com"
+      };
+      try {
+        await db.collection("settings").doc("main").set({ notify: updated }, { merge: true });
+        alert("تم حفظ إعدادات الربط بنجاح!");
+      } catch(err) { alert("خطأ: " + err.message); }
+      finally { btn.textContent = "حفظ إعدادات الربط سحابياً"; btn.disabled = false; }
     }
 
     function getFinalPrice(p) {
@@ -962,49 +1055,302 @@
       }
     }
 
+    // إدارة الطلبات
     function renderOrdersTable() {
       const tbody = document.getElementById('ordersTableBody');
-      tbody.innerHTML = orders.length === 0 ? `<tr><td colspan="9" style="text-align:center; padding:30px;">لا توجد طلبات حتى الآن.</td></tr>` :
-      orders.map(o => `
-        <tr>
-          <td style="font-weight:900; color:#0d9488;">${o.id}</td>
-          <td><b>${o.name}</b></td>
-          <td><a href="tel:${o.phone}">${o.phone}</a></td>
-          <td>${o.gov || ''} - ${o.city || ''}</td>
-          <td>${o.items}</td>
-          <td><b>${o.total}</b></td>
-          <td>
-            <select class="status-select" onchange="updateOrderStatus('${o.docId}', this.value)">
-              <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>قيد التنفيذ</option>
-              <option value="completed" ${o.status === 'completed' ? 'selected' : ''}>تم التسليم</option>
-              <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>ملغي</option>
-            </select>
-          </td>
-          <td>${o.date}</td>
-          <td><button onclick="deleteOrder('${o.docId}')" class="btn-delete">حذف</button></td>
-        </tr>
-      `).join('');
+      const completedOrders = orders.filter(o => o.status === 'completed');
+      const pendingOrders = orders.filter(o => o.status === 'pending' || o.status === 'delivering');
+      const completedRevenue = completedOrders.reduce((sum, o) => sum + (o.totalAmountNumber || parseInt(o.total) || 0), 0);
+
+      document.getElementById('statCompletedRevenue').textContent = completedRevenue.toLocaleString('ar-EG') + " ج.م";
+      document.getElementById('statPendingOrders').textContent = pendingOrders.length;
+      document.getElementById('statCompletedOrders').textContent = completedOrders.length;
+      document.getElementById('statTotalAllOrders').textContent = orders.length;
+
+      if (orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:35px; color:#94a3b8; font-weight:bold;">لا توجد طلبات مستلمة حتى الآن.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = orders.map((o) => {
+        let statusClass = 'status-pending';
+        if (o.status === 'delivering') statusClass = 'status-delivering';
+        else if (o.status === 'completed') statusClass = 'status-completed';
+        else if (o.status === 'cancelled') statusClass = 'status-cancelled';
+
+        return `
+          <tr>
+            <td style="font-weight:900; color:#0d9488;">${o.id}</td>
+            <td style="font-weight:bold;">${o.name}</td>
+            <td>
+              <a href="tel:${o.phone}" class="btn-action-small" style="background:#f0f9ff; color:#0369a1;">📞 ${o.phone}</a>
+              <a href="https://wa.me/2${o.phone}" target="_blank" class="btn-action-small" style="background:#f0fdf4; color:#15803d;">💬 واتساب</a>
+            </td>
+            <td>${o.gov || ''} - ${o.city || ''}</td>
+            <td style="font-weight:600; font-size:12px;">${o.items}</td>
+            <td style="font-weight:900;">${o.total}</td>
+            <td>
+              <select class="status-select ${statusClass}" onchange="updateOrderStatus('${o.docId}', this.value)">
+                <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>⏳ قيد التنفيذ</option>
+                <option value="delivering" ${o.status === 'delivering' ? 'selected' : ''}>🚚 جاري الشحن</option>
+                <option value="completed" ${o.status === 'completed' ? 'selected' : ''}>✅ تم التسليم</option>
+                <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>❌ ملغي</option>
+              </select>
+            </td>
+            <td style="color:#64748b; font-size:11px;">${o.date}</td>
+            <td style="text-align:center;">
+              <button type="button" onclick="viewFullOrderDetails('${o.docId}')" class="btn-edit">العنوان 🔍</button>
+              <button type="button" onclick="deleteOrder('${o.docId}')" class="btn-delete">حذف 🗑️</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
-    async function updateOrderStatus(docId, st) { await db.collection("orders").doc(docId).update({ status: st }); }
-    async function deleteOrder(docId) { if (confirm("حذف الطلب؟")) await db.collection("orders").doc(docId).delete(); }
+    async function updateOrderStatus(docId, st) {
+      if (db && docId) await db.collection("orders").doc(docId).update({ status: st });
+    }
 
+    function viewFullOrderDetails(docId) {
+      const o = orders.find(i => i.docId == docId);
+      if (!o) return;
+      document.getElementById('modalOrderTitle').textContent = `تفاصيل الطلب: ${o.id}`;
+      document.getElementById('modalOrderContent').innerHTML = `
+        <div style="background:#f8fafc; padding:12px; border-radius:10px; margin-bottom:10px; border:1px solid #e2e8f0;">
+          <div><strong>👤 العميل:</strong> ${o.name}</div>
+          <div><strong>📱 الهاتف:</strong> ${o.phone} ${o.phoneAlt ? ` | بديل: ${o.phoneAlt}` : ''}</div>
+        </div>
+        <div style="background:#f0fdfa; padding:12px; border-radius:10px; margin-bottom:10px; border:1px solid #ccfbf1;">
+          <div><strong>📍 المحافظة والحي:</strong> ${o.gov || ''} - ${o.city || ''}</div>
+          <div><strong>🏠 العنوان بالتفصيل:</strong> ${o.address}</div>
+          ${o.notes ? `<div><strong>📝 ملاحظات:</strong> ${o.notes}</div>` : ''}
+        </div>
+        <div style="background:#fff7ed; padding:12px; border-radius:10px; border:1px solid #ffedd5;">
+          <div><strong>📦 المنتجات:</strong> ${o.items}</div>
+          <div style="font-weight:900; color:#ea580c; margin-top:5px;">💵 الإجمالي: ${o.total}</div>
+        </div>
+      `;
+      document.getElementById('orderDetailsModal').classList.remove('hidden');
+    }
+
+    function exportOrdersToCSV() {
+      if (orders.length === 0) { alert("لا توجد طلبات لتصديرها!"); return; }
+      let csv = "\uFEFFرقم الطلب,اسم العميل,رقم الهاتف,المحافظة,المدينة,العنوان,المنتجات,المبلغ,التاريخ\n";
+      orders.forEach(o => {
+        csv += `"${o.id}","${o.name}","${o.phone}","${o.gov || ''}","${o.city || ''}","${(o.address || '').replace(/"/g, '""')}","${(o.items || '').replace(/"/g, '""')}","${o.total}","${o.date}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute("download", `طلبات_زمزميتي.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    async function clearAllOrders() {
+      if (orders.length === 0) return;
+      if (!confirm("مسح كل الطلبات نهائياً؟")) return;
+      for (const o of orders) { if (o.docId) await db.collection("orders").doc(o.docId).delete(); }
+    }
+
+    async function deleteOrder(docId) {
+      if (!confirm("حذف هذا الطلب؟")) return;
+      if (docId) await db.collection("orders").doc(docId).delete();
+    }
+
+    // إدارة المنتجات (إضافة + تعديل + حذف + رفع صور متعددة)
     function renderAdminTable() {
-      document.getElementById('adminTableBody').innerHTML = products.map(p => `
-        <tr>
-          <td><img src="${p.images?.[0] || p.img}" style="width:40px; height:40px; object-fit:contain;"> <b>${p.title}</b></td>
-          <td>${p.capacity}</td>
-          <td>${p.price} ج.م</td>
-          <td>${p.discount || 0}%</td>
-          <td style="color:#0d9488; font-weight:900;">${getFinalPrice(p)} ج.م</td>
-          <td>${p.stock}</td>
-          <td><button onclick="deleteProduct('${p.id}')" class="btn-delete">حذف</button></td>
-        </tr>
+      const tbody = document.getElementById('adminTableBody');
+      if (products.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#94a3b8; font-weight:bold;">لا توجد زمزميات حالياً. اضغط على (+ إضافة زمزمية جديدة) في الأعلى.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = products.map(p => {
+        const finalPrice = getFinalPrice(p);
+        const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.img || '');
+        const imagesCount = (p.images && p.images.length > 0) ? p.images.length : 1;
+        return `
+          <tr>
+            <td style="display:flex; align-items:center; gap:10px;">
+              <img src="${mainImg}" style="width:45px; height:45px; object-fit:contain; background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:2px;">
+              <div><span style="font-weight:bold; display:block;">${p.title}</span><small style="color:#64748b;">(${imagesCount} صور)</small></div>
+            </td>
+            <td>${p.capacity}</td>
+            <td style="font-weight:bold;">${p.price} ج.م</td>
+            <td style="font-weight:bold; color:#ef4444;">${p.discount || 0}%</td>
+            <td style="font-weight:900; color:#0d9488;">${finalPrice} ج.م</td>
+            <td style="font-weight:bold;">${p.stock} قطعة</td>
+            <td style="text-align:center;">
+              <button type="button" onclick="openEditProduct('${p.id}')" class="btn-edit">تعديل ✏️</button>
+              <button type="button" onclick="deleteProduct('${p.id}')" class="btn-delete">حذف 🗑️</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function handleMultipleImagesUpload(event, mode) {
+      const files = Array.from(event.target.files);
+      if (files.length === 0) return;
+      for (const file of files) {
+        const base64 = await compressImageFile(file);
+        if (base64) {
+          if (mode === 'new') newProductImages.push(base64);
+          else editProductImages.push(base64);
+        }
+      }
+      renderPreviewThumbs(mode);
+    }
+
+    function renderPreviewThumbs(mode) {
+      const isNew = mode === 'new';
+      const container = document.getElementById(isNew ? 'newImagesPreview' : 'editImagesPreview');
+      const list = isNew ? newProductImages : editProductImages;
+      container.innerHTML = list.map((src, index) => `
+        <div class="preview-thumb-box">
+          <img src="${src}">
+          <span class="btn-remove-thumb" onclick="removeUploadedThumb(${index}, '${mode}')">✕</span>
+        </div>
       `).join('');
     }
 
-    async function deleteProduct(id) { if (confirm("حذف الزمزمية؟")) await db.collection("products").doc(id).delete(); }
+    function removeUploadedThumb(index, mode) {
+      if (mode === 'new') newProductImages.splice(index, 1);
+      else editProductImages.splice(index, 1);
+      renderPreviewThumbs(mode);
+    }
 
+    function openAddProductModal() {
+      newProductImages = [];
+      isSubmittingProduct = false;
+      document.getElementById('newImagesPreview').innerHTML = '';
+      const fileInput = document.getElementById('newFileInput');
+      if (fileInput) fileInput.value = '';
+      document.getElementById('addProductModal').classList.remove('hidden');
+    }
+
+    async function handleAddNewProduct(e) {
+      e.preventDefault();
+      if (isSubmittingProduct) return;
+      if (newProductImages.length === 0) {
+        alert("يرجى اختيار صورة واحدة على الأقل للزمزمية!");
+        return;
+      }
+      isSubmittingProduct = true;
+      const btn = document.getElementById('btnSaveNewProduct');
+      btn.textContent = "جاري النشر...";
+      btn.disabled = true;
+
+      const newProd = {
+        title: document.getElementById('newTitle').value.trim(),
+        price: Number(document.getElementById('newPrice').value),
+        discount: Number(document.getElementById('newDiscount').value || 0),
+        stock: Number(document.getElementById('newStock').value),
+        capacity: document.getElementById('newCap').value.trim(),
+        images: [...newProductImages],
+        desc: document.getElementById('newDesc').value.trim() || "زمزمية طبية فاخرة بعزل حراري ممتاز."
+      };
+      try {
+        await db.collection("products").add(newProd);
+        closeModal('addProductModal');
+        e.target.reset();
+        newProductImages = [];
+        alert("تمت إضافة الزمزمية ونشرها في المتجر بنجاح!");
+      } catch(err) {
+        alert("خطأ أثناء الرفع: " + err.message);
+      } finally {
+        btn.textContent = "نشر الزمزمية فوراً ☁️";
+        btn.disabled = false;
+        isSubmittingProduct = false;
+      }
+    }
+
+    function openEditProduct(id) {
+      const p = products.find(i => i.id == id);
+      if (!p) return;
+      editProductImages = (p.images && p.images.length > 0) ? [...p.images] : (p.img ? [p.img] : []);
+      document.getElementById('editProdId').value = p.id;
+      document.getElementById('editProdTitle').value = p.title;
+      document.getElementById('editProdPrice').value = p.price;
+      document.getElementById('editProdDiscount').value = p.discount || 0;
+      document.getElementById('editProdStock').value = p.stock;
+      document.getElementById('editProdCap').value = p.capacity;
+      document.getElementById('editProdDesc').value = p.desc;
+      const fileInput = document.getElementById('editProdFileInput');
+      if (fileInput) fileInput.value = '';
+      renderPreviewThumbs('edit');
+      document.getElementById('editProductModal').classList.remove('hidden');
+    }
+
+    async function saveProductEdit(e) {
+      e.preventDefault();
+      if (editProductImages.length === 0) {
+        alert("يجب وجود صورة واحدة على الأقل للمنتج!");
+        return;
+      }
+      const btn = document.getElementById('btnSaveEditProduct');
+      btn.textContent = "جاري الحفظ...";
+      btn.disabled = true;
+
+      const id = document.getElementById('editProdId').value;
+      const updateData = {
+        title: document.getElementById('editProdTitle').value.trim(),
+        price: Number(document.getElementById('editProdPrice').value),
+        discount: Number(document.getElementById('editProdDiscount').value || 0),
+        stock: Number(document.getElementById('editProdStock').value),
+        capacity: document.getElementById('editProdCap').value.trim(),
+        desc: document.getElementById('editProdDesc').value.trim(),
+        images: [...editProductImages]
+      };
+      try {
+        await db.collection("products").doc(id).update(updateData);
+        closeModal('editProductModal');
+        alert("تم تحديث بيانات الزمزمية بنجاح!");
+      } catch(err) {
+        alert("خطأ أثناء التحديث: " + err.message);
+      } finally {
+        btn.textContent = "حفظ التحديثات سحابياً";
+        btn.disabled = false;
+      }
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm("هل أنت متأكد من حذف هذه الزمزمية نهائياً من المتجر؟")) return;
+      await db.collection("products").doc(id).delete();
+    }
+
+    // تغيير كلمة المرور واليوزر
+    function openChangePassModal() {
+      document.getElementById('newAdminEmail').value = '';
+      document.getElementById('newAdminPass').value = '';
+      document.getElementById('changePassModal').classList.remove('hidden');
+    }
+
+    async function saveNewCredentials(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSavePass');
+      btn.textContent = "جاري الحفظ...";
+      btn.disabled = true;
+
+      const email = document.getElementById('newAdminEmail').value.trim();
+      const pass = document.getElementById('newAdminPass').value.trim();
+      const newAuth = { email, pass };
+
+      try {
+        await db.collection("settings").doc("main").set({ auth: newAuth }, { merge: true });
+        currentAuth = newAuth;
+        closeModal('changePassModal');
+        alert("تم تحديث وحفظ بيانات الدخول الجديدة بنجاح!");
+      } catch(err) {
+        alert("خطأ أثناء الحفظ: " + err.message);
+      } finally {
+        btn.textContent = "حفظ البيانات الجديدة سحابياً";
+        btn.disabled = false;
+      }
+    }
+
+    // ضغط الصور مع الحفاظ على جودتها وأبعادها الكاملة
     function compressImageFile(file) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -1015,18 +1361,24 @@
             const canvas = document.createElement('canvas');
             const MAX = 600;
             let w = img.width, h = img.height;
-            if (w > h) { if (w > MAX) { h *= MAX / w; w = MAX; } } else { if (h > MAX) { w *= MAX / h; h = MAX; } }
+            if (w > h) { if (w > MAX) { h *= MAX / w; w = MAX; } }
+            else { if (h > MAX) { w *= MAX / h; h = MAX; } }
             canvas.width = w; canvas.height = h;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, w, h);
-            resolve(canvas.toDataURL('image/png', 0.8));
+            resolve(canvas.toDataURL('image/png', 0.82));
           };
+          img.onerror = () => resolve('');
         };
         reader.readAsDataURL(file);
       });
     }
 
-    function closeModal(id) { document.getElementById(id)?.classList.add('hidden'); }
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('hidden');
+    }
+
     checkLoginState();
   </script>
 </body>
