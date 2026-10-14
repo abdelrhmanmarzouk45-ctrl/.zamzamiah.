@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم الشاملة | إدارة متجر زمزميتي</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- مكتبات Firebase السحابية -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+    body { background-color: #f1f5f9; color: #0f172a; direction: rtl; }
+    button { cursor: pointer; border: none; font-family: inherit; transition: 0.25s; }
+    button:hover { opacity: 0.92; }
+
+    /* شاشة تسجيل الدخول */
+    .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; background: linear-gradient(135deg, #0f172a, #0f766e); }
+    .login-box { background: white; width: 100%; max-width: 430px; padding: 38px; border-radius: 26px; box-shadow: 0 25px 50px rgba(0,0,0,0.35); text-align: center; }
+    .login-logo { width: 64px; height: 64px; background: #0d9488; color: white; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 15px; }
+    .login-box h2 { font-size: 23px; font-weight: 900; margin-bottom: 6px; color: #0f172a; }
+    .login-box p { font-size: 13px; color: #64748b; margin-bottom: 25px; font-weight: 600; }
+
+    /* هيكل لوحة التحكم */
+    .admin-panel { max-width: 1320px; margin: 28px auto; padding: 0 20px 60px; }
+    .admin-header { background: white; padding: 22px 26px; border-radius: 20px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+    .admin-tabs { display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
+    .tab-btn { background: white; color: #334155; padding: 11px 18px; border-radius: 14px; font-weight: 800; font-size: 13px; border: 1.5px solid #cbd5e1; display: flex; align-items: center; gap: 6px; }
+    .tab-btn.active { background: #0d9488; color: white; border-color: #0d9488; box-shadow: 0 6px 15px rgba(13, 148, 136, 0.25); }
+
+    .btn-buy { background: #0d9488; color: white; padding: 10px 18px; border-radius: 12px; font-weight: 800; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-dark { background: #0f172a; color: white; padding: 10px 18px; border-radius: 12px; font-weight: 800; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 22px; }
+    .stat-card { background: white; padding: 20px; border-radius: 18px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+    .stat-icon { width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    .stat-num { font-size: 23px; font-weight: 900; color: #0f172a; }
+    .stat-lbl { font-size: 12px; color: #64748b; font-weight: 700; }
+
+    .card-box { background: white; padding: 26px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+    .card-box h3 { font-size: 18px; font-weight: 900; margin-bottom: 6px; color: #0f172a; display: flex; align-items: center; gap: 8px; }
+    .card-box p.sub { font-size: 13px; color: #64748b; margin-bottom: 20px; font-weight: 600; }
+
+    .table-container { overflow-x: auto; background: white; border-radius: 18px; border: 1px solid #e2e8f0; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; min-width: 950px; }
+    th, td { padding: 14px 16px; text-align: right; font-size: 13px; border-bottom: 1px solid #f1f5f9; }
+    th { background: #f8fafc; color: #475569; font-weight: 800; }
+    .btn-edit { background: #f0fdfa; color: #0d9488; border: 1px solid #ccfbf1; padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 12px; margin-left: 5px; }
+    .btn-delete { background: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 12px; }
+    .btn-action-small { padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; margin-left: 3px; }
+
+    .status-select { padding: 6px 10px; border-radius: 10px; font-size: 12px; font-weight: 800; border: 1px solid #cbd5e1; outline: none; }
+    .status-pending { background: #fef9c3; color: #854d0e; border-color: #fde047; }
+    .status-delivering { background: #e0f2fe; color: #075985; border-color: #7dd3fc; }
+    .status-completed { background: #dcfce7; color: #166534; border-color: #86efac; }
+    .status-cancelled { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+
+    /* معاينة الصور */
+    .images-preview-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .preview-thumb-box { position: relative; width: 82px; height: 82px; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; background: #fff; padding: 4px; }
+    .preview-thumb-box img { width: 100%; height: 100%; object-fit: contain; }
+    .btn-remove-thumb { position: absolute; top: 3px; left: 3px; background: rgba(239, 68, 68, 0.95); color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; cursor: pointer; }
+
+    /* النماذج والحقول */
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; }
+    .form-group { margin-bottom: 14px; text-align: right; }
+    .form-group label { display: block; font-size: 12px; font-weight: 800; margin-bottom: 6px; color: #334155; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 11px 14px; border: 1.5px solid #cbd5e1; border-radius: 12px; font-size: 13px; font-weight: 600; outline: none; background: #f8fafc; transition: 0.2s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #0d9488; background: white; }
+    .form-group input[type="color"] { height: 46px; padding: 4px; cursor: pointer; background: white; }
+    .btn-submit { width: 100%; background: #0d9488; color: white; padding: 14px; border-radius: 14px; font-weight: 900; font-size: 15px; margin-top: 10px; box-shadow: 0 6px 15px rgba(13, 148, 136, 0.2); }
+
+    /* مفاتيح التبديل (Toggles) */
+    .toggle-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .toggle-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px 16px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 800; }
+    .toggle-item input[type="checkbox"] { width: 20px; height: 20px; accent-color: #0d9488; cursor: pointer; }
+
+    /* قائمة الأزرار المخصصة */
+    .custom-btn-row { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; }
+    .preset-btn { padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 800; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; }
+    .preset-btn:hover { border-color: #0d9488; background: #f0fdfa; }
+
+    /* النوافذ المنبثقة */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 15px; backdrop-filter: blur(4px); }
+    .modal { background: white; width: 100%; max-width: 540px; border-radius: 24px; padding: 28px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.25); }
+    .modal-close { position: absolute; top: 18px; left: 18px; font-size: 18px; background: #f1f5f9; width: 34px; height: 34px; border-radius: 50%; color: #64748b; font-weight: bold; }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- 1. شاشة تسجيل الدخول المحمية -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-box">
+      <div class="login-logo">🔒</div>
+      <h2>لوحة التحكم الشاملة</h2>
+      <p>إدارة متجر زمزميتي (الألوان، اللوجو، الأزرار، المنتجات، والطلبات)</p>
+      <form onsubmit="doAdminLogin(event)" autocomplete="off">
+        <div class="form-group">
+          <label>معرّف الإدارة (اليوزر - محمي ومخفي)</label>
+          <input type="password" id="loginEmail" required placeholder="••••••••••••••" autocomplete="new-password" spellcheck="false">
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور (الباسورد - محمي ومخفي)</label>
+          <input type="password" id="loginPass" required placeholder="••••••••" autocomplete="new-password">
+        </div>
+        <p id="loginError" style="color: #ef4444; font-size: 12px; font-weight: bold; margin-bottom: 10px;" class="hidden">بيانات الدخول غير صحيحة!</p>
+        <button type="submit" class="btn-submit">دخول لوحة الإدارة</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. لوحة التحكم الكاملة -->
+  <div id="adminView" class="admin-panel hidden">
+    <div class="admin-header">
+      <div>
+        <h2 style="font-weight: 900; font-size: 22px;">لوحة تحكم المتجر الشاملة (متصل سحابياً ☁️)</h2>
+        <p style="font-size: 12px; color: #64748b; font-weight: 600;">أي تعديل في اللوجو أو الخلفية أو الأزرار أو المنتجات يظهر للعملاء في نفس اللحظة</p>
+      </div>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button onclick="openAddProductModal()" class="btn-buy">+ إضافة زمزمية جديدة</button>
+        <button onclick="openChangePassModal()" class="btn-dark">🔑 بيانات الدخول</button>
+        <a href="index.html" target="_blank" class="btn-dark" style="background:#475569;">🏪 فتح المتجر الحي</a>
+        <button onclick="adminLogout()" class="btn-delete" style="padding: 10px 16px;">خروج 🚪</button>
+      </div>
+    </div>
+
+    <!-- التبويبات الرئيسية -->
+    <div class="admin-tabs">
+      <button class="tab-btn active" id="tabOrdersBtn" onclick="switchAdminTab('orders')">📥 الطلبات والمبيعات</button>
+      <button class="tab-btn" id="tabProductsBtn" onclick="switchAdminTab('products')">📦 الزمزميات والمخزون</button>
+      <button class="tab-btn" id="tabThemeBtn" onclick="switchAdminTab('theme')">🎨 اللوجو والباك جروند والألوان</button>
+      <button class="tab-btn" id="tabButtonsMgrBtn" onclick="switchAdminTab('buttonsMgr')">🔘 إضافة وحذف أزرار وأقسام</button>
+      <button class="tab-btn" id="tabTextsBtn" onclick="switchAdminTab('texts')">✏️ جميع نصوص ومميزات الموقع</button>
+      <button class="tab-btn" id="tabNotifyBtn" onclick="switchAdminTab('notify')">⚡ الربط (واتساب وجيميل)</button>
+    </div>
+
+    <!-- ================= تبويب 1: سجل الطلبات ================= -->
+    <div id="adminTabOrders">
+      <div class="stats-grid">
+        <div class="stat-card" style="border-right: 4px solid #16a34a;">
+          <div class="stat-icon" style="background:#dcfce7; color:#16a34a;">💰</div>
+          <div>
+            <div class="stat-num" id="statCompletedRevenue">0 ج.م</div>
+            <div class="stat-lbl">المبيعات الفعلية (تم تسليمها)</div>
+          </div>
+        </div>
+        <div class="stat-card" style="border-right: 4px solid #ca8a04;">
+          <div class="stat-icon" style="background:#fef9c3; color:#ca8a04;">⏳</div>
+          <div>
+            <div class="stat-num" id="statPendingOrders">0</div>
+            <div class="stat-lbl">طلبات قيد التنفيذ / جارية</div>
+          </div>
+        </div>
+        <div class="stat-card" style="border-right: 4px solid #0284c7;">
+          <div class="stat-icon" style="background:#e0f2fe; color:#0284c7;">📦</div>
+          <div>
+            <div class="stat-num" id="statCompletedOrders">0</div>
+            <div class="stat-lbl">الطلبات المسلّمة بنجاح</div>
+          </div>
+        </div>
+        <div class="stat-card" style="border-right: 4px solid #64748b;">
+          <div class="stat-icon" style="background:#f1f5f9; color:#475569;">📊</div>
+          <div>
+            <div class="stat-num" id="statTotalAllOrders">0</div>
+            <div class="stat-lbl">إجمالي كل الطلبات الواردة</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+        <h3 style="font-weight: 900; font-size:17px;">إدارة حالات الطلبات:</h3>
+        <div style="display:flex; gap:8px;">
+          <button onclick="exportOrdersToCSV()" class="btn-buy" style="background:#15803d; font-size:12px;">📊 تصدير Excel (CSV)</button>
+          <button onclick="clearAllOrders()" class="btn-delete" style="font-size:12px;">🗑️ مسح كل السجل</button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>رقم الطلب</th>
+              <th>اسم العميل</th>
+              <th>الهاتف / تواصل</th>
+              <th>المحافظة والحي</th>
+              <th>المنتجات</th>
+              <th>المبلغ</th>
+              <th>حالة الطلب (تأكيد البيع)</th>
+              <th>تاريخ الطلب</th>
+              <th style="text-align: center;">إجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ================= تبويب 2: إدارة المنتجات ================= -->
+    <div id="adminTabProducts" class="hidden">
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>الزمزمية والصور</th>
+              <th>السعة</th>
+              <th>السعر الأصلي</th>
+              <th>الخصم (%)</th>
+              <th>السعر النهائي</th>
+              <th>المخزون المتوفر</th>
+              <th style="text-align: center;">إجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="adminTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ================= تبويب 3: اللوجو والباك جروند والألوان ================= -->
+    <div id="adminTabTheme" class="hidden">
+      <div class="card-box">
+        <h3>🎨 التحكم الكامل في اللوجو، الباك جروند (الخلفية)، وألوان الموقع</h3>
+        <p class="sub">اختر ثيم جاهز أو خصص كل لون وصورة خلفية ولوجو بنفسك:</p>
+
+        <!-- ثيمات سريعة -->
+        <div style="margin-bottom: 22px; padding: 15px; background: #f8fafc; border-radius: 14px; border: 1px solid #e2e8f0;">
+          <label style="font-size: 12px; font-weight: 800; display: block; margin-bottom: 10px;">✨ قوالب ألوان جاهزة بضغطة واحدة:</label>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button type="button" class="preset-btn" onclick="applyThemePreset('#0d9488', '#f8fafc', '#ffffff', '#0f172a', '#f0fdfa', '#f8fafc', '#0f766e')">🌊 تركواز مائي (الافتراضي)</button>
+            <button type="button" class="preset-btn" onclick="applyThemePreset('#2563eb', '#f8fafc', '#ffffff', '#0f172a', '#eff6ff', '#f8fafc', '#1d4ed8')">💙 أزرق ملكي</button>
+            <button type="button" class="preset-btn" onclick="applyThemePreset('#7c3aed', '#faf5ff', '#ffffff', '#1e1b4b', '#f3e8ff', '#faf5ff', '#6d28d9')">💜 بنفسجي عصري</button>
+            <button type="button" class="preset-btn" onclick="applyThemePreset('#ea580c', '#fff7ed', '#ffffff', '#431407', '#ffedd5', '#fff7ed', '#c2410c')">🧡 برتقالي ناري</button>
+            <button type="button" class="preset-btn" onclick="applyThemePreset('#059669', '#f0fdf4', '#ffffff', '#064e3b', '#dcfce7', '#f0fdf4', '#047857')">🌿 أخضر زمردي</button>
+            <button type="button" class="preset-btn" onclick="applyThemePreset('#14b8a6', '#0f172a', '#1e293b', '#f8fafc', '#1e293b', '#0f172a', '#0d9488')">🌙 الوضع الليلي الفاخر</button>
+          </div>
+        </div>
+
+        <form onsubmit="saveThemeSettings(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>اللون الأساسي للموقع والأزرار</label>
+              <input type="color" id="cfg_theme_primary" value="#0d9488">
+            </div>
+            <div class="form-group">
+              <label>لون باك جروند الموقع العام (Background)</label>
+              <input type="color" id="cfg_theme_bg" value="#f8fafc">
+            </div>
+            <div class="form-group">
+              <label>لون خلفية كروت المنتجات</label>
+              <input type="color" id="cfg_theme_card_bg" value="#ffffff">
+            </div>
+            <div class="form-group">
+              <label>لون النصوص والعناوين الأساسي</label>
+              <input type="color" id="cfg_theme_text_main" value="#0f172a">
+            </div>
+            <div class="form-group">
+              <label>لون خلفية البنر العلوي (بداية التدرج)</label>
+              <input type="color" id="cfg_theme_hero_start" value="#f0fdfa">
+            </div>
+            <div class="form-group">
+              <label>لون خلفية البنر العلوي (نهاية التدرج)</label>
+              <input type="color" id="cfg_theme_hero_end" value="#f8fafc">
+            </div>
+            <div class="form-group">
+              <label>لون شريط الإعلانات العلوي</label>
+              <input type="color" id="cfg_theme_topbar" value="#0f766e">
+            </div>
+            <div class="form-group">
+              <label>رمز اللوجو (إيموجي يظهر إذا لم ترفع صورة)</label>
+              <input type="text" id="cfg_theme_logo_icon" placeholder="مثال: 💧 أو 🥤">
+            </div>
+          </div>
+
+          <!-- رفع لوجو وصور خلفية -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 15px;">
+            <div class="form-group" style="background: #f8fafc; padding: 16px; border-radius: 14px; border: 1px solid #e2e8f0;">
+              <label>🖼️ 1. رفع صورة لوجو المتجر (اختياري)</label>
+              <input type="file" accept="image/*" onchange="handleSingleImageUpload(event, 'logo')">
+              <div style="display: flex; align-items: center; gap: 12px; margin-top: 10px;">
+                <img id="logoPreviewImg" src="" style="width: 55px; height: 55px; object-fit: contain; border-radius: 10px; border: 1px solid #cbd5e1; background: white; display: none;">
+                <button type="button" id="btnRemoveLogo" onclick="clearSingleImage('logo')" class="btn-delete hidden">حذف صورة اللوجو</button>
+              </div>
+            </div>
+
+            <div class="form-group" style="background: #f8fafc; padding: 16px; border-radius: 14px; border: 1px solid #e2e8f0;">
+              <label>🌄 2. رفع صورة باك جروند للبنر الرئيسي (اختياري)</label>
+              <input type="file" accept="image/*" onchange="handleSingleImageUpload(event, 'heroBg')">
+              <div style="display: flex; align-items: center; gap: 12px; margin-top: 10px;">
+                <img id="heroBgPreviewImg" src="" style="width: 80px; height: 50px; object-fit: cover; border-radius: 10px; border: 1px solid #cbd5e1; background: white; display: none;">
+                <button type="button" id="btnRemoveHeroBg" onclick="clearSingleImage('heroBg')" class="btn-delete hidden">حذف خلفية البنر</button>
+              </div>
+            </div>
+
+            <div class="form-group" style="background: #f8fafc; padding: 16px; border-radius: 14px; border: 1px solid #e2e8f0;">
+              <label>🏞️ 3. رفع صورة باك جروند للموقع بالكامل (اختياري)</label>
+              <input type="file" accept="image/*" onchange="handleSingleImageUpload(event, 'siteBg')">
+              <div style="display: flex; align-items: center; gap: 12px; margin-top: 10px;">
+                <img id="siteBgPreviewImg" src="" style="width: 80px; height: 50px; object-fit: cover; border-radius: 10px; border: 1px solid #cbd5e1; background: white; display: none;">
+                <button type="button" id="btnRemoveSiteBg" onclick="clearSingleImage('siteBg')" class="btn-delete hidden">حذف خلفية الموقع</button>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" id="btnSaveTheme" class="btn-submit" style="max-width: 320px;">حفظ اللوجو والباك جروند والألوان ☁️</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ================= تبويب 4: إضافة وحذف أزرار وأقسام الموقع ================= -->
+    <div id="adminTabButtonsMgr" class="hidden">
+      <!-- أولاً: إظهار أو إخفاء أزرار وأقسام الموقع الأساسية -->
+      <div class="card-box">
+        <h3>👁️ إظهار أو إخفاء أزرار وأقسام الموقع</h3>
+        <p class="sub">تحكم في أي عنصر أو زر تريد إظهاره أو إخفاءه من صفحة المستخدم:</p>
+
+        <div class="toggle-grid">
+          <label class="toggle-item">
+            <span>شريط الإعلانات العلوي</span>
+            <input type="checkbox" id="tog_showTopBar" checked>
+          </label>
+          <label class="toggle-item">
+            <span>الشارة الترويجية فوق البنر</span>
+            <input type="checkbox" id="tog_showHeroBadge" checked>
+          </label>
+          <label class="toggle-item">
+            <span>شريط المميزات الأربعة (Trust Strip)</span>
+            <input type="checkbox" id="tog_showTrustStrip" checked>
+          </label>
+          <label class="toggle-item">
+            <span>شريط البحث السريع</span>
+            <input type="checkbox" id="tog_showSearchBar" checked>
+          </label>
+          <label class="toggle-item">
+            <span>أزرار الفلترة والترتيب</span>
+            <input type="checkbox" id="tog_showFilterPills" checked>
+          </label>
+          <label class="toggle-item">
+            <span>مؤشر المخزون المتبقي في الكارت</span>
+            <input type="checkbox" id="tog_showStockBar" checked>
+          </label>
+          <label class="toggle-item">
+            <span>زر "اطلبها الآن ⚡" في صفحة المنتج</span>
+            <input type="checkbox" id="tog_showBuyNowBtn" checked>
+          </label>
+          <label class="toggle-item">
+            <span>شريط الشحن المجاني في السلة</span>
+            <input type="checkbox" id="tog_showFreeShipBar" checked>
+          </label>
+        </div>
+
+        <button onclick="saveTogglesAndCustomButtons()" id="btnSaveToggles" class="btn-submit" style="max-width: 280px; margin-top: 0;">حفظ إعدادات الإظهار والإخفاء ☁️</button>
+      </div>
+
+      <!-- ثانياً: إضافة وحذف أزرار مخصصة جديدة في الموقع -->
+      <div class="card-box">
+        <h3>➕ إضافة أزرار جديدة في الموقع (أو حذفها)</h3>
+        <p class="sub">يمكنك إضافة أزرار مخصصة تظهر للعملاء في الهيدر العلوي أو في وسط البنر الرئيسي (مثل زر تواصل واتساب، صفحة فيسبوك، انستجرام، أو قسم عروض):</p>
+
+        <form onsubmit="addCustomButton(event)" style="background: #f8fafc; padding: 18px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>نص الزر (مثلاً: 💬 تواصل واتساب)</label>
+              <input type="text" id="newBtnLabel" required placeholder="مثال: 💬 خدمة العملاء">
+            </div>
+            <div class="form-group">
+              <label>الرابط عند الضغط عليه (URL أو رقم واتساب)</label>
+              <input type="text" id="newBtnUrl" required placeholder="مثال: https://wa.me/201012345678 أو #catalog">
+            </div>
+            <div class="form-group">
+              <label>مكان ظهور الزر في الموقع</label>
+              <select id="newBtnLocation">
+                <option value="hero">في البنر الرئيسي (تحت الوصف)</option>
+                <option value="header">في الهيدر العلوي (بجانب زر السلة)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>لون الزر</label>
+              <input type="color" id="newBtnColor" value="#0d9488">
+            </div>
+          </div>
+          <button type="submit" class="btn-buy" style="margin-top: 6px;">+ إضافة الزر للموقع فوراً</button>
+        </form>
+
+        <h4 style="font-size: 15px; font-weight: 900; margin-bottom: 12px;">الأزرار المضافة حالياً في الموقع:</h4>
+        <div id="customButtonsListContainer"></div>
+      </div>
+    </div>
+
+    <!-- ================= تبويب 5: جميع نصوص ومميزات الموقع الجديد ================= -->
+    <div id="adminTabTexts" class="hidden">
+      <form onsubmit="saveCustomTexts(event)">
+        <div class="card-box">
+          <h3>✏️ النصوص الأساسية، الأزرار، وحد الشحن المجاني</h3>
+          <p class="sub">عدّل اسم الموقع، عناوين البنر، نصوص الأزرار، وقيمة الشحن المجاني:</p>
+
+          <div class="form-grid">
+            <div class="form-group"><label>اسم الموقع الرئيسي</label><input type="text" id="cfg_store_name" required></div>
+            <div class="form-group"><label>الوصف الفرعي تحت الاسم</label><input type="text" id="cfg_store_subtitle" required></div>
+            <div class="form-group"><label>نص شريط الإعلانات العلوي</label><input type="text" id="cfg_top_bar" required></div>
+            <div class="form-group"><label>نص الشارة فوق البنر (Hero Badge)</label><input type="text" id="cfg_hero_badge" required></div>
+            <div class="form-group"><label>عنوان البنر الرئيسي</label><input type="text" id="cfg_hero_title" required></div>
+            <div class="form-group"><label>النص الملون داخل البنر</label><input type="text" id="cfg_hero_span" required></div>
+            <div class="form-group"><label>الوصف الترويجي أسفل البنر</label><input type="text" id="cfg_hero_desc" required></div>
+            <div class="form-group"><label>عنوان قسم عرض المنتجات</label><input type="text" id="cfg_catalog_heading" required></div>
+            <div class="form-group"><label>نص زر إضافة للسلة</label><input type="text" id="cfg_btn_buy" required></div>
+            <div class="form-group"><label>نص زر السلة في الهيدر</label><input type="text" id="cfg_btn_cart" required></div>
+            <div class="form-group"><label>نص زر الشراء السريع في صفحة المنتج</label><input type="text" id="cfg_btn_buy_now" required></div>
+            <div class="form-group"><label>قيمة الشحن المجاني في السلة (ج.م)</label><input type="number" id="cfg_free_ship_target" required min="0"></div>
+            <div class="form-group"><label>وصف المتجر في الفوتر السفلي</label><input type="text" id="cfg_footer_desc" required></div>
+            <div class="form-group"><label>نص حقوق الملكية في الفوتر</label><input type="text" id="cfg_footer_copy" required></div>
+          </div>
+        </div>
+
+        <div class="card-box">
+          <h3>🛡️ تعديل مربعات المميزات الأربعة (Trust Badges)</h3>
+          <p class="sub">المربعات الأربعة التي تظهر تحت البنر في التصميم الجديد:</p>
+
+          <div class="form-grid">
+            <div class="form-group"><label>أيقونة الميزة 1</label><input type="text" id="cfg_t1_icon"></div>
+            <div class="form-group"><label>عنوان الميزة 1</label><input type="text" id="cfg_t1_title"></div>
+            <div class="form-group"><label>وصف الميزة 1</label><input type="text" id="cfg_t1_desc"></div>
+
+            <div class="form-group"><label>أيقونة الميزة 2</label><input type="text" id="cfg_t2_icon"></div>
+            <div class="form-group"><label>عنوان الميزة 2</label><input type="text" id="cfg_t2_title"></div>
+            <div class="form-group"><label>وصف الميزة 2</label><input type="text" id="cfg_t2_desc"></div>
+
+            <div class="form-group"><label>أيقونة الميزة 3</label><input type="text" id="cfg_t3_icon"></div>
+            <div class="form-group"><label>عنوان الميزة 3</label><input type="text" id="cfg_t3_title"></div>
+            <div class="form-group"><label>وصف الميزة 3</label><input type="text" id="cfg_t3_desc"></div>
+
+            <div class="form-group"><label>أيقونة الميزة 4</label><input type="text" id="cfg_t4_icon"></div>
+            <div class="form-group"><label>عنوان الميزة 4</label><input type="text" id="cfg_t4_title"></div>
+            <div class="form-group"><label>وصف الميزة 4</label><input type="text" id="cfg_t4_desc"></div>
+          </div>
+
+          <button type="submit" id="btnSaveTexts" class="btn-submit" style="max-width: 300px;">حفظ جميع النصوص والمميزات ☁️</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ================= تبويب 6: إعدادات الربط ================= -->
+    <div id="adminTabNotify" class="hidden">
+      <div class="card-box" style="max-width: 650px;">
+        <h3>⚡ إعدادات استلام الطلبات (واتساب وجيميل)</h3>
+        <p class="sub">حدد كيف ترغب في استقبال إشعارات وتفاصيل الطلبات الجديدة:</p>
+        <form onsubmit="saveNotificationSettings(event)">
+          <div class="form-group">
+            <label>طريقة تحويل واستلام الطلب *</label>
+            <select id="cfg_notify_channel" required>
+              <option value="both">إرسال على الواتساب وفتح الجيميل معاً</option>
+              <option value="whatsapp">تحويل للواتساب فقط</option>
+              <option value="gmail">تحويل للجيميل فقط</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>رقم الواتساب لاستقبال الطلبات (مع كود مصر 20 مثل: 201012345678)</label>
+            <input type="text" id="cfg_notify_whatsapp" placeholder="مثال: 201012345678">
+          </div>
+          <div class="form-group">
+            <label>بريد الجيميل (Gmail) لاستلام الطلبات عليه</label>
+            <input type="email" id="cfg_notify_email" placeholder="مثال: store.owner@gmail.com">
+          </div>
+          <button type="submit" id="btnSaveNotify" class="btn-submit">حفظ إعدادات الربط سحابياً</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- النوافذ المنبثقة للإدارة -->
+  <div id="orderDetailsModal" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('orderDetailsModal')">✕</button>
+      <h3 id="modalOrderTitle" style="margin-bottom: 14px; font-weight: 900;">تفاصيل الطلب</h3>
+      <div id="modalOrderContent" style="font-size: 13px; line-height: 1.8; color: #334155;"></div>
+    </div>
+  </div>
+
+  <div id="editProductModal" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('editProductModal')">✕</button>
+      <h3 style="margin-bottom: 14px; font-weight: 900;">تعديل بيانات الزمزمية وصورها</h3>
+      <form onsubmit="saveProductEdit(event)">
+        <input type="hidden" id="editProdId">
+        <div class="form-group"><label>اسم الزمزمية</label><input type="text" id="editProdTitle" required></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group"><label>السعر (ج.م) *</label><input type="number" id="editProdPrice" required min="1"></div>
+          <div class="form-group"><label>نسبة الخصم (%)</label><input type="number" id="editProdDiscount" min="0" max="95" value="0"></div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group"><label>المخزون *</label><input type="number" id="editProdStock" required min="0"></div>
+          <div class="form-group"><label>السعة</label><input type="text" id="editProdCap" required></div>
+        </div>
+        <div class="form-group">
+          <label>إضافة صور للمنتج (تظهر كاملة وبدون قص)</label>
+          <input type="file" id="editProdFileInput" accept="image/*" multiple onchange="handleMultipleImagesUpload(event, 'edit')">
+          <div id="editImagesPreview" class="images-preview-grid"></div>
+        </div>
+        <div class="form-group"><label>الوصف</label><textarea id="editProdDesc" rows="3"></textarea></div>
+        <button type="submit" id="btnSaveEditProduct" class="btn-submit">حفظ التحديثات سحابياً</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="addProductModal" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('addProductModal')">✕</button>
+      <h3 style="margin-bottom: 14px; font-weight: 900;">إضافة زمزمية جديدة للمتجر</h3>
+      <form onsubmit="handleAddNewProduct(event)">
+        <div class="form-group"><label>اسم الزمزمية *</label><input type="text" id="newTitle" required></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group"><label>السعر (ج.م) *</label><input type="number" id="newPrice" required min="1"></div>
+          <div class="form-group"><label>الخصم (%)</label><input type="number" id="newDiscount" min="0" max="95" value="0"></div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group"><label>المخزون *</label><input type="number" id="newStock" required min="1" value="20"></div>
+          <div class="form-group"><label>السعة *</label><input type="text" id="newCap" required></div>
+        </div>
+        <div class="form-group">
+          <label>صور الزمزمية (اختر صورة أو عدة صور - ستظهر كاملة) *</label>
+          <input type="file" id="newFileInput" accept="image/*" multiple onchange="handleMultipleImagesUpload(event, 'new')">
+          <div id="newImagesPreview" class="images-preview-grid"></div>
+        </div>
+        <div class="form-group"><label>الوصف</label><textarea id="newDesc" rows="3"></textarea></div>
+        <button type="submit" id="btnSaveNewProduct" class="btn-submit">نشر الزمزمية في المتجر فوراً ☁️</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="changePassModal" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('changePassModal')">✕</button>
+      <h3 style="margin-bottom: 14px; font-weight: 900;">تغيير بيانات دخول الأدمن</h3>
+      <form onsubmit="saveNewCredentials(event)" autocomplete="off">
+        <div class="form-group">
+          <label>اليوزر الجديد (مخفي أثناء الكتابة)</label>
+          <input type="password" id="newAdminEmail" required placeholder="اكتب اليوزر الجديد" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور الجديدة (مخفية)</label>
+          <input type="password" id="newAdminPass" required minlength="5" placeholder="اكتب الباسورد الجديد" autocomplete="new-password">
+        </div>
+        <button type="submit" id="btnSavePass" class="btn-submit">حفظ البيانات سحابياً</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDaGnK_ms8pA4eS2o78gPSKe3oAgSnpObM",
+      authDomain: "zamzamiah-f234e.firebaseapp.com",
+      projectId: "zamzamiah-f234e",
+      storageBucket: "zamzamiah-f234e.firebasestorage.app",
+      messagingSenderId: "629744259699",
+      appId: "1:629744259699:web:a35aea069476c84b309006",
+      measurementId: "G-ZGW2QCWHLG"
+    };
+
+    let db;
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+    } catch(err) { console.warn(err); }
+
+    const DEFAULT_AUTH = { email: "admin@zamzamiah.com", pass: "admin123" };
+    let currentAuth = DEFAULT_AUTH;
+
+    let products = [];
+    let orders = [];
+
+    let customTexts = {
+      store_name: "زَمْزَمِيتِي",
+      store_subtitle: "عالم المطارات والزمزميات في مصر",
+      btn_buy: "أضف للسلة 🛒",
+      btn_cart: "🛒 السلة",
+      btn_buy_now: "اطلبها الآن ⚡",
+      top_bar: "💧 شحن مجاني للطلبات فوق 350 ج.م في مصر | كود خصم: EGYPT10 (خصم 10%)",
+      hero_badge: "✨ الجودة الطبية الأولى في مصر",
+      hero_title: "برودتك وانتعاشك معك",
+      hero_span: "طوال 24 ساعة متواصلة",
+      hero_desc: "زمزميات طبية عازلة للحرارة والبرودة من فولاذ 18/8 الطبي المقاوم للصدأ والتسريب تماماً.",
+      catalog_heading: "الزمزميات المتوفرة للطلب الفوري:",
+      free_ship_target: 350,
+      footer_desc: "وجهتك الأولى لأفضل المطارات والزمزميات الطبية المعزولة في مصر.",
+      footer_copy: "جميع الحقوق محفوظة © 2026 | صُمم بأعلى معايير الجودة والراحة",
+      t1_icon: "❄️", t1_title: "عزل حراري 24 ساعة", t1_desc: "تحفظ البرودة والحرارة بكفاءة قصوى",
+      t2_icon: "🛡️", t2_title: "فولاذ طبي 18/8 آمن", t2_desc: "خالي من BPA ومقاوم للصدأ 100%",
+      t3_icon: "🚚", t3_title: "شحن سريع لكل المحافظات", t3_desc: "توصيل لحد باب البيت في أسرع وقت",
+      t4_icon: "🤝", t4_title: "معاينة قبل الاستلام", t4_desc: "ادفع نقداً بعد التأكد من جودة زمزميتك"
+    };
+
+    let themeSettings = {
+      primaryColor: "#0d9488",
+      bgColor: "#f8fafc",
+      cardBg: "#ffffff",
+      textMain: "#0f172a",
+      heroBgStart: "#f0fdfa",
+      heroBgEnd: "#f8fafc",
+      topbarBg: "#0f766e",
+      logoIcon: "💧",
+      logoImage: "",
+      heroBgImage: "",
+      siteBgImage: ""
+    };
+
+    let uiToggles = {
+      showTopBar: true,
+      showHeroBadge: true,
+      showTrustStrip: true,
+      showSearchBar: true,
+      showFilterPills: true,
+      showStockBar: true,
+      showBuyNowBtn: true,
+      showFreeShipBar: true
+    };
+
+    let customButtons = [];
+
+    let notificationSettings = {
+      channel: "both",
+      whatsapp: "201000000000",
+      email: "store@example.com"
+    };
+
+    let newProductImages = [];
+    let editProductImages = [];
+    let isSubmittingProduct = false;
+
+    if (db) {
+      db.collection("products").onSnapshot((snapshot) => {
+        products = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          let imgs = data.images || (data.img ? [data.img] : []);
+          products.push({ id: doc.id, ...data, images: imgs });
+        });
+        renderAdminTable();
+      });
+
+      db.collection("orders").onSnapshot((snapshot) => {
+        orders = [];
+        snapshot.forEach(doc => {
+          orders.push({ docId: doc.id, ...doc.data() });
+        });
+        orders.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+        renderOrdersTable();
+      });
+
+      db.collection("settings").doc("main").onSnapshot((doc) => {
+        if (doc.exists) {
+          const data = doc.data();
+          if (data.texts) customTexts = { ...customTexts, ...data.texts };
+          if (data.theme) themeSettings = { ...themeSettings, ...data.theme };
+          if (data.toggles) uiToggles = { ...uiToggles, ...data.toggles };
+          if (data.customButtons) customButtons = data.customButtons;
+          if (data.notify) notificationSettings = { ...notificationSettings, ...data.notify };
+          if (data.auth) currentAuth = data.auth;
+        }
+        fillAdminForms();
+        renderCustomButtonsList();
+      });
+    }
+
+    function fillAdminForms() {
+      try {
+        // النصوص والمميزات
+        document.getElementById('cfg_store_name').value = customTexts.store_name || "";
+        document.getElementById('cfg_store_subtitle').value = customTexts.store_subtitle || "";
+        document.getElementById('cfg_btn_buy').value = customTexts.btn_buy || "";
+        document.getElementById('cfg_btn_cart').value = customTexts.btn_cart || "";
+        document.getElementById('cfg_btn_buy_now').value = customTexts.btn_buy_now || "اطلبها الآن ⚡";
+        document.getElementById('cfg_top_bar').value = customTexts.top_bar || "";
+        document.getElementById('cfg_hero_badge').value = customTexts.hero_badge || "";
+        document.getElementById('cfg_hero_title').value = customTexts.hero_title || "";
+        document.getElementById('cfg_hero_span').value = customTexts.hero_span || "";
+        document.getElementById('cfg_hero_desc').value = customTexts.hero_desc || "";
+        document.getElementById('cfg_catalog_heading').value = customTexts.catalog_heading || "";
+        document.getElementById('cfg_free_ship_target').value = customTexts.free_ship_target ?? 350;
+        document.getElementById('cfg_footer_desc').value = customTexts.footer_desc || "";
+        document.getElementById('cfg_footer_copy').value = customTexts.footer_copy || "";
+
+        document.getElementById('cfg_t1_icon').value = customTexts.t1_icon || "❄️";
+        document.getElementById('cfg_t1_title').value = customTexts.t1_title || "";
+        document.getElementById('cfg_t1_desc').value = customTexts.t1_desc || "";
+        document.getElementById('cfg_t2_icon').value = customTexts.t2_icon || "🛡️";
+        document.getElementById('cfg_t2_title').value = customTexts.t2_title || "";
+        document.getElementById('cfg_t2_desc').value = customTexts.t2_desc || "";
+        document.getElementById('cfg_t3_icon').value = customTexts.t3_icon || "🚚";
+        document.getElementById('cfg_t3_title').value = customTexts.t3_title || "";
+        document.getElementById('cfg_t3_desc').value = customTexts.t3_desc || "";
+        document.getElementById('cfg_t4_icon').value = customTexts.t4_icon || "🤝";
+        document.getElementById('cfg_t4_title').value = customTexts.t4_title || "";
+        document.getElementById('cfg_t4_desc').value = customTexts.t4_desc || "";
+
+        // الثيم والخلفيات واللوجو
+        document.getElementById('cfg_theme_primary').value = themeSettings.primaryColor || "#0d9488";
+        document.getElementById('cfg_theme_bg').value = themeSettings.bgColor || "#f8fafc";
+        document.getElementById('cfg_theme_card_bg').value = themeSettings.cardBg || "#ffffff";
+        document.getElementById('cfg_theme_text_main').value = themeSettings.textMain || "#0f172a";
+        document.getElementById('cfg_theme_hero_start').value = themeSettings.heroBgStart || "#f0fdfa";
+        document.getElementById('cfg_theme_hero_end').value = themeSettings.heroBgEnd || "#f8fafc";
+        document.getElementById('cfg_theme_topbar').value = themeSettings.topbarBg || "#0f766e";
+        document.getElementById('cfg_theme_logo_icon').value = themeSettings.logoIcon || "💧";
+
+        updateSinglePreviewUI('logo', themeSettings.logoImage);
+        updateSinglePreviewUI('heroBg', themeSettings.heroBgImage);
+        updateSinglePreviewUI('siteBg', themeSettings.siteBgImage);
+
+        // مفاتيح الإظهار والإخفاء
+        document.getElementById('tog_showTopBar').checked = uiToggles.showTopBar !== false;
+        document.getElementById('tog_showHeroBadge').checked = uiToggles.showHeroBadge !== false;
+        document.getElementById('tog_showTrustStrip').checked = uiToggles.showTrustStrip !== false;
+        document.getElementById('tog_showSearchBar').checked = uiToggles.showSearchBar !== false;
+        document.getElementById('tog_showFilterPills').checked = uiToggles.showFilterPills !== false;
+        document.getElementById('tog_showStockBar').checked = uiToggles.showStockBar !== false;
+        document.getElementById('tog_showBuyNowBtn').checked = uiToggles.showBuyNowBtn !== false;
+        document.getElementById('tog_showFreeShipBar').checked = uiToggles.showFreeShipBar !== false;
+
+        // إعدادات الإشعارات
+        document.getElementById('cfg_notify_channel').value = notificationSettings.channel;
+        document.getElementById('cfg_notify_whatsapp').value = notificationSettings.whatsapp;
+        document.getElementById('cfg_notify_email').value = notificationSettings.email;
+      } catch(e) {}
+    }
+
+    function updateSinglePreviewUI(type, src) {
+      const imgId = type === 'logo' ? 'logoPreviewImg' : (type === 'heroBg' ? 'heroBgPreviewImg' : 'siteBgPreviewImg');
+      const btnId = type === 'logo' ? 'btnRemoveLogo' : (type === 'heroBg' ? 'btnRemoveHeroBg' : 'btnRemoveSiteBg');
+      const imgEl = document.getElementById(imgId);
+      const btnEl = document.getElementById(btnId);
+      if (src && src.trim() !== "") {
+        imgEl.src = src;
+        imgEl.style.display = 'block';
+        btnEl.classList.remove('hidden');
+      } else {
+        imgEl.style.display = 'none';
+        btnEl.classList.add('hidden');
+      }
+    }
+
+    async function handleSingleImageUpload(event, type) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const base64 = await compressImageFile(file);
+      if (!base64) return;
+      if (type === 'logo') themeSettings.logoImage = base64;
+      else if (type === 'heroBg') themeSettings.heroBgImage = base64;
+      else if (type === 'siteBg') themeSettings.siteBgImage = base64;
+      updateSinglePreviewUI(type, base64);
+    }
+
+    function clearSingleImage(type) {
+      if (type === 'logo') themeSettings.logoImage = "";
+      else if (type === 'heroBg') themeSettings.heroBgImage = "";
+      else if (type === 'siteBg') themeSettings.siteBgImage = "";
+      updateSinglePreviewUI(type, "");
+    }
+
+    function applyThemePreset(primary, bg, cardBg, textMain, heroStart, heroEnd, topbar) {
+      document.getElementById('cfg_theme_primary').value = primary;
+      document.getElementById('cfg_theme_bg').value = bg;
+      document.getElementById('cfg_theme_card_bg').value = cardBg;
+      document.getElementById('cfg_theme_text_main').value = textMain;
+      document.getElementById('cfg_theme_hero_start').value = heroStart;
+      document.getElementById('cfg_theme_hero_end').value = heroEnd;
+      document.getElementById('cfg_theme_topbar').value = topbar;
+    }
+
+    async function saveThemeSettings(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSaveTheme');
+      btn.textContent = "جاري حفظ التصميم...";
+      btn.disabled = true;
+
+      const updatedTheme = {
+        primaryColor: document.getElementById('cfg_theme_primary').value,
+        bgColor: document.getElementById('cfg_theme_bg').value,
+        cardBg: document.getElementById('cfg_theme_card_bg').value,
+        textMain: document.getElementById('cfg_theme_text_main').value,
+        heroBgStart: document.getElementById('cfg_theme_hero_start').value,
+        heroBgEnd: document.getElementById('cfg_theme_hero_end').value,
+        topbarBg: document.getElementById('cfg_theme_topbar').value,
+        logoIcon: document.getElementById('cfg_theme_logo_icon').value.trim() || "💧",
+        logoImage: themeSettings.logoImage || "",
+        heroBgImage: themeSettings.heroBgImage || "",
+        siteBgImage: themeSettings.siteBgImage || ""
+      };
+
+      try {
+        await db.collection("settings").doc("main").set({ theme: updatedTheme }, { merge: true });
+        alert("تم حفظ وتطبيق اللوجو والباك جروند والألوان في المتجر بنجاح!");
+      } catch(err) {
+        alert("خطأ أثناء الحفظ: " + err.message);
+      } finally {
+        btn.textContent = "حفظ اللوجو والباك جروند والألوان ☁️";
+        btn.disabled = false;
+      }
+    }
+
+    // إدارة الأزرار المخصصة ومفاتيح الإظهار والإخفاء
+    async function saveTogglesAndCustomButtons() {
+      const btn = document.getElementById('btnSaveToggles');
+      btn.textContent = "جاري الحفظ...";
+      btn.disabled = true;
+
+      const updatedToggles = {
+        showTopBar: document.getElementById('tog_showTopBar').checked,
+        showHeroBadge: document.getElementById('tog_showHeroBadge').checked,
+        showTrustStrip: document.getElementById('tog_showTrustStrip').checked,
+        showSearchBar: document.getElementById('tog_showSearchBar').checked,
+        showFilterPills: document.getElementById('tog_showFilterPills').checked,
+        showStockBar: document.getElementById('tog_showStockBar').checked,
+        showBuyNowBtn: document.getElementById('tog_showBuyNowBtn').checked,
+        showFreeShipBar: document.getElementById('tog_showFreeShipBar').checked
+      };
+
+      try {
+        await db.collection("settings").doc("main").set({ toggles: updatedToggles }, { merge: true });
+        alert("تم تحديث حالة الأزرار والأقسام في المتجر فوراً!");
+      } catch(err) {
+        alert("خطأ: " + err.message);
+      } finally {
+        btn.textContent = "حفظ إعدادات الإظهار والإخفاء ☁️";
+        btn.disabled = false;
+      }
+    }
+
+    async function addCustomButton(e) {
+      e.preventDefault();
+      const label = document.getElementById('newBtnLabel').value.trim();
+      const url = document.getElementById('newBtnUrl').value.trim();
+      const location = document.getElementById('newBtnLocation').value;
+      const color = document.getElementById('newBtnColor').value;
+
+      const newBtn = { id: "btn_" + Date.now(), label, url, location, color };
+      const updatedList = [...customButtons, newBtn];
+
+      try {
+        await db.collection("settings").doc("main").set({ customButtons: updatedList }, { merge: true });
+        e.target.reset();
+        alert("تمت إضافة الزر للموقع بنجاح!");
+      } catch(err) {
+        alert("خطأ أثناء إضافة الزر: " + err.message);
+      }
+    }
+
+    async function removeCustomButton(btnId) {
+      if (!confirm("هل تريد حذف هذا الزر من الموقع؟")) return;
+      const updatedList = customButtons.filter(b => b.id !== btnId);
+      try {
+        await db.collection("settings").doc("main").set({ customButtons: updatedList }, { merge: true });
+      } catch(err) {
+        alert("خطأ أثناء الحذف: " + err.message);
+      }
+    }
+
+    function renderCustomButtonsList() {
+      const container = document.getElementById('customButtonsListContainer');
+      if (!customButtons || customButtons.length === 0) {
+        container.innerHTML = `<p style="color:#94a3b8; font-size:13px; font-weight:700;">لا توجد أزرار إضافية حالياً. يمكنك إضافة أي زر من النموذج أعلاه.</p>`;
+        return;
+      }
+
+      container.innerHTML = customButtons.map(b => `
+        <div class="custom-btn-row">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="display:inline-block; width:18px; height:18px; border-radius:50%; background:${b.color};"></span>
+            <strong>${b.label}</strong>
+            <span style="font-size:12px; color:#64748b;">(${b.location === 'header' ? 'يظهر في الهيدر العلوي' : 'يظهر في البنر الرئيسي'})</span>
+            <a href="${b.url}" target="_blank" style="font-size:12px; color:#0d9488;">🔗 الرابط</a>
+          </div>
+          <button onclick="removeCustomButton('${b.id}')" class="btn-delete">حذف الزر 🗑️</button>
+        </div>
+      `).join('');
+    }
+
+    async function saveCustomTexts(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSaveTexts');
+      btn.textContent = "جاري الحفظ...";
+      btn.disabled = true;
+
+      const updated = {
+        store_name: document.getElementById('cfg_store_name').value,
+        store_subtitle: document.getElementById('cfg_store_subtitle').value,
+        btn_buy: document.getElementById('cfg_btn_buy').value,
+        btn_cart: document.getElementById('cfg_btn_cart').value,
+        btn_buy_now: document.getElementById('cfg_btn_buy_now').value,
+        top_bar: document.getElementById('cfg_top_bar').value,
+        hero_badge: document.getElementById('cfg_hero_badge').value,
+        hero_title: document.getElementById('cfg_hero_title').value,
+        hero_span: document.getElementById('cfg_hero_span').value,
+        hero_desc: document.getElementById('cfg_hero_desc').value,
+        catalog_heading: document.getElementById('cfg_catalog_heading').value,
+        free_ship_target: Number(document.getElementById('cfg_free_ship_target').value || 350),
+        footer_desc: document.getElementById('cfg_footer_desc').value,
+        footer_copy: document.getElementById('cfg_footer_copy').value,
+        t1_icon: document.getElementById('cfg_t1_icon').value,
+        t1_title: document.getElementById('cfg_t1_title').value,
+        t1_desc: document.getElementById('cfg_t1_desc').value,
+        t2_icon: document.getElementById('cfg_t2_icon').value,
+        t2_title: document.getElementById('cfg_t2_title').value,
+        t2_desc: document.getElementById('cfg_t2_desc').value,
+        t3_icon: document.getElementById('cfg_t3_icon').value,
+        t3_title: document.getElementById('cfg_t3_title').value,
+        t3_desc: document.getElementById('cfg_t3_desc').value,
+        t4_icon: document.getElementById('cfg_t4_icon').value,
+        t4_title: document.getElementById('cfg_t4_title').value,
+        t4_desc: document.getElementById('cfg_t4_desc').value
+      };
+
+      try {
+        await db.collection("settings").doc("main").set({ texts: updated }, { merge: true });
+        alert("تم حفظ وتحديث جميع نصوص ومميزات المتجر بنجاح!");
+      } catch(err) {
+        alert("خطأ أثناء الحفظ: " + err.message);
+      } finally {
+        btn.textContent = "حفظ جميع النصوص والمميزات ☁️";
+        btn.disabled = false;
+      }
+    }
+
+    function getFinalPrice(p) {
+      if (!p.discount || p.discount <= 0) return p.price;
+      return Math.round(p.price - (p.price * (p.discount / 100)));
+    }
+
+    function doAdminLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass = document.getElementById('loginPass').value.trim();
+      
+      const isMatch = (email.toLowerCase() === currentAuth.email.toLowerCase() && pass === currentAuth.pass) || 
+                      (email.toLowerCase() === "admin@zamzamiah.com" && pass === "admin123");
+
+      if (isMatch) {
+        sessionStorage.setItem('is_admin_logged', 'true');
+        checkLoginState();
+      } else {
+        document.getElementById('loginError').classList.remove('hidden');
+      }
+    }
+
+    function checkLoginState() {
+      if (sessionStorage.getItem('is_admin_logged') === 'true') {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('adminView').classList.remove('hidden');
+        renderOrdersTable();
+        renderAdminTable();
+        fillAdminForms();
+        renderCustomButtonsList();
+      } else {
+        document.getElementById('loginScreen').classList.remove('hidden');
+        document.getElementById('adminView').classList.add('hidden');
+      }
+    }
+
+    function adminLogout() {
+      sessionStorage.removeItem('is_admin_logged');
+      checkLoginState();
+    }
+
+    function switchAdminTab(tab) {
+      ['Orders', 'Products', 'Theme', 'ButtonsMgr', 'Texts', 'Notify'].forEach(t => {
+        const el = document.getElementById('adminTab' + t);
+        if (el) el.classList.add('hidden');
+        const btn = document.getElementById('tab' + t + 'Btn');
+        if (btn) btn.classList.remove('active');
+      });
+
+      const map = {
+        orders: ['adminTabOrders', 'tabOrdersBtn'],
+        products: ['adminTabProducts', 'tabProductsBtn'],
+        theme: ['adminTabTheme', 'tabThemeBtn'],
+        buttonsMgr: ['adminTabButtonsMgr', 'tabButtonsMgrBtn'],
+        texts: ['adminTabTexts', 'tabTextsBtn'],
+        notify: ['adminTabNotify', 'tabNotifyBtn']
+      };
+
+      if (map[tab]) {
+        document.getElementById(map[tab][0]).classList.remove('hidden');
+        document.getElementById(map[tab][1]).classList.add('active');
+      }
+    }
+
+    function renderOrdersTable() {
+      const tbody = document.getElementById('ordersTableBody');
+      const completedOrders = orders.filter(o => o.status === 'completed');
+      const pendingOrders = orders.filter(o => o.status === 'pending' || o.status === 'delivering');
+      const completedRevenue = completedOrders.reduce((sum, o) => sum + (o.totalAmountNumber || parseInt(o.total) || 0), 0);
+
+      document.getElementById('statCompletedRevenue').textContent = completedRevenue.toLocaleString('ar-EG') + " ج.م";
+      document.getElementById('statPendingOrders').textContent = pendingOrders.length;
+      document.getElementById('statCompletedOrders').textContent = completedOrders.length;
+      document.getElementById('statTotalAllOrders').textContent = orders.length;
+
+      if (orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:35px; color:#94a3b8; font-weight:bold;">لا توجد أي طلبات مستلمة في السجل حتى الآن.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = orders.map((o) => {
+        let statusClass = 'status-pending';
+        if (o.status === 'delivering') statusClass = 'status-delivering';
+        else if (o.status === 'completed') statusClass = 'status-completed';
+        else if (o.status === 'cancelled') statusClass = 'status-cancelled';
+
+        return `
+          <tr>
+            <td style="font-weight:900; color:#0d9488;">${o.id}</td>
+            <td style="font-weight:bold;">${o.name}</td>
+            <td>
+              <a href="tel:${o.phone}" class="btn-action-small" style="background:#f0f9ff; color:#0369a1;">📞 ${o.phone}</a>
+              <a href="https://wa.me/2${o.phone}" target="_blank" class="btn-action-small" style="background:#f0fdf4; color:#15803d;">💬 واتساب</a>
+            </td>
+            <td>${o.gov || ''} - ${o.city || ''}</td>
+            <td style="font-weight:600; font-size:12px;">${o.items}</td>
+            <td style="font-weight:900; color:#0f172a;">${o.total}</td>
+            <td>
+              <select class="status-select ${statusClass}" onchange="updateOrderStatus('${o.docId}', this.value)">
+                <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>⏳ قيد التنفيذ (معلق)</option>
+                <option value="delivering" ${o.status === 'delivering' ? 'selected' : ''}>🚚 جاري الشحن</option>
+                <option value="completed" ${o.status === 'completed' ? 'selected' : ''}>✅ تم التسليم (إتمام البيع)</option>
+                <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>❌ ملغي / راجع</option>
+              </select>
+            </td>
+            <td style="color:#64748b; font-size:11px;">${o.date}</td>
+            <td style="text-align:center;">
+              <button onclick="viewFullOrderDetails('${o.docId}')" class="btn-edit" style="margin-bottom:3px;">العنوان 🔍</button>
+              <button onclick="deleteOrder('${o.docId}')" class="btn-delete">حذف 🗑️</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function updateOrderStatus(docId, newStatus) {
+      if (db && docId) await db.collection("orders").doc(docId).update({ status: newStatus });
+    }
+
+    function viewFullOrderDetails(docId) {
+      const o = orders.find(i => i.docId == docId);
+      if (!o) return;
+      document.getElementById('modalOrderTitle').textContent = `تفاصيل الطلب: ${o.id}`;
+      document.getElementById('modalOrderContent').innerHTML = `
+        <div style="background:#f8fafc; padding:12px; border-radius:10px; margin-bottom:12px; border:1px solid #e2e8f0;">
+          <div><strong>👤 اسم العميل:</strong> ${o.name}</div>
+          <div><strong>📱 الهاتف الأساسي:</strong> ${o.phone}</div>
+          ${o.phoneAlt ? `<div><strong>📞 هاتف بديل:</strong> ${o.phoneAlt}</div>` : ''}
+          <div><strong>📅 وقت الطلب:</strong> ${o.date}</div>
+        </div>
+        <div style="background:#f0fdfa; padding:12px; border-radius:10px; margin-bottom:12px; border:1px solid #ccfbf1;">
+          <div><strong>📍 المحافظة والحي:</strong> ${o.gov || ''} - ${o.city || ''}</div>
+          <div><strong>🏠 العنوان بالتفصيل:</strong> ${o.address}</div>
+          ${o.notes ? `<div><strong>📝 ملاحظات العميل:</strong> ${o.notes}</div>` : ''}
+        </div>
+        <div style="background:#fff7ed; padding:12px; border-radius:10px; border:1px solid #ffedd5;">
+          <div><strong>📦 المنتجات:</strong> ${o.items}</div>
+          <div style="font-size:15px; font-weight:900; color:#ea580c; margin-top:5px;">💵 المبلغ الإجمالي: ${o.total} (الدفع عند الاستلام)</div>
+        </div>
+      `;
+      document.getElementById('orderDetailsModal').classList.remove('hidden');
+    }
+
+    function exportOrdersToCSV() {
+      if (orders.length === 0) { alert("لا توجد طلبات لتصديرها حالياً!"); return; }
+      let csv = "\uFEFFرقم الطلب,اسم العميل,رقم الهاتف,المحافظة,المدينة,العنوان,المنتجات,المبلغ,حالة الطلب,تاريخ الطلب\n";
+      orders.forEach(o => {
+        let statusAr = "قيد التنفيذ";
+        if (o.status === 'completed') statusAr = "تم التسليم";
+        else if (o.status === 'delivering') statusAr = "جاري الشحن";
+        else if (o.status === 'cancelled') statusAr = "ملغي";
+        csv += `"${o.id}","${o.name}","${o.phone}","${o.gov || ''}","${o.city || ''}","${(o.address || '').replace(/"/g, '""')}","${(o.items || '').replace(/"/g, '""')}","${o.total}","${statusAr}","${o.date}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute("download", `مبيعات_وطلبات_زمزميتي_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    async function clearAllOrders() {
+      if (orders.length === 0) return;
+      if (!confirm("هل أنت متأكد من مسح جميع الطلبات نهائياً؟")) return;
+      for (const o of orders) {
+        if (o.docId) await db.collection("orders").doc(o.docId).delete();
+      }
+    }
+
+    async function deleteOrder(docId) {
+      if (!confirm("هل تريد حذف هذا الطلب نهائياً؟")) return;
+      if (docId) await db.collection("orders").doc(docId).delete();
+    }
+
+    function renderAdminTable() {
+      const tbody = document.getElementById('adminTableBody');
+      tbody.innerHTML = products.map(p => {
+        const finalPrice = getFinalPrice(p);
+        const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.img || '');
+        const imagesCount = (p.images && p.images.length > 0) ? p.images.length : 1;
+
+        return `
+          <tr>
+            <td style="display:flex; align-items:center; gap:10px;">
+              <img src="${mainImg}" style="width:45px; height:45px; object-fit:contain; background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:2px;">
+              <div>
+                <span style="font-weight:bold; display:block;">${p.title}</span>
+                <small style="color:#64748b;">(${imagesCount} صور)</small>
+              </div>
+            </td>
+            <td>${p.capacity}</td>
+            <td style="font-weight:bold;">${p.price} ج.م</td>
+            <td style="font-weight:bold; color:${p.discount > 0 ? '#ef4444' : '#64748b'};">${p.discount || 0}%</td>
+            <td style="font-weight:900; color:#0d9488;">${finalPrice} ج.م</td>
+            <td style="font-weight:bold;">${p.stock} قطعة</td>
+            <td style="text-align:center;">
+              <button onclick="openEditProduct('${p.id}')" class="btn-edit">تعديل ✏️</button>
+              <button onclick="deleteProduct('${p.id}')" class="btn-delete">حذف 🗑️</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function saveNotificationSettings(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSaveNotify');
+      btn.textContent = "جاري الحفظ...";
+      btn.disabled = true;
+
+      const updated = {
+        channel: document.getElementById('cfg_notify_channel').value,
+        whatsapp: document.getElementById('cfg_notify_whatsapp').value.trim() || "201000000000",
+        email: document.getElementById('cfg_notify_email').value.trim() || "store@example.com"
+      };
+
+      try {
+        await db.collection("settings").doc("main").set({ notify: updated }, { merge: true });
+        alert("تم حفظ إعدادات الربط في المتجر بنجاح!");
+      } catch(err) {
+        alert("خطأ أثناء الحفظ: " + err.message);
+      } finally {
+        btn.textContent = "حفظ إعدادات الربط سحابياً";
+        btn.disabled = false;
+      }
+    }
+
+    function compressImageFile(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.src = e.target.result;
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const MAX_DIM = 650;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > MAX_DIM) { height *= MAX_DIM / width; width = MAX_DIM; }
+            } else {
+              if (height > MAX_DIM) { width *= MAX_DIM / height; height = MAX_DIM; }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', 0.78));
+          };
+          img.onerror = () => resolve('');
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleMultipleImagesUpload(event, mode) {
+      const files = Array.from(event.target.files);
+      if (files.length === 0) return;
+      for (const file of files) {
+        const base64 = await compressImageFile(file);
+        if (base64) {
+          if (mode === 'new') newProductImages.push(base64);
+          else editProductImages.push(base64);
+        }
+      }
+      renderPreviewThumbs(mode);
+    }
+
+    function renderPreviewThumbs(mode) {
+      const isNew = mode === 'new';
+      const container = document.getElementById(isNew ? 'newImagesPreview' : 'editImagesPreview');
+      const list = isNew ? newProductImages : editProductImages;
+      container.innerHTML = list.map((src, index) => `
+        <div class="preview-thumb-box">
+          <img src="${src}">
+          <span class="btn-remove-thumb" onclick="removeUploadedThumb(${index}, '${mode}')">✕</span>
+        </div>
+      `).join('');
+    }
+
+    function removeUploadedThumb(index, mode) {
+      if (mode === 'new') newProductImages.splice(index, 1);
+      else editProductImages.splice(index, 1);
+      renderPreviewThumbs(mode);
+    }
+
+    function openAddProductModal() {
+      newProductImages = [];
+      isSubmittingProduct = false;
+      document.getElementById('newImagesPreview').innerHTML = '';
+      const fileInput = document.getElementById('newFileInput');
+      if (fileInput) fileInput.value = '';
+      document.getElementById('addProductModal').classList.remove('hidden');
+    }
+
+    async function handleAddNewProduct(e) {
+      e.preventDefault();
+      if (isSubmittingProduct) return;
+      if (newProductImages.length === 0) { alert("يرجى اختيار صورة واحدة على الأقل للزمزمية!"); return; }
+
+      isSubmittingProduct = true;
+      const btn = document.getElementById('btnSaveNewProduct');
+      btn.textContent = "جاري النشر...";
+      btn.disabled = true;
+
+      const newProd = {
+        title: document.getElementById('newTitle').value.trim(),
+        price: Number(document.getElementById('newPrice').value),
+        discount: Number(document.getElementById('newDiscount').value || 0),
+        stock: Number(document.getElementById('newStock').value),
+        capacity: document.getElementById('newCap').value.trim(),
+        images: [...newProductImages],
+        desc: document.getElementById('newDesc').value.trim() || "زمزمية طبية فاخرة بعزل حراري عالي الجودة."
+      };
+      
+      try {
+        await db.collection("products").add(newProd);
+        closeModal('addProductModal');
+        e.target.reset();
+        newProductImages = [];
+        alert("تمت إضافة الزمزمية بنجاح في المتجر!");
+      } catch(err) {
+        alert("حدث خطأ أثناء الرفع: " + err.message);
+      } finally {
+        btn.textContent = "نشر الزمزمية في المتجر فوراً ☁️";
+        btn.disabled = false;
+        isSubmittingProduct = false;
+      }
+    }
+
+    function openEditProduct(id) {
+      const p = products.find(i => i.id == id);
+      if (!p) return;
+      editProductImages = (p.images && p.images.length > 0) ? [...p.images] : (p.img ? [p.img] : []);
+      document.getElementById('editProdId').value = p.id;
+      document.getElementById('editProdTitle').value = p.title;
+      document.getElementById('editProdPrice').value = p.price;
+      document.getElementById('editProdDiscount').value = p.discount || 0;
+      document.getElementById('editProdStock').value = p.stock;
+      document.getElementById('editProdCap').value = p.capacity;
+      document.getElementById('editProdDesc').value = p.desc;
+      const fileInput = document.getElementById('editProdFileInput');
+      if (fileInput) fileInput.value = '';
+      renderPreviewThumbs('edit');
+      document.getElementById('editProductModal').classList.remove('hidden');
+    }
+
+    async function saveProductEdit(e) {
+      e.preventDefault();
+      if (editProductImages.length === 0) { alert("يجب أن يحتوي المنتج على صورة واحدة على الأقل!"); return; }
+
+      const btn = document.getElementById('btnSaveEditProduct');
+      btn.textContent = "جاري الحفظ...";
+      btn.disabled = true;
+
+      const id = document.getElementById('editProdId').value;
+      const updateData = {
+        title: document.getElementById('editProdTitle').value.trim(),
+        price: Number(document.getElementById('editProdPrice').value),
+        discount: Number(document.getElementById('editProdDiscount').value || 0),
+        stock: Number(document.getElementById('editProdStock').value),
+        capacity: document.getElementById('editProdCap').value.trim(),
+        desc: document.getElementById('editProdDesc').value.trim(),
+        images: [...editProductImages]
+      };
+
+      try {
+        await db.collection("products").doc(id).update(updateData);
+        closeModal('editProductModal');
+        alert("تم تحديث بيانات الزمزمية وصورها بنجاح!");
+      } catch(err) {
+        alert("خطأ أثناء التحديث: " + err.message);
+      } finally {
+        btn.textContent = "حفظ التحديثات سحابياً";
+        btn.disabled = false;
+      }
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm("هل أنت متأكد من حذف هذه الزمزمية نهائياً من المتجر؟")) return;
+      await db.collection("products").doc(id).delete();
+    }
+
+    function openChangePassModal() {
+      document.getElementById('newAdminEmail').value = '';
+      document.getElementById('newAdminPass').value = '';
+      document.getElementById('changePassModal').classList.remove('hidden');
+    }
+
+    async function saveNewCredentials(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSavePass');
+      btn.textContent = "جاري الحفظ...";
+      btn.disabled = true;
+
+      const email = document.getElementById('newAdminEmail').value.trim();
+      const pass = document.getElementById('newAdminPass').value.trim();
+      const newAuth = { email, pass };
+      
+      try {
+        await db.collection("settings").doc("main").set({ auth: newAuth }, { merge: true });
+        currentAuth = newAuth;
+        closeModal('changePassModal');
+        alert("تم تحديث وحفظ بيانات الدخول الجديدة بنجاح!");
+      } catch(err) {
+        alert("خطأ أثناء الحفظ: " + err.message);
+      } finally {
+        btn.textContent = "حفظ البيانات سحابياً";
+        btn.disabled = false;
+      }
+    }
+
+    function closeModal(id) { 
+      const el = document.getElementById(id);
+      if (el) el.classList.add('hidden'); 
+    }
+
+    checkLoginState();
+  </script>
+</body>
+</html>
