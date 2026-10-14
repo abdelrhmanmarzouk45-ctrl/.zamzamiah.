@@ -82,11 +82,39 @@
     .logo p { font-size: 12px; color: var(--text-muted); font-weight: 700; margin-top: 2px; }
 
     .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+    /* أزرار السوشيال ميديا الاحترافية (فيسبوك، انستجرام، تيك توك، وصور مخصصة) */
+    .social-icons-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .social-icon-btn {
+      width: 42px; height: 42px; border-radius: 14px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: white; text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+      background: var(--primary);
+    }
+    .social-icon-btn:hover { transform: translateY(-4px) scale(1.08); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+    .social-icon-btn svg { width: 22px; height: 22px; fill: currentColor; flex-shrink: 0; }
+    .social-icon-btn img { width: 100%; height: 100%; object-fit: contain; background: white; padding: 3px; border-radius: 12px; }
+    .social-icon-btn.with-text { width: auto; padding: 0 14px; gap: 8px; font-size: 13px; font-weight: 800; }
+    .social-icon-btn.with-text img { width: 28px; height: 28px; border-radius: 8px; }
+
+    /* ألوان منصات السوشيال الأصلية */
+    .bg-facebook { background: linear-gradient(135deg, #1877F2, #0d5bd9); }
+    .bg-instagram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+    .bg-whatsapp { background: linear-gradient(135deg, #25D366, #128C7E); }
+    .bg-tiktok { background: linear-gradient(135deg, #000000 30%, #25F4EE 80%, #FE2C55 100%); }
+    .bg-youtube { background: linear-gradient(135deg, #FF0000, #cc0000); }
+    .bg-telegram { background: linear-gradient(135deg, #2AABEE, #229ED9); }
+
     .custom-dyn-btn {
-      padding: 10px 18px; border-radius: 14px; color: white; font-weight: 800; font-size: 13px;
-      text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      padding: 9px 16px; border-radius: 14px; color: white; font-weight: 800; font-size: 13px;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.12);
       transition: 0.3s;
     }
+    .custom-dyn-btn img { width: 26px; height: 26px; object-fit: contain; background: white; border-radius: 7px; padding: 2px; }
     .custom-dyn-btn:hover { transform: translateY(-3px); filter: brightness(1.08); }
 
     .btn-cart { 
@@ -118,7 +146,7 @@
     .hero h2 { font-size: 40px; font-weight: 900; color: var(--text-main); margin-bottom: 14px; line-height: 1.25; animation: fadeInUp 0.6s ease; }
     .hero h2 span { color: var(--primary); }
     .hero p { color: var(--text-muted); font-size: 16px; max-width: 650px; margin: 0 auto 24px; font-weight: 600; line-height: 1.7; animation: fadeInUp 0.7s ease; }
-    .hero-custom-btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 15px; animation: fadeInUp 0.8s ease; }
+    .hero-custom-btns { display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 15px; animation: fadeInUp 0.8s ease; }
 
     /* شريط المميزات الأربعة */
     .trust-strip {
@@ -282,7 +310,8 @@
     footer { background: #0f172a; color: white; padding: 45px 20px 25px; margin-top: 60px; text-align: center; }
     .footer-content { max-width: 800px; margin: 0 auto; }
     .footer-content h3 { font-size: 22px; font-weight: 900; margin-bottom: 8px; color: #14b8a6; }
-    .footer-content p { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
+    .footer-content p { font-size: 13px; color: #94a3b8; margin-bottom: 16px; }
+    .footer-socials { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
     .footer-copy { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; font-size: 12px; color: #64748b; font-weight: 600; }
 
     .hidden { display: none !important; }
@@ -294,6 +323,7 @@
       header { padding: 12px 16px; }
       .hero h2 { font-size: 28px; }
       .trust-strip { margin-top: 15px; }
+      .logo h1 { font-size: 19px; }
     }
   </style>
 </head>
@@ -306,7 +336,7 @@
     💧 شحن مجاني للطلبات فوق 350 ج.م في مصر | كود خصم: EGYPT10 (خصم 10%)
   </div>
 
-  <!-- الهيدر -->
+  <!-- الهيدر العلوي -->
   <header>
     <div class="logo" onclick="showCustomerStore()">
       <div class="logo-icon" id="ui_logo_box">💧</div>
@@ -315,8 +345,12 @@
         <p id="ui_store_subtitle">عالم المطارات والزمزميات في مصر</p>
       </div>
     </div>
+
     <div class="header-actions">
-      <!-- الأزرار المخصصة التي يضيفها الأدمن في الهيدر -->
+      <!-- أزرار السوشيال ميديا العلوية (فيسبوك، انستجرام، تيك توك، وأي زر بصورة مخصصة) -->
+      <div id="headerSocialsBar" class="social-icons-bar"></div>
+
+      <!-- الأزرار الإضافية المخصصة في الهيدر -->
       <div id="headerCustomBtns" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
 
       <button id="cartBtn" class="btn-cart" onclick="openCartDrawer()">
@@ -335,7 +369,7 @@
       <h2 id="ui_hero_title">برودتك وانتعاشك معك <br><span id="ui_hero_span">طوال 24 ساعة متواصلة</span></h2>
       <p id="ui_hero_desc">زمزميات طبية عازلة للحرارة والبرودة من فولاذ 18/8 الطبي المقاوم للصدأ والتسريب تماماً.</p>
       
-      <!-- الأزرار المخصصة التي يضيفها الأدمن في البنر -->
+      <!-- الأزرار المخصصة في البنر -->
       <div id="heroCustomBtns" class="hero-custom-btns"></div>
     </section>
 
@@ -554,6 +588,7 @@
     <div class="footer-content">
       <h3 id="footer_store_name">زَمْزَمِيتِي</h3>
       <p id="footer_store_desc">وجهتك الأولى لأفضل المطارات والزمزميات الطبية المعزولة في مصر.</p>
+      <div id="footerSocialsBar" class="footer-socials"></div>
       <div class="footer-copy" id="footer_store_copy">جميع الحقوق محفوظة © 2026 | صُمم بأعلى معايير الجودة والراحة</div>
     </div>
   </footer>
@@ -574,6 +609,16 @@
       firebase.initializeApp(firebaseConfig);
       db = firebase.firestore();
     } catch(err) { console.warn(err); }
+
+    const SOCIAL_SVGS = {
+      facebook: `<svg viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>`,
+      instagram: `<svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>`,
+      tiktok: `<svg viewBox="0 0 24 24"><path d="M16.6 5.82s.51.5 0 0A4.278 4.278 0 0 1 15.54 3h-3.09v12.4a2.592 2.592 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48z"/></svg>`,
+      whatsapp: `<svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2"/></svg>`,
+      youtube: `<svg viewBox="0 0 24 24"><path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"/></svg>`,
+      telegram: `<svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>`,
+      custom: `<svg viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>`
+    };
 
     let products = [];
     let cart = [];
@@ -604,37 +649,25 @@
     };
 
     let themeSettings = {
-      primaryColor: "#0d9488",
-      bgColor: "#f8fafc",
-      cardBg: "#ffffff",
-      textMain: "#0f172a",
-      heroBgStart: "#f0fdfa",
-      heroBgEnd: "#f8fafc",
-      topbarBg: "#0f766e",
-      logoIcon: "💧",
-      logoImage: "",
-      heroBgImage: "",
-      siteBgImage: ""
+      primaryColor: "#0d9488", bgColor: "#f8fafc", cardBg: "#ffffff", textMain: "#0f172a",
+      heroBgStart: "#f0fdfa", heroBgEnd: "#f8fafc", topbarBg: "#0f766e", logoIcon: "💧",
+      logoImage: "", heroBgImage: "", siteBgImage: ""
     };
 
     let uiToggles = {
-      showTopBar: true,
-      showHeroBadge: true,
-      showTrustStrip: true,
-      showSearchBar: true,
-      showFilterPills: true,
-      showStockBar: true,
-      showBuyNowBtn: true,
-      showFreeShipBar: true
+      showTopBar: true, showHeroBadge: true, showTrustStrip: true, showSearchBar: true,
+      showFilterPills: true, showStockBar: true, showBuyNowBtn: true, showFreeShipBar: true
     };
+
+    // فيسبوك وانستجرام وتيك توك يظهرون افتراضياً في الهيدر والفوتر
+    let socialLinks = [
+      { id: "soc_fb", platform: "facebook", label: "", url: "https://facebook.com", location: "both", customImg: "", active: true },
+      { id: "soc_ig", platform: "instagram", label: "", url: "https://instagram.com", location: "both", customImg: "", active: true },
+      { id: "soc_tt", platform: "tiktok", label: "", url: "https://tiktok.com", location: "both", customImg: "", active: true }
+    ];
 
     let customButtons = [];
-
-    let notificationSettings = {
-      channel: "both",
-      whatsapp: "201000000000",
-      email: "store@example.com"
-    };
+    let notificationSettings = { channel: "both", whatsapp: "201000000000", email: "store@example.com" };
 
     function showToast(message, icon = "✅") {
       const container = document.getElementById('toastContainer');
@@ -667,6 +700,13 @@
           if (data.texts) customTexts = { ...customTexts, ...data.texts };
           if (data.theme) themeSettings = { ...themeSettings, ...data.theme };
           if (data.toggles) uiToggles = { ...uiToggles, ...data.toggles };
+          if (data.socialLinks && data.socialLinks.length > 0) {
+            socialLinks = data.socialLinks;
+            // ضمان ظهور تيك توك حتى لو كانت الإعدادات القديمة محفوظة بدونه
+            if (!socialLinks.some(s => s.platform === 'tiktok')) {
+              socialLinks.push({ id: "soc_tt", platform: "tiktok", label: "", url: "https://tiktok.com", location: "both", customImg: "", active: true });
+            }
+          }
           if (data.customButtons) customButtons = data.customButtons;
           if (data.notify) notificationSettings = { ...notificationSettings, ...data.notify };
         }
@@ -674,6 +714,34 @@
         renderStore();
         updateCartUI();
       });
+    }
+
+    function renderSocialBtnHTML(s) {
+      const hasCustomImg = s.customImg && s.customImg.trim() !== "";
+      const iconContent = hasCustomImg ? `<img src="${s.customImg}" alt="${s.platform}">` : (SOCIAL_SVGS[s.platform] || SOCIAL_SVGS.custom);
+      const bgClass = (!hasCustomImg && ['facebook', 'instagram', 'whatsapp', 'tiktok', 'youtube', 'telegram'].includes(s.platform))
+        ? `bg-${s.platform}`
+        : '';
+      const hasLabel = s.label && s.label.trim() !== "";
+      return `
+        <a href="${s.url || '#'}" target="_blank" rel="noopener noreferrer" 
+           class="social-icon-btn ${bgClass} ${hasLabel ? 'with-text' : ''}" 
+           title="${s.label || s.platform}">
+          ${iconContent}
+          ${hasLabel ? `<span>${s.label}</span>` : ''}
+        </a>
+      `;
+    }
+
+    function renderCustomBtnHTML(b) {
+      const hasImg = b.customImg && b.customImg.trim() !== "";
+      return `
+        <a href="${b.url}" target="${(b.url || '').startsWith('#') ? '_self' : '_blank'}" 
+           class="custom-dyn-btn" style="background:${b.color || 'var(--primary)'};">
+          ${hasImg ? `<img src="${b.customImg}" alt="icon">` : ''}
+          <span>${b.label}</span>
+        </a>
+      `;
     }
 
     function applyTextsAndTheme() {
@@ -692,7 +760,6 @@
         document.getElementById('footer_store_desc').textContent = customTexts.footer_desc;
         document.getElementById('footer_store_copy').textContent = customTexts.footer_copy;
 
-        // المميزات الأربعة
         document.getElementById('ui_t1_icon').textContent = customTexts.t1_icon;
         document.getElementById('ui_t1_title').textContent = customTexts.t1_title;
         document.getElementById('ui_t1_desc').textContent = customTexts.t1_desc;
@@ -706,7 +773,6 @@
         document.getElementById('ui_t4_title').textContent = customTexts.t4_title;
         document.getElementById('ui_t4_desc').textContent = customTexts.t4_desc;
 
-        // الألوان والخلفيات
         const root = document.documentElement;
         root.style.setProperty('--primary', themeSettings.primaryColor || '#0d9488');
         root.style.setProperty('--bg-color', themeSettings.bgColor || '#f8fafc');
@@ -716,7 +782,6 @@
         root.style.setProperty('--hero-bg-end', themeSettings.heroBgEnd || '#f8fafc');
         root.style.setProperty('--topbar-bg', themeSettings.topbarBg || '#0f766e');
 
-        // صور الباك جروند
         if (themeSettings.siteBgImage && themeSettings.siteBgImage.trim() !== "") {
           document.body.style.backgroundImage = `url('${themeSettings.siteBgImage}')`;
         } else {
@@ -730,7 +795,6 @@
           heroSec.style.backgroundImage = `linear-gradient(180deg, var(--hero-bg-start), var(--hero-bg-end))`;
         }
 
-        // اللوجو
         const logoBox = document.getElementById('ui_logo_box');
         if (themeSettings.logoImage && themeSettings.logoImage.trim() !== "") {
           logoBox.innerHTML = `<img src="${themeSettings.logoImage}" alt="Logo">`;
@@ -738,7 +802,6 @@
           logoBox.textContent = themeSettings.logoIcon || "💧";
         }
 
-        // إظهار وإخفاء الأقسام
         document.getElementById('ui_top_announcement').classList.toggle('hidden', uiToggles.showTopBar === false);
         document.getElementById('ui_hero_badge').classList.toggle('hidden', uiToggles.showHeroBadge === false);
         document.getElementById('ui_trust_strip').classList.toggle('hidden', uiToggles.showTrustStrip === false);
@@ -746,17 +809,20 @@
         document.getElementById('ui_filter_pills').classList.toggle('hidden', uiToggles.showFilterPills === false);
         document.getElementById('ui_free_ship_box').classList.toggle('hidden', uiToggles.showFreeShipBar === false);
 
-        // عرض الأزرار المخصصة التي أضافها الأدمن
+        const activeSocials = (socialLinks || []).filter(s => s.active !== false);
+        const headerSocials = activeSocials.filter(s => s.location === 'header' || s.location === 'both');
+        const footerSocials = activeSocials.filter(s => s.location === 'footer' || s.location === 'both');
+        const heroSocials = activeSocials.filter(s => s.location === 'hero');
+
+        document.getElementById('headerSocialsBar').innerHTML = headerSocials.map(renderSocialBtnHTML).join('');
+        document.getElementById('footerSocialsBar').innerHTML = footerSocials.map(renderSocialBtnHTML).join('');
+
         const headerBtns = customButtons.filter(b => b.location === 'header');
         const heroBtns = customButtons.filter(b => b.location === 'hero');
 
-        document.getElementById('headerCustomBtns').innerHTML = headerBtns.map(b => `
-          <a href="${b.url}" target="${b.url.startsWith('#') ? '_self' : '_blank'}" class="custom-dyn-btn" style="background:${b.color};">${b.label}</a>
-        `).join('');
-
-        document.getElementById('heroCustomBtns').innerHTML = heroBtns.map(b => `
-          <a href="${b.url}" target="${b.url.startsWith('#') ? '_self' : '_blank'}" class="custom-dyn-btn" style="background:${b.color}; padding:12px 24px; font-size:14px;">${b.label}</a>
-        `).join('');
+        document.getElementById('headerCustomBtns').innerHTML = headerBtns.map(renderCustomBtnHTML).join('');
+        document.getElementById('heroCustomBtns').innerHTML = 
+          heroSocials.map(renderSocialBtnHTML).join('') + heroBtns.map(renderCustomBtnHTML).join('');
 
       } catch(e) {}
     }
@@ -816,7 +882,7 @@
                 ${imgs.length > 1 ? `
                   <button class="img-nav-btn img-nav-prev" onclick="slideCardImage(event, '${p.id}', -1)">❯</button>
                   <button class="img-nav-btn img-nav-next" onclick="slideCardImage(event, '${p.id}', 1)">❮</button>
-                  <span class="badge-multi-img" id="card_counter_${p.id}">📷 ${currentIdx + 1} / ${imgs.length}</span>
+                  <span class="badge-multi-img" id="card_counter_${p.id}">📷 ${currentIdx + 1} /${imgs.length}</span>
                 ` : ''}
               </div>
               <h4>${p.title}</h4>
@@ -830,7 +896,7 @@
                     <span style="color: ${p.stock > 5 ? 'var(--primary)' : '#ef4444'};">${p.stock} قطعة</span>
                   </div>
                   <div class="stock-track">
-                    <div class="stock-fill" style="width: ${stockPercent}%; background: ${p.stock > 5 ? 'var(--primary)' : '#ef4444'};"></div>
+                    <div class="stock-fill" style="width: ${stockPercent}\%; background:${p.stock > 5 ? 'var(--primary)' : '#ef4444'};"></div>
                   </div>
                 </div>
               ` : ''}
